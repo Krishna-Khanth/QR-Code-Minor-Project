@@ -352,7 +352,7 @@ def main_page():
     
         #code to monitor screen1 close event
         def on_closing():    
-            screen1_5.destroy()
+            #screen1_5.destroy()
             screen2.destroy()
             screen1.deiconify()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
@@ -380,7 +380,7 @@ def main_page():
             bttn = Button(screen1_5, text="OK", width="15", command=calllog)
             bttn.grid(pady=5, row=3, column=1, columnspan=1)
             screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
-                                
+
         #check if password is strong
         if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
             username_info = username.get()
@@ -393,21 +393,38 @@ def main_page():
         else:
             messagebox.showerror("ALERT", "Password not Strong")
         
-    #GUI code for adding organizer
+    #GUI code for adding organizer            
     def register():
-        global screen2
+        global screen2, labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, opt1_entry, opt2_entry, regbtn
+
         screen2 = Toplevel(screen1)
         screen2.title("Register")
         screen2.geometry("520x310")
         screen2.resizable(False, False)
         screen2.config(background=colr)
-        screen1.withdraw()
-        global labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, opt1_entry, opt2_entry
+        screen1.withdraw()        
         username = StringVar()
         password = StringVar()
         emailid = StringVar()
         phno = StringVar() 
-        rights =  IntVar()
+        rights = StringVar()
+                
+        def valinp():
+            if (username_entry.get() != "") and (emailid_entry.get() != "") and (phno_entry.get() != "") and (password_entry.get() != "") and (perm_entry.get() != "Select"):
+                if (len(phno_entry.get()) == 10):
+                    rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+                    if(re.search(rege, emailid_entry.get())):  
+                        if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
+                            register_user()
+                        else:
+                            messagebox.showerror("ALERT", "Password not Strong")
+                    else:
+                        messagebox.showerror("ALERT", "Invalid Email")
+                else:
+                    messagebox.showerror("ALERT", "Invalid Phone Number")                        
+            else:
+                messagebox.showerror("ALERT", "Fields Incomplete")
+
         labl = Label(screen2, text="Please enter user information", width="30", bg=colr)
         labl.configure(foreground="white", font=("Times New Roman", 20, 'bold'))
         labl.grid(row=1, column=1, padx=5, pady=5, columnspan=2)
@@ -437,23 +454,15 @@ def main_page():
         labl = Label(screen2, text="Permission :", width='30', bg=colr)
         labl.configure(foreground="white")
         labl.grid(row=7, column=1, padx=5, pady=5, columnspan=1)        
-        opt1_entry = Radiobutton(screen2, variable=rights, value="Admin", width="6", state=NORMAL, anchor="w", text="Admin", bg=colr)
-        opt1_entry.configure(foreground="white")
-        opt1_entry.grid(row=7, column=2, pady=5, columnspan=1, padx=(10,100))
-        opt2_entry = Radiobutton(screen2, variable=rights, value="User", width="6", state=NORMAL, anchor="w", text="User", bg=colr)
-        opt2_entry.configure(foreground="white")
-        opt2_entry.grid(row=7, column=2, pady=5, padx=(100,10), columnspan=1)
+        perm_entry = ttk.Combobox(screen2, textvariable=rights, values=["Select", "Admin", "User"], state="readonly")
+        perm_entry.current(0)
+        perm_entry.grid(row=7, column=2, columnspan=1, pady=5)
         labl = Label(screen2, text="", width="30", bg=colr)
         labl.grid(row=8, column=1, columnspan=2)         
-        buutn = Button(screen2, text="Sumbit", width='18', command=register_user)
-        buutn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)
-                
-        #check for all fields completion
-        if (username != "") and (password != "") and (emailid != "") and (phno != "") and (rights != ""):
-            screen2.bind('<Return>', lambda event=None: buutn.invoke())
-        else:
-            messagebox.showerror("ALERT", "Fields Incomplete")
-
+        regbtn = Button(screen2, text="Sumbit", width='18', command=valinp)
+        regbtn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)        
+        screen2.bind('<Return>', lambda event=None: regbtn.invoke())
+                                
         #code to monitor screen2 close event
         def on_closing():
             screen3.deiconify()
@@ -471,6 +480,7 @@ def main_page():
         bttn = Button(screen3, text="Add Organizer", width="10", command=register)
         bttn.grid(row=3, column=1, pady=5, columnspan=1)        
         screen3.bind('<Return>', lambda event=None: bttnn.invoke())
+        screen3.bind("<Control-a>", lambda event=None: bttn.invoke())
         
     #GUI if data of user
     def userlogin():        
