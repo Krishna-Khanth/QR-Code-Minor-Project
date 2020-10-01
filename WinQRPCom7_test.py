@@ -21,15 +21,15 @@ from openpyxl.styles import Font, Color, PatternFill
 #check OS
 def chkos():
     oname = platform.system()
-    print (oname)
+    print(oname)
     if oname == "Windows":
-        screen1geo = ""
-        screen1_5geo = ""
-        screen2geo = ""
-        screen3geo = ""
-        screen4geo = ""
-        screen5geo = ""
-        screen6geo = ""
+        screen1geo = "430x300"
+        screen1_5geo = "490x145"
+        screen2geo = "500x310"
+        screen3geo = "360x125"
+        screen4geo = "250x258"
+        screen5geo = "675x425"
+        screen6geo = "390x190"
         screen7geo = ""
 
 #path for excel file
@@ -608,4 +608,4 @@ global colr
 colr = "#1c44a5"
 
 chkos()
-#main_page()
+main_page()
