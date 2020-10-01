@@ -1,6 +1,6 @@
 #importing libraries & modules
 import os
-import re 
+import re
 import cv2
 import time
 import random
@@ -16,10 +16,9 @@ from openpyxl.styles import colors
 from openpyxl.styles.colors import *
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color, PatternFill
-import App.frontend_api as fi
 
 #path for excel file
-path = "./data/regdata.xlsx"               
+path = "./data/regdata.xlsx"
 
 #QR Scanner code
 def QRScan():
@@ -28,15 +27,19 @@ def QRScan():
     cap.set(3,640)
     cap.set(4,480)
     time.sleep(2)
-    
+    """
+    icon = PhotoImage(file="./resc/qr-code-scan.png")
+    screen7.iconphoto(False, icon)
+    """
+
     #find content of QR
-    def decode(im): 
+    def decode(im):
         decodedObjects = pyzbar.decode(im)
         return decodedObjects
 
     font = cv2.FONT_HERSHEY_SIMPLEX
 
-    #check if data of scanned QR in excel    
+    #check if data of scanned QR in excel
     def regbk(bar):
         wb = load_workbook(path)
         ws = wb.active
@@ -62,27 +65,27 @@ def QRScan():
         GUI alert pop karva.
         """
 
-    #scan the QR 
+    #scan the QR
     def app():
         decodedObject = ""
         while(cap.isOpened()):
             ret, frame = cap.read()
             im = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             decodedObjects = decode(im)
-            for decodedObject in decodedObjects: 
+            for decodedObject in decodedObjects:
                 points = decodedObject.polygon
-                if len(points) > 4 : 
+                if len(points) > 4 :
                   hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
                   hull = list(map(tuple, np.squeeze(hull)))
-                else : 
-                  hull = points;         
-                n = len(hull)     
+                else :
+                  hull = points;
+                n = len(hull)
                 for j in range(0,n):
                   cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
                 x = decodedObject.rect.left
                 y = decodedObject.rect.top
                 cv2.putText(frame, str(decodedObject.data), (x, y), font, 1, (0,255,255), 2, cv2.LINE_AA)
-                
+
             cv2.imshow('frame', frame)
             key = cv2.waitKey(1)
             if key & 0xFF == ord('q'):
@@ -94,12 +97,12 @@ def QRScan():
                     iname = "./scan/" + bar + ".png"
                 else:
                     iname = "./scan/" + random.randint(1, 101) + ".png"
-                cv2.imwrite(iname, frame)     
-            
-        barCode = str(decodedObject.data)            
+                cv2.imwrite(iname, frame)
+
+        barCode = str(decodedObject.data)
         barC = barCode.split('-')
         bar = barC[1]
-        
+
         regbk(bar)
         regdb()
 
@@ -115,17 +118,21 @@ def QRP():
         gcolor = "#161a2d"
         screen5 = Toplevel(screen4)
         screen5.title("QR Generator")
-        screen5.geometry("775x425")
+        screen5.geometry("675x425")
         screen5.resizable(False, False)
         screen5.config(background=gcolor)
+        screen5.focus_force()
+        icon = PhotoImage(file="./resc/laptop.png")
+        screen5.iconphoto(False, icon)
         label = Label(screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
         label.configure(foreground="white", anchor="center")
-        label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)        
+        label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)
         label = Label(screen5, text="Enter Name : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=1, column=1, padx=5, pady=10)
         screen5.entry = Entry(screen5, width=30, textvariable=qrName)
         screen5.entry.grid(row=1, column=2, padx=5, pady=10, columnspan=2)
+        screen5.entry.focus_set()
         label = Label(screen5, text="Enter Phno : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=2, column=1, padx=5, pady=10)
@@ -135,21 +142,21 @@ def QRP():
         label.configure(foreground="white")
         label.grid(row=3, column=1, padx=5, pady=10)
         screen5.entry = Entry(screen5, width=30, textvariable=qrmail)
-        screen5.entry.grid(row=3, column=2, padx=5, pady=10, columnspan=2)    
+        screen5.entry.grid(row=3, column=2, padx=5, pady=10, columnspan=2)
         label = Label(screen5, text="1st Event Name : ", bg=gcolor)
         label.configure(foreground="white")
-        label.grid(row=4, column=1, padx=5, pady=10)    
+        label.grid(row=4, column=1, padx=5, pady=10)
         label = Label(screen5, text="2nd Event Name : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=5, column=1, padx=5, pady=10)
-        screen5.entry1 = ttk.Combobox(screen5, width=29, textvariable=qrevent1)#, state="readonly")
+        screen5.entry1 = ttk.Combobox(screen5, width=27, textvariable=qrevent1)#, state="readonly")
         screen5.entry1.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
         screen5.entry1['values'] = () #add data from db here
-        screen5.entry1.current() 
-        screen5.entry2 = ttk.Combobox(screen5, width=29, textvariable=qrevent2)#, state="readonly")
+        screen5.entry1.current()
+        screen5.entry2 = ttk.Combobox(screen5, width=27, textvariable=qrevent2)#, state="readonly")
         screen5.entry2.grid(row=5, column=2, padx=5, pady=10, columnspan=2)
         screen5.entry2['values'] = () #add data from db here
-        screen5.entry2.current() 
+        screen5.entry2.current()
         label = Label(screen5, text="QR Code : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=6, column=1, padx=5, pady=10)
@@ -165,9 +172,9 @@ def QRP():
         image = ImageTk.PhotoImage(image)
         screen5.imageLabel.config(image=image)
         screen5.imageLabel.photo = image
-        
-    #code for clearing values of GUI fields        
-    def QRClear():        
+
+    #code for clearing values of GUI fields
+    def QRClear():
         qrName.set("")
         qrphno.set("")
         qrmail.set("")
@@ -178,13 +185,13 @@ def QRP():
         image = ImageTk.PhotoImage(image)
         screen5.imageLabel.config(image=image)
         screen5.imageLabel.photo = image
-                
-    #code to generate QR with participant data    
-    def QRCodeGenerate():    
+
+    #code to generate QR with participant data
+    def QRCodeGenerate():
         if (qrName.get() != '') and (qrphno.get() != '') and (qrmail.get() != '') and (qrevent1.get() != ''):
             if (len(qrphno.get()) == 10):
                 rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-                if(re.search(rege,qrmail.get())):  
+                if(re.search(rege,qrmail.get())):
                     content = qrName.get() + "-" + qrphno.get()
                     qrGenerate = pyqrcode.create(content)
                     qrCodePath = './data/'
@@ -197,13 +204,13 @@ def QRP():
                     screen5.imageLabel.photo = image
                     QRdatamgSQL()
                     QRdatamgXL()
-                else:  
+                else:
                     messagebox.showerror("ALERT", "Invalid Email ID")
             else:
                 messagebox.showerror("ALERT", "Invalid Phone Number")
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
-                
+
     #code add participant ddata to excel sheet
     def QRdatamgXL():
         wb = load_workbook(path)
@@ -216,7 +223,7 @@ def QRP():
     def QRdatamgSQL():
         print("SHARAD")
         """
-        ek new function bana to check if data 
+        ek new function bana to check if data
         being entered is already in db.
         ek new function bana for SQL db creation,
         iss function se SQL db connection and
@@ -224,7 +231,7 @@ def QRP():
         database ke table mei 5 columns rakh,
         4 for collected data, 1 for marking present.
         add if to check if email already in db,
-        if yes give GUI prompt to confirms    
+        if yes give GUI prompt to confirms
         """
 
     #code initializing varaibles of GUI
@@ -241,138 +248,144 @@ def QRP():
 sharad please decide how you want this function to work
 """
 def eventmgm():
-    global screen5, evename, evetime, evedate, adevent, adevedt, adeveti
-           
-    #code to create event management GUI
-    def evemg():
-        #clear fields
-        def clrevent():
-            evename.set("")
-            evedate.set("")
-            evetime.set("")
-            
-        #add events to database    
-        def addevent():
+    global screen6
+    #clear fields
+    def clrevent():
+        evename.set("")
+        evedate.set("")
+        evetime.set("")
+
+    #add events to database
+    def addevent():
+        if (adevent.get() != "") and (adeveti.get() != "") and (adevedt.get() != ""):
             print("add event to SQL")
-            """
-            add entered event in db
-            """
-            
-        #remove events from database    
-        def remevent():
+            #add entered event in db
+        else:
+            messagebox.showerror("ALERT", "Fields Incomplete")
+
+    #remove events from database
+    def remevent():
+        if (adevent.get() != "") and (adeveti.get() != "") and (adevedt.get() != ""):
             print("remove event from sql")
-            """
-            remove entered event from db
-            """
+            #remove entered event from db
+        else:
+            messagebox.showerror("ALERT", "Fields Incomplete")
 
-        #GUI code for event manager
-        screen4.withdraw()
-        evename = StringVar()
-        evetime = StringVar()
-        evedate = StringVar()
-        screen5 = Toplevel(screen4)
-        screen5.title("Event Manager")
-        screen5.geometry("440x190")
-        screen5.resizable(False, False)
-        screen5.config(background="green") 
-        label = Label(screen5, text="Event Management", bg="green", font=("Times New Roman", 20, 'bold'))
-        label.configure(foreground="white", anchor="center")
-        label.grid(row=0, column=1, padx=(17,0), pady=(10,15), columnspan=4)        
-        lbl = Label(screen5, text="Event Name", bg="green")
-        lbl.configure(foreground="white")
-        lbl.grid(row=1, column=1, padx=(40,5), pady=5, columnspan=1)
-        adevent = Entry(screen5, width='17', textvariable=evename)
-        adevent.grid(row=1, column=2, padx=5, pady=5, columnspan=1)       
-        lbl = Label(screen5, text="Event Date", bg="green")
-        lbl.configure(foreground="white")
-        lbl.grid(row=2, column=1, padx=(40,5), pady=5, columnspan=1)
-        adeveti = Entry(screen5, width='17', textvariable=evedate)
-        adeveti.grid(row=2, column=2, padx=5, pady=5, columnspan=1)        
-        lbl = Label(screen5, text="Event Time", bg="green")
-        lbl.configure(foreground="white")
-        lbl.grid(row=3, column=1, padx=(40,5), pady=5, columnspan=1)
-        adevedt = Entry(screen5, width='17', textvariable=evetime)
-        adevedt.grid(row=3, column=2, padx=5, pady=5, columnspan=1)                        
-        nbt = Button(screen5, text="Clear", command=clrevent, width='10')
-        nbt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)        
-        nbt = Button(screen5, text="Add Event", command=addevent, width='10')
-        nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)        
-        nbt = Button(screen5, text="Remove Event", command=remevent, width='10')
-        nbt.grid(row=3, column=3, padx=5, pady=5, columnspan=2)        
+    #GUI code for event manager
+    evename = StringVar()
+    evetime = StringVar()
+    evedate = StringVar()
+    screen6 = Toplevel(screen4)
+    screen6.title("Event Manager")
+    screen6.geometry("390x190")
+    screen6.resizable(False, False)
+    screen6.config(background="green")
+    icon = PhotoImage(file="./resc/team-management.png")
+    screen6.iconphoto(False, icon)
+    screen6.focus_force()
+    label = Label(screen6, text="Event Management", bg="green", font=("Times New Roman", 20, 'bold'))
+    label.configure(foreground="white", anchor="center")
+    label.grid(row=0, column=1, padx=(17,0), pady=(10,15), columnspan=4)
+    lbl = Label(screen6, text="Event Name", bg="green")
+    lbl.configure(foreground="white")
+    lbl.grid(row=1, column=1, padx=(40,5), pady=5, columnspan=1)
+    adevent = Entry(screen6, width='17', textvariable=evename)
+    adevent.grid(row=1, column=2, padx=5, pady=5, columnspan=1)
+    adevent.focus_set()
+    lbl = Label(screen6, text="Event Date", bg="green")
+    lbl.configure(foreground="white")
+    lbl.grid(row=2, column=1, padx=(40,5), pady=5, columnspan=1)
+    adeveti = Entry(screen6, width='17', textvariable=evedate)
+    adeveti.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
+    lbl = Label(screen6, text="Event Time", bg="green")
+    lbl.configure(foreground="white")
+    lbl.grid(row=3, column=1, padx=(40,5), pady=5, columnspan=1)
+    adevedt = Entry(screen6, width='17', textvariable=evetime)
+    adevedt.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
+    nbt = Button(screen6, text="Clear", command=clrevent, width='13')
+    nbt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)
+    nbt = Button(screen6, text="Add Event", command=addevent, width='13')
+    nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)
+    nbt = Button(screen6, text="Remove Event", command=remevent, width='13')
+    nbt.grid(row=3, column=3, padx=5, pady=5, columnspan=2)
 
-        #code to monitor app close event
-        def on_closing():
-            screen4.deiconify()    
-            screen5.destroy()
-        screen5.protocol("WM_DELETE_WINDOW", on_closing)
+    #code to monitor app close event
+    def on_closing():
+        screen4.deiconify()
+        screen6.destroy()
+    screen6.protocol("WM_DELETE_WINDOW", on_closing)
 
-    evemg()        
-    
 #code to manage organizer/user tasks
 def mgm_page():
     #GUI for organizer management
     screen3.withdraw()
     global screen4, background_label
     screen4 = Toplevel(screen3)
-    screen4.title("Select")      
+    screen4.title("Select")
     screen4.geometry("250x258")
     screen4.resizable(False, False)
     screen4.config(background=colr)
-    btn = Button(screen4, width=13, borderwidth=0, text="QR Generator", command=QRP)
+    icon = PhotoImage(file="./resc/process.png")
+    screen4.iconphoto(False, icon)
+    screen4.focus_force()
+    btn = Button(screen4, width=15, borderwidth=0, text="QR Generator", command=QRP)
     btn.grid(row=1, column=1, padx=5, pady=5, columnspan=1)
     btn.place(relx=0.5, rely=0.25, anchor=N)
-    bnt = Button(screen4, width=13, borderwidth=0, text="QR Scanner", command=QRScan)
+    bnt = Button(screen4, width=15, borderwidth=0, text="QR Scanner", command=QRScan)
     bnt.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
     bnt.place(relx=0.5, rely=0.5, anchor=CENTER)
-    tbn = Button(screen4, width=13, borderwidth=0, text="Event Management", command=eventmgm)
+    tbn = Button(screen4, width=15, borderwidth=0, text="Event Management", command=eventmgm)
     tbn.grid(row=3, column=1, padx=5, pady=5, columnspan=1)
     tbn.place(relx=0.5, rely=0.75, anchor=S)
+    screen4.bind("<Control-g>", lambda event=None: btn.invoke())
+    screen4.bind("<Control-s>", lambda event=None: bnt.invoke())
+    screen4.bind("<Control-e>", lambda event=None: tbn.invoke())
 
     #code to monitor app close event
     def on_closing():
         screen1.destroy()
     screen4.protocol("WM_DELETE_WINDOW", on_closing)
-    
+
 """
-sharad please optimize organizer registration & 
+sharad please optimize organizer registration &
 login technique as you see fit.
-"""   
+"""
 #GUI & code for login & signup
 def main_page():
-    global username_verify, password_verify, username1, password1            
-    
+    global username_verify, password_verify, username1, password1
+
     #code to clear login data fields after successful login
     def clrlogin():
         username_verify.set("")
         password_verify.set("")
         username_entry1.focus_set()
         mgm_page()
-        
+
     #code to organizer management
     def register_user():
-    
         #code to monitor screen1 close event
-        def on_closing():    
+        def on_closing():
             #screen1_5.destroy()
             screen2.destroy()
             screen1.deiconify()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
-        
+
         #user add success
         def disab():
             global screen1_5
             screen1_5 = Toplevel(screen1)
             screen1_5.title("Success")
-            screen1_5.geometry("390x145")
+            screen1_5.geometry("490x145")
             screen1_5.resizable(False, False)
             screen1_5.config(background="green")
-            
+            screen1_5.focus_force()
+
             #code to call login success screen
-            def calllog():    
+            def calllog():
                 screen1_5.destroy()
                 screen2.destroy()
                 adminlogin()
-                
+
             label = Label(screen1_5, text="", bg="green")
             label.grid(row=1, column=1)
             label = Label(screen1_5, text="Registeration Success", width='30', bg="green", font=("Times New Roman", 20, 'bold'))
@@ -393,28 +406,30 @@ def main_page():
             disab()
         else:
             messagebox.showerror("ALERT", "Password not Strong")
-        
-    #GUI code for adding organizer            
+
+    #GUI code for adding organizer
     def register():
         global screen2, labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, opt1_entry, opt2_entry, regbtn
-
         screen2 = Toplevel(screen1)
         screen2.title("Register")
-        screen2.geometry("520x310")
+        screen2.geometry("500x310")
         screen2.resizable(False, False)
         screen2.config(background=colr)
-        screen1.withdraw()        
+        screen3.focus_force()
+        screen1.withdraw()
+        icon = PhotoImage(file="./resc/add.png")
+        screen2.iconphoto(False, icon)
         username = StringVar()
         password = StringVar()
         emailid = StringVar()
-        phno = StringVar() 
+        phno = StringVar()
         rights = StringVar()
-                
+
         def valinp():
             if (username_entry.get() != "") and (emailid_entry.get() != "") and (phno_entry.get() != "") and (password_entry.get() != "") and (perm_entry.get() != "Select"):
                 if (len(phno_entry.get()) == 10):
                     rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-                    if(re.search(rege, emailid_entry.get())):  
+                    if(re.search(rege, emailid_entry.get())):
                         if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
                             register_user()
                         else:
@@ -422,7 +437,7 @@ def main_page():
                     else:
                         messagebox.showerror("ALERT", "Invalid Email")
                 else:
-                    messagebox.showerror("ALERT", "Invalid Phone Number")                        
+                    messagebox.showerror("ALERT", "Invalid Phone Number")
             else:
                 messagebox.showerror("ALERT", "Fields Incomplete")
 
@@ -449,21 +464,21 @@ def main_page():
         labl.configure(foreground="white")
         labl.grid(row=4, column=2, padx=5, pady=5, columnspan=1)
         password_entry = Entry(screen2, show="*", textvariable=password)
-        password_entry.grid(row=5, column=2, padx=5, pady=5, columnspan=1)        
+        password_entry.grid(row=5, column=2, padx=5, pady=5, columnspan=1)
         labl = Label(screen2, text="", width="30", bg=colr)
-        labl.grid(row=6, column=1, padx=5, pady=5, columnspan=2)         
-        labl = Label(screen2, text="Permission :", width='30', bg=colr)
+        labl.grid(row=6, column=1, padx=5, pady=5, columnspan=2)
+        labl = Label(screen2, text="Permission : ", width='30', bg=colr)
         labl.configure(foreground="white")
-        labl.grid(row=7, column=1, padx=5, pady=5, columnspan=1)        
-        perm_entry = ttk.Combobox(screen2, textvariable=rights, values=["Select", "Admin", "User"], state="readonly")
+        labl.grid(row=7, column=1, padx=5, pady=5, columnspan=1)
+        perm_entry = ttk.Combobox(screen2, textvariable=rights, width="17", values=["Select", "Admin", "User"], state="readonly")
         perm_entry.current(0)
         perm_entry.grid(row=7, column=2, columnspan=1, pady=5)
-        labl = Label(screen2, text="", width="30", bg=colr)
-        labl.grid(row=8, column=1, columnspan=2)         
+        labl = Label(screen2, text="", bg=colr)
+        labl.grid(row=8, column=1, columnspan=2)
         regbtn = Button(screen2, text="Sumbit", width='18', command=valinp)
-        regbtn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)        
+        regbtn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)
         screen2.bind('<Return>', lambda event=None: regbtn.invoke())
-                                
+
         #code to monitor screen2 close event
         def on_closing():
             screen3.deiconify()
@@ -472,20 +487,20 @@ def main_page():
 
     #GUI if data of admin
     def adminlogin():
-        screen3.geometry("320x125")
+        screen3.geometry("360x125")
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
         label.grid(row=1, column=1, pady=5, columnspan=1)
-        bttnn = Button(screen3, text="OK", width="10", command=clrlogin)
+        bttnn = Button(screen3, text="OK", width="15", command=clrlogin)
         bttnn.grid(row=2, column=1, pady=5, columnspan=1)
-        bttn = Button(screen3, text="Add Organizer", width="10", command=register)
-        bttn.grid(row=3, column=1, pady=5, columnspan=1)        
+        bttn = Button(screen3, text="Add Organizer", width="15", command=register)
+        bttn.grid(row=3, column=1, pady=5, columnspan=1)
         screen3.bind('<Return>', lambda event=None: bttnn.invoke())
         screen3.bind("<Control-a>", lambda event=None: bttn.invoke())
-        
+
     #GUI if data of user
-    def userlogin():        
-        screen3.geometry("330x90")
+    def userlogin():
+        screen3.geometry("360x90")
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
         label.grid(row=1, column=1, pady=5)
@@ -496,45 +511,39 @@ def main_page():
     #code for organizer details verification
     def login_verify():
         screen1.withdraw()
-        global screen3        
+        global screen3
         screen3 = Toplevel(screen1)
         screen3.title("Info")
-        screen3.geometry("150x30")        
-        screen3.config(background="green")
+        screen3.geometry("150x30")
         screen3.resizable(False, False)
+        screen3.config(background="green")
+        screen3.focus_force()
+        icon = PhotoImage(file="./resc/check.png")
+        screen3.iconphoto(False, icon)
 
         #code to monitor screen3 close event
         def on_closing():
             clrlogin()
-            screen1.deiconify()    
-            screen3.destroy()        
+            screen1.deiconify()
+            screen3.destroy()
         screen3.protocol("WM_DELETE_WINDOW", on_closing)
-                
-        #validate input        
+
+        #validate input
         username1 = username_verify.get()
         password1 = password_verify.get()
         list_of_dir = os.listdir()
-        # if username1 in list_of_dir:
-        #     file = open (username1, "r")
-        #     verify = file.read().splitlines()
-        #     if (password1 and "Admin") in verify:
-        #         adminlogin()
-        #     elif password1 in verify:
-        #         userlogin()
-        #     else:
-        #         on_closing()
-        #         messagebox.showerror("ALERT", "Invalid Password")
-        # else :
-        #     on_closing()
-        #     messagebox.showerror("ALERT", "Invalid User")
-        resp = fi.login(uid=username1, password=password1)
-        if resp == 2:
-            adminlogin()
-        elif resp == 1:
-            userlogin()
-        elif resp == 0:
-            messagebox.showerror("ALERT", "Invalid User/password")
-        else:
+        if username1 in list_of_dir:
+            file = open (username1, "r")
+            verify = file.read().splitlines()
+            if (password1 and "Admin") in verify:
+                adminlogin()
+            elif password1 in verify:
+                userlogin()
+            else:
+                on_closing()
+                messagebox.showerror("ALERT", "Invalid Password")
+        else :
+            on_closing()
             messagebox.showerror("ALERT", "Invalid User")
 
     #code for login GUI
@@ -542,9 +551,11 @@ def main_page():
         global screen1, username_verify, password_verify, username_entry1
         screen1 = Tk()
         screen1.title("Login")
-        screen1.geometry("375x300")
+        screen1.geometry("430x300")
         screen1.config(background=colr)
         screen1.resizable(False, False)
+        icon = PhotoImage(file="./resc/login.png")
+        screen1.iconphoto(False, icon)
         username_verify = StringVar()
         password_verify = StringVar()
         label = Label(text="", bg=colr)
@@ -577,9 +588,8 @@ def main_page():
         screen1.mainloop()
 
     login()
-    
-global colr 
+
+global colr
 colr = "#1c44a5"
 
 main_page()
-
