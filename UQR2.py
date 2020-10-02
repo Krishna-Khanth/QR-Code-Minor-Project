@@ -8,7 +8,7 @@ import platform
 import pyqrcode
 import numpy as np
 import tkinter as tk
-#import frontend_api as fi
+import frontend_api as fi
 import pyzbar.pyzbar as pyzbar
 from tkinter import *
 from tkinter import ttk
@@ -40,7 +40,8 @@ def chkos():
         screen2geo = "520x310"
         screen3geo = "320x125"
         screen4geo = "250x258"
-        screen5geo = "760x420"
+        #screen5geo = "760x420"
+        screen5geo = "760x460"
         screen6geo = "455x190"
         screen7geo = ""
 
@@ -158,7 +159,6 @@ def QRP():
         gcolor = "#161a2d"
         screen5 = Toplevel(screen4)
         screen5.title("QR Generator")
-        #screen5.geometry("760x420")
         screen5.geometry(screen5geo)
         screen5.resizable(False, False)
         screen5.config(background=gcolor)
@@ -168,7 +168,7 @@ def QRP():
         label = Label(screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
         label.configure(foreground="white", anchor="center")
         label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)
-        label = Label(screen5, text="Enter all deltails or QR-ID of participant", bg=gcolor)
+        label = Label(screen5, text="Enter all details or QR-ID of participant", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=1, column=1, padx=5, pady=10, columnspan=3)
         label = Label(screen5, text="Enter Name : ", bg=gcolor)
@@ -217,7 +217,6 @@ def QRP():
         buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)
         screen5.bind("<Control-r>", lambda event=None: buton.invoke())
         screen5.imageLabel = Label(screen5, background=gcolor)
-        #screen5.imageLabel.grid(row=1, column=4, rowspan=9, columnspan=3, padx=(10,5), pady=10)
         screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10,5), pady=10)
         image = Image.open("./resc/wait.png")
         image = image.resize((350, 350), Image.ANTIALIAS)
@@ -328,7 +327,6 @@ def eventmgm():
     global screen6
     #clear fields
     def clrevent():
-        #evename.focus_set()
         adevent.focus_set()
         evename.set("")
         evedate.set("")
@@ -356,7 +354,6 @@ def eventmgm():
     evedate = StringVar()
     screen6 = Toplevel(screen4)
     screen6.title("Event Manager")
-    #screen6.geometry("390x190")
     screen6.geometry(screen6geo)
     screen6.resizable(False, False)
     screen6.config(background="green")
@@ -405,7 +402,6 @@ def mgm_page():
     global screen4, background_label
     screen4 = Toplevel(screen3)
     screen4.title("Select")
-    #screen4.geometry("250x258")
     screen4.geometry(screen4geo)
     screen4.resizable(False, False)
     screen4.config(background=colr)
@@ -459,7 +455,6 @@ def main_page():
             global screen1_5
             screen1_5 = Toplevel(screen1)
             screen1_5.title("Success")
-            #screen1_5.geometry("490x145")
             screen1_5.geometry(screen1_5geo)
             screen1_5.resizable(False, False)
             screen1_5.config(background="green")
@@ -494,7 +489,7 @@ def main_page():
 
     #GUI code for adding organizer
     def register():
-        global screen2, labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, opt1_entry, opt2_entry, regbtn
+        global screen2, labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, regbtn
         screen2 = Toplevel(screen1)
         screen2.title("Register")
         screen2.geometry(screen2geo)
@@ -570,9 +565,8 @@ def main_page():
             screen2.destroy()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
-    #GUI if data of admin
+    #GUI if data is of admin
     def adminlogin():
-        #screen3.geometry("360x125")
         screen3.geometry(screen3geo)
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
@@ -584,9 +578,8 @@ def main_page():
         screen3.bind('<Return>', lambda event=None: bttnn.invoke())
         screen3.bind("<Control-a>", lambda event=None: bttn.invoke())
 
-    #GUI if data of user
+    #GUI if data is of user
     def userlogin():
-        #screen3.geometry("360x90")
         screen3.geometry(screen3geo)
         label = Label(screen3, text="", bg="green")
         label.grid(row=1, column=1, pady=5)
@@ -597,13 +590,12 @@ def main_page():
         bttn.grid(row=3, column=1, pady=5)
         screen3.bind('<Return>', lambda event=None: bttn.invoke())
 
-    #code for organizer details verification
+    #code for GUI & user details verification
     def login_verify():
         screen1.withdraw()
         global screen3
         screen3 = Toplevel(screen1)
         screen3.title("Info")
-        #screen3.geometry("150x30")
         screen3.geometry(screen3geo)
         screen3.resizable(False, False)
         screen3.config(background="green")
@@ -618,7 +610,7 @@ def main_page():
             screen3.destroy()
         screen3.protocol("WM_DELETE_WINDOW", on_closing)
 
-        #validate input
+        #validate dara in input
         username1 = username_verify.get()
         password1 = password_verify.get()
         list_of_dir = os.listdir()
@@ -673,14 +665,21 @@ def main_page():
         #monitor app close
         def on_closing(event):
             sys.exit()
+        #binding Escape key as shortcut
         screen1.bind('<Escape>', on_closing)
 
         screen1.mainloop()
 
+    #calling the login module
     login()
 
+#setting a main colour theme
 global colr
 colr = "#1c44a5"
 
+#checking OS
 chkos()
+
+#start of program
 main_page()
+
