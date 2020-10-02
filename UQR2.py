@@ -22,17 +22,18 @@ from openpyxl.styles import Font, Color, PatternFill
 #check OS
 def chkos():
     oname = platform.system()
-    global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo    
+    global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo
     if oname == "Windows":
         screen1geo = "430x300"
         screen1_5geo = "490x145"
         screen2geo = "500x310"
-        screen3geo = "320x125"
+        screen3geo = "360x125"
         screen4geo = "250x258"
-        screen5geo = "675x525"
+        #screen5geo = "675x525"
+        screen5geo = "690x470"
         screen6geo = "390x190"
         screen7geo = ""
-    
+
     elif oname == "Linux":
         screen1geo = "375x300"
         screen1_5geo = "390x145"
@@ -42,10 +43,10 @@ def chkos():
         screen5geo = "760x420"
         screen6geo = "455x190"
         screen7geo = ""
-        
+
     else:
-        print ("Invalid OS")        
-        
+        print ("Invalid OS")
+
 #path for excel file
 path = "./data/regdata.xlsx"
 
@@ -135,16 +136,19 @@ def QRScan():
                     iname = "./scan/" + random.randint(1, 101) + ".png"
                 cv2.imwrite(iname, frame)
 
-        barCode = str(decodedObject.data)
-        barC = barCode.split('-')
-        bar = barC[1]
-
-        regbk(bar)
-        regdb()
+        try:
+            barCode = str(decodedObject.data)
+            barC = barCode.split('-')
+            bar = barC[1]
+            regbk(bar)
+            regdb()
+        except:
+            messagebox.showerror("ALERT", "No QR Detected")
 
     app()
     cap.release()
     cv2.destroyAllWindows()
+    screen4.focus_force()
 
 #code to register & generate QR for participant
 def QRP():
@@ -163,10 +167,10 @@ def QRP():
         screen5.iconphoto(False, icon)
         label = Label(screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
         label.configure(foreground="white", anchor="center")
-        label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)        
+        label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)
         label = Label(screen5, text="Enter all deltails or QR-ID of participant", bg=gcolor)
         label.configure(foreground="white")
-        label.grid(row=1, column=1, padx=5, pady=10, columnspan=3)        
+        label.grid(row=1, column=1, padx=5, pady=10, columnspan=3)
         label = Label(screen5, text="Enter Name : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=2, column=1, padx=5, pady=10)
@@ -176,19 +180,19 @@ def QRP():
         label = Label(screen5, text="Enter Phno : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=3, column=1, padx=5, pady=10)
-        screen5.entry = Entry(screen5, width=30, textvariable=qrphno)
-        screen5.entry.grid(row=3, column=2, padx=5, pady=10, columnspan=2)
+        screen5.entryphno = Entry(screen5, width=30, textvariable=qrphno)
+        screen5.entryphno.grid(row=3, column=2, padx=5, pady=10, columnspan=2)
         label = Label(screen5, text="Enter Email : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=4, column=1, padx=5, pady=10)
-        screen5.entry = Entry(screen5, width=30, textvariable=qrmail)
-        screen5.entry.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
+        screen5.entrymail = Entry(screen5, width=30, textvariable=qrmail)
+        screen5.entrymail.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
         label = Label(screen5, text="QR ID : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=5, column=1, padx=5, pady=10)
         screen5.entry = Entry(screen5, width=30, textvariable=qrID)
         screen5.entry.grid(row=5, column=2, padx=5, pady=10, columnspan=2)
-        ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')        
+        ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
         label = Label(screen5, text="1st Event Name : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=7, column=1, padx=5, pady=10)
@@ -210,10 +214,11 @@ def QRP():
         button.grid(row=9, column=2, padx=5, pady=10, columnspan=1)
         screen5.bind('<Return>', lambda event=None: button.invoke())
         buton = Button(screen5, width=10, text="Clear", command=QRClear)
-        buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)        
+        buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)
         screen5.bind("<Control-r>", lambda event=None: buton.invoke())
         screen5.imageLabel = Label(screen5, background=gcolor)
-        screen5.imageLabel.grid(row=1, column=4, rowspan=9, columnspan=3, padx=(10,5), pady=10)
+        #screen5.imageLabel.grid(row=1, column=4, rowspan=9, columnspan=3, padx=(10,5), pady=10)
+        screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10,5), pady=10)
         image = Image.open("./resc/wait.png")
         image = image.resize((350, 350), Image.ANTIALIAS)
         image = ImageTk.PhotoImage(image)
@@ -266,14 +271,21 @@ def QRP():
                         QRdatamgXL()
                     else:
                         messagebox.showerror("ALERT", "Invalid Email ID")
+                        screen5.focus_force()
+                        screen5.entrymail.focus_set()
                 except:
-                    messagebox.showerror("ALERT", "Phone: Not a Number")    
+                    messagebox.showerror("ALERT", "Phone: Not a Number")
+                    screen5.focus_force()
+                    screen5.entryphno.focus_set()
             else:
                 messagebox.showerror("ALERT", "Invalid Phone Number")
+                screen5.focus_force()
+                screen5.entryphno.focus_set()
         elif (qrID.get() != '') and (qrevent1.get() != ''):
             print ("lol")
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
+            screen5.focus_force()
 
     #code add participant ddata to excel sheet
     def QRdatamgXL():
@@ -672,4 +684,3 @@ colr = "#1c44a5"
 
 chkos()
 main_page()
-

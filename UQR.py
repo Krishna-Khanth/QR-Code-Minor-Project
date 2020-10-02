@@ -21,7 +21,7 @@ from openpyxl.styles import Font, Color, PatternFill
 #check OS
 def chkos():
     oname = platform.system()
-    global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo    
+    global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo
     if oname == "Windows":
         screen1geo = "430x300"
         screen1_5geo = "490x145"
@@ -31,7 +31,7 @@ def chkos():
         screen5geo = "675x425"
         screen6geo = "390x190"
         screen7geo = ""
-    
+
     elif oname == "Linux":
         screen1geo = "375x300"
         screen1_5geo = "390x145"
@@ -41,10 +41,10 @@ def chkos():
         screen5geo = "775x425"
         screen6geo = "440x190"
         screen7geo = ""
-        
+
     else:
-        print ("Invalid OS")        
-        
+        print ("Invalid OS")
+
 #path for excel file
 path = "./data/regdata.xlsx"
 
@@ -638,4 +638,3 @@ colr = "#1c44a5"
 
 chkos()
 main_page()
-
