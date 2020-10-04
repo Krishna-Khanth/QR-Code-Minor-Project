@@ -46,7 +46,16 @@ def chkos():
         screen7geo = ""
 
     else:
-        print ("Invalid OS")
+        #print ("Invalid OS")
+        screen1geo = "375x300"
+        screen1_5geo = "390x145"
+        screen2geo = "520x310"
+        screen3geo = "320x125"
+        screen4geo = "250x258"
+        #screen5geo = "760x420"
+        screen5geo = "760x460"
+        screen6geo = "455x190"
+        screen7geo = ""
 
 #path for excel file
 path = "./data/regdata.xlsx"
