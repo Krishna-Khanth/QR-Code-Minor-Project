@@ -645,7 +645,7 @@ def main_page():
         label = Label(text="Please Enter your Login \nInformation", width='30', bg=colr)
         label.configure(foreground="white", font=("Times New Roman", 18, 'bold'))
         label.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
-        label = Label(text="Username : ", width='30', bg=colr)
+        label = Label(text="Email ID : ", width='30', bg=colr)
         label.configure(foreground="white")
         label.grid(row=4, column=1, padx=25, pady=5, columnspan=1)
         username_entry1 = Entry(width="21", textvariable=username_verify)
@@ -682,4 +682,3 @@ chkos()
 
 #start of program
 main_page()
-
