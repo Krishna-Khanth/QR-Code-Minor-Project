@@ -18,12 +18,16 @@ from openpyxl.styles.colors import *
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color, PatternFill
 
+try:
+    import App.frontend_api as fi
+except:
+    import frontend_api as fi
+
 #check OS
 def chkos():
     oname = platform.system()
     global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo    
     if oname == "Windows":
-        print ("Win")
         screen1geo = "430x300"
         screen1_5geo = "490x145"
         screen2geo = "500x310"
@@ -34,13 +38,12 @@ def chkos():
         screen7geo = ""
     
     elif oname == "Linux":
-        print ("Lin")
         screen1geo = "375x300"
         screen1_5geo = "390x145"
         screen2geo = "520x310"
         screen3geo = "320x125"
         screen4geo = "250x258"
-        screen5geo = "765x425"
+        screen5geo = "775x425"
         screen6geo = "440x190"
         screen7geo = ""
         
@@ -211,14 +214,6 @@ def QRP():
         screen5.imageLabel.config(image=image)
         screen5.imageLabel.photo = image
 
-    #reload wait image
-    def ld():
-        image = Image.open("./resc/wait.png")
-        image = image.resize((350, 350), Image.ANTIALIAS)
-        image = ImageTk.PhotoImage(image)
-        screen5.imageLabel.config(image=image)
-        screen5.imageLabel.photo = image
-
     #code for clearing values of GUI fields
     def QRClear():
         qrName.set("")
@@ -231,7 +226,6 @@ def QRP():
         image = ImageTk.PhotoImage(image)
         screen5.imageLabel.config(image=image)
         screen5.imageLabel.photo = image
-        screen5.after(500, ld)
 
     #code to generate QR with participant data
     def QRCodeGenerate():
@@ -445,17 +439,18 @@ def main_page():
             bttn.grid(pady=5, row=3, column=1, columnspan=1)
             screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
 
+        disab()
         #check if password is strong
-        if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
-            username_info = username.get()
-            password_info = password.get()
-            file = open(username_info, "w")
-            file.write(username_info+"\n")
-            file.write(password_info)
-            file.close()
-            disab()
-        else:
-            messagebox.showerror("ALERT", "Password not Strong")
+        # if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
+            # username_info = username.get()
+            # password_info = password.get()
+            # file = open(username_info, "w")
+            # file.write(username_info+"\n")
+            # file.write(password_info)
+            # file.close()
+            # disab()
+        # else:
+        #     messagebox.showerror("ALERT", "Password not Strong")
 
     #GUI code for adding organizer
     def register():
@@ -481,7 +476,14 @@ def main_page():
                     rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
                     if(re.search(rege, emailid_entry.get())):
                         if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
-                            register_user()
+                            # register_user()
+                            perm = perm_entry.get()
+                            perm = 2 if perm == "Admin" else 1
+                            resp = fi.add_user(name=username_entry.get(), email_id=emailid_entry.get(), password=password_entry.get(), phone=int(phno_entry.get()), perm=perm)
+                            if resp == 0:
+                                messagebox.showerror("ALERT", "User email already exists")
+                            else:
+                                register_user()
                         else:
                             messagebox.showerror("ALERT", "Password not Strong")
                     else:
@@ -586,18 +588,29 @@ def main_page():
         #validate input
         username1 = username_verify.get()
         password1 = password_verify.get()
-        list_of_dir = os.listdir()
-        if username1 in list_of_dir:
-            file = open (username1, "r")
-            verify = file.read().splitlines()
-            if (password1 and "Admin") in verify:
-                adminlogin()
-            elif password1 in verify:
-                userlogin()
-            else:
-                on_closing()
-                messagebox.showerror("ALERT", "Invalid Password")
-        else :
+        # list_of_dir = os.listdir()
+        # if username1 in list_of_dir:
+        #     file = open(username1, "r")
+        #     verify = file.read().splitlines()
+        #     if (password1 and "Admin") in verify:
+        #         adminlogin()
+        #     elif password1 in verify:
+        #         userlogin()
+        #     else:
+        #         on_closing()
+        #         messagebox.showerror("ALERT", "Invalid Password")
+        # else:
+        #     on_closing()
+        #     messagebox.showerror("ALERT", "Invalid User")
+        resp = fi.login(uid=username1, password=password1)
+        if resp == 2:
+            adminlogin()
+        elif resp == 1:
+            userlogin()
+        elif resp == 0:
+            on_closing()
+            messagebox.showerror("ALERT", "Invalid User/password")
+        else:
             on_closing()
             messagebox.showerror("ALERT", "Invalid User")
 

@@ -8,7 +8,6 @@ import platform
 import pyqrcode
 import numpy as np
 import tkinter as tk
-#import frontend_api as fi
 import pyzbar.pyzbar as pyzbar
 from tkinter import *
 from tkinter import ttk
@@ -18,8 +17,12 @@ from openpyxl.styles import colors
 from openpyxl.styles.colors import *
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color, PatternFill
+try:
+    import App.frontend_api as fi
+except:
+    import frontend_api as fi
 
-#check OS
+# check OS
 def chkos():
     oname = platform.system()
     global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo
@@ -247,7 +250,7 @@ def QRP():
         screen5.imageLabel.config(image=image)
         screen5.imageLabel.photo = image
 
-    #code for clearing values of GUI fields
+    # code for clearing values of GUI fields
     def QRClear():
         screen5.entryname.focus_set()
         qrName.set("")
@@ -490,17 +493,18 @@ def main_page():
             bttn.grid(pady=5, row=3, column=1, columnspan=1)
             screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
 
+        disab()
         #check if password is strong
-        if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
-            username_info = username.get()
-            password_info = password.get()
-            file = open(username_info, "w")
-            file.write(username_info+"\n")
-            file.write(password_info)
-            file.close()
-            disab()
-        else:
-            messagebox.showerror("ALERT", "Password not Strong")
+        # if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
+        #     username_info = username.get()
+        #     password_info = password.get()
+        #     file = open(username_info, "w")
+        #     file.write(username_info+"\n")
+        #     file.write(password_info)
+        #     file.close()
+        #     disab()
+        # else:
+        #     messagebox.showerror("ALERT", "Password not Strong")
 
     #GUI code for adding organizer
     def register():
@@ -526,7 +530,15 @@ def main_page():
                     rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
                     if(re.search(rege, emailid_entry.get())):
                         if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
-                            register_user()
+                            # register_user()
+                            perm = perm_entry.get()
+                            perm = 2 if perm == "Admin" else 1
+                            resp = fi.add_user(name=username_entry.get(), email_id=emailid_entry.get(),
+                                               password=password_entry.get(), phone=int(phno_entry.get()), perm=perm)
+                            if resp == 0:
+                                messagebox.showerror("ALERT", "User email already exists")
+                            else:
+                                register_user()
                         else:
                             messagebox.showerror("ALERT", "Password not Strong")
                     else:
@@ -628,18 +640,30 @@ def main_page():
         #validate dara in input
         username1 = username_verify.get()
         password1 = password_verify.get()
-        list_of_dir = os.listdir()
-        if username1 in list_of_dir:
-            file = open (username1, "r")
-            verify = file.read().splitlines()
-            if (password1 and "Admin") in verify:
-                adminlogin()
-            elif password1 in verify:
-                userlogin()
-            else:
-                on_closing()
-                messagebox.showerror("ALERT", "Invalid Password")
-        else :
+        # list_of_dir = os.listdir()
+        # if username1 in list_of_dir:
+        #     file = open (username1, "r")
+        #     verify = file.read().splitlines()
+        #     if (password1 and "Admin") in verify:
+        #         adminlogin()
+        #     elif password1 in verify:
+        #         userlogin()
+        #     else:
+        #         on_closing()
+        #         messagebox.showerror("ALERT", "Invalid Password")
+        # else :
+        #     on_closing()
+        #     messagebox.showerror("ALERT", "Invalid User")
+
+        resp = fi.login(uid=username1, password=password1)
+        if resp == 2:
+            adminlogin()
+        elif resp == 1:
+            userlogin()
+        elif resp == 0:
+            on_closing()
+            messagebox.showerror("ALERT", "Invalid User/password")
+        else:
             on_closing()
             messagebox.showerror("ALERT", "Invalid User")
 
