@@ -8,7 +8,7 @@ import platform
 import pyqrcode
 import numpy as np
 import tkinter as tk
-import frontend_api as fi
+#import frontend_api as fi
 import pyzbar.pyzbar as pyzbar
 from tkinter import *
 from tkinter import ttk
@@ -119,7 +119,6 @@ def QRScan():
                   hull = points;
                 n = len(hull)
                 for j in range(0,n):
-                  #while scanning
                   cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
                 x = decodedObject.rect.left
                 y = decodedObject.rect.top
@@ -646,7 +645,7 @@ def main_page():
         label = Label(text="Please Enter your Login \nInformation", width='30', bg=colr)
         label.configure(foreground="white", font=("Times New Roman", 18, 'bold'))
         label.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
-        label = Label(text="Email ID : ", width='30', bg=colr)
+        label = Label(text="Username : ", width='30', bg=colr)
         label.configure(foreground="white")
         label.grid(row=4, column=1, padx=25, pady=5, columnspan=1)
         username_entry1 = Entry(width="21", textvariable=username_verify)

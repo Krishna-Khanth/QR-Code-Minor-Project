@@ -12,17 +12,17 @@ CREATE TABLE `minor_db`.`user` (
   `User_id` INT AUTO_INCREMENT NOT NULL,
   `name` VARCHAR(50) NOT NULL,
   `Email_id` VARCHAR(45) NOT NULL,
-  `Phone` INT NOT NULL,
-  `Password` VARCHAR(20) NOT NULL,
+  `Phone` VARCHAR(15) NOT NULL,
+  `Password` VARCHAR(100) NOT NULL,
   `Permission` INT NOT NULL,
   PRIMARY KEY (`User_id`),
   UNIQUE INDEX `Email_id_UNIQUE` (`Email_id` ASC) VISIBLE,
   UNIQUE INDEX `User_id_UNIQUE` (`User_id` ASC) VISIBLE);
 
-DROP TABLE user;
-DROP TABLE registration;
-DROP TABLE participants;
-DROP TABLE events;
+-- DROP TABLE user;
+-- DROP TABLE registration;
+-- DROP TABLE participants;
+-- DROP TABLE events;
 SHOW TABLES;
 
 SELECT * FROM user;
@@ -34,8 +34,9 @@ CREATE TABLE `minor_db`.`participants` (
   `p_id` VARCHAR(50) NOT NULL,
   `name` VARCHAR(50) NOT NULL,
   `Email_id` VARCHAR(45) NOT NULL,
-  `Phone` INT NOT NULL,
+  `Phone` VARCHAR(15) NOT NULL,
   PRIMARY KEY (`p_id`),
+  UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) VISIBLE,
   UNIQUE INDEX `idparticipants_UNIQUE` (`p_id` ASC) VISIBLE);
 
 CREATE TABLE `minor_db`.`events` (
@@ -49,7 +50,7 @@ CREATE TABLE `minor_db`.`events` (
 
 CREATE TABLE `minor_db`.`registration` (
   `r_id` INT NOT NULL AUTO_INCREMENT,
-  `p_id` INT NOT NULL,
+  `p_id` VARCHAR(50) NOT NULL,
   `event_id` INT NOT NULL,
   `present` INT NOT NULL,
   PRIMARY KEY (`r_id`),
