@@ -1,4 +1,6 @@
 import mysql.connector
+import hashlib
+# SHA hash algorithms.
 
 
 def db_init():
@@ -46,10 +48,16 @@ def db_init():
 
     if user_table not in ls:
         print("User not present")
-        mycursor.execute("CREATE TABLE `" + db_name + "`.`user` (`User_id` INT AUTO_INCREMENT NOT NULL,`name` VARCHAR(50) NOT NULL,`Email_id` VARCHAR(45) NOT NULL,`Phone` INT NOT NULL,`Password` VARCHAR(20) NOT NULL,`Permission` INT NOT NULL,PRIMARY KEY (`User_id`), UNIQUE INDEX `Email_id_UNIQUE` (`Email_id` ASC) VISIBLE,UNIQUE INDEX `User_id_UNIQUE` (`User_id` ASC) VISIBLE);")
+        mycursor.execute("CREATE TABLE `" + db_name + "`.`user` (`User_id` INT AUTO_INCREMENT NOT NULL,`name` VARCHAR(50) NOT NULL,`Email_id` VARCHAR(45) NOT NULL,`Phone` VARCHAR(15) NOT NULL,`Password` VARCHAR(100) NOT NULL,`Permission` INT NOT NULL,PRIMARY KEY (`User_id`), UNIQUE INDEX `Email_id_UNIQUE` (`Email_id` ASC) VISIBLE,UNIQUE INDEX `User_id_UNIQUE` (`User_id` ASC) VISIBLE);")
 
         sql = "INSERT INTO user (User_id, name, Email_id, Phone, Password, Permission) VALUES (%s, %s, %s, %s, %s, %s)"
-        val = (1, "admin", "MinorProject@tips.com", 1234567890, "minor", 2)
+        password = "Admin@123"
+        password = password[::-1]
+        password = hashlib.sha224(password.encode()).hexdigest()
+        password = password[::-1]
+        password = hashlib.sha256(password.encode()).hexdigest()
+        password = password[::-1]
+        val = (1, "Admin", "admin@event.com", 1234567890, password, 2)
         mycursor.execute(sql, val)
         mydb.commit()
 
@@ -69,7 +77,7 @@ def db_init():
 
     if part_table not in ls:
         print("part not present")
-        mycursor.execute("CREATE TABLE `" + db_name + "`.`participants` (`p_id` VARCHAR(50) NOT NULL,`name` VARCHAR(50) NOT NULL,`Email_id` VARCHAR(45) NOT NULL,`Phone` INT NOT NULL,PRIMARY KEY (`p_id`), UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) VISIBLE,UNIQUE INDEX `idparticipants_UNIQUE` (`p_id` ASC) VISIBLE);")
+        mycursor.execute("CREATE TABLE `" + db_name + "`.`participants` (`p_id` VARCHAR(50) NOT NULL,`name` VARCHAR(50) NOT NULL,`Email_id` VARCHAR(45) NOT NULL,`Phone` VARCHAR(15) NOT NULL,PRIMARY KEY (`p_id`), UNIQUE INDEX `phone_UNIQUE` (`phone` ASC) VISIBLE,UNIQUE INDEX `idparticipants_UNIQUE` (`p_id` ASC) VISIBLE);")
 
         print("part created")
     else:

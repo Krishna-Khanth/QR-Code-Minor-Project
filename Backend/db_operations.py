@@ -67,6 +67,8 @@ def add_user(name, email, phone, passw, perm):
     mycursor = mydb.cursor()
     db_name = "minor_db"
     mycursor.execute("USE " + db_name)
+    phone = str(phone)
+    passw = str(passw)
 
     try:
         sql = "INSERT INTO user (name, email_id, phone, password, permission) VALUES (%s, %s, %s, %s, %s)"
@@ -182,5 +184,5 @@ if __name__ == "__main__":
     # add_user("sharad", "mp@gmail.in", 1234567890, "abc", 2)
     # add_reg(54321, 1)
     get_events()
-    get_user()
+    # get_user()
     # get_reg("54321", 1)

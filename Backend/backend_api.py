@@ -59,6 +59,8 @@ def add_user():
     name = req_data["name"]
     perm = req_data["permission"]
     print(name, e_id, phone, passw, perm)
+    print(type(phone))
+    print(type(passw))
 
     # "1" if added, "0" if exists
     response = op.add_user(name=name, email_id=e_id, phone=phone, perm=perm, password=passw)
