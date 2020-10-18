@@ -17,8 +17,10 @@ def login(uid, passw):
     try:
         users = db.get_user()
     except:
+        print("user not exists")
         db_init.db_init()
         users = db.get_user()
+        print("user created")
 
     for i in users:
         if i[0] == uid:
