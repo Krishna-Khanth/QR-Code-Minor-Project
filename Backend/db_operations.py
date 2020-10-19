@@ -13,8 +13,8 @@ import mysql.connector
 def add_event(name, date, time):
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
@@ -38,8 +38,8 @@ def add_event(name, date, time):
 def add_participant(p_id, name, email, phone):
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
@@ -61,8 +61,8 @@ def add_participant(p_id, name, email, phone):
 def add_user(name, email, phone, passw, perm):
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
@@ -86,8 +86,8 @@ def add_user(name, email, phone, passw, perm):
 def add_reg(p_id, event_id):
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
@@ -108,8 +108,8 @@ def add_reg(p_id, event_id):
 def get_events():
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
@@ -124,8 +124,8 @@ def get_events():
 def get_user():
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
@@ -141,8 +141,8 @@ def get_user():
 def get_reg(p_id, event_id):
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
@@ -163,8 +163,8 @@ def get_reg(p_id, event_id):
 def get_pid(phone):
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
@@ -178,11 +178,11 @@ def get_pid(phone):
     print(myresult[0][0])
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # add_event("jkl", "2020-09-30", "10:10")
-    # add_participant("54321", "sharad", "mp@gmail.in", 1234567890)
-    # add_user("sharad", "mp@gmail.in", 1234567890, "abc", 2)
+    # add_participant("54321", "sharad", "mp@gmail.in", pass567890)
+    # add_user("sharad", "mp@gmail.in", pass567890, "abc", 2)
     # add_reg(54321, 1)
-    get_events()
+    # get_events()
     # get_user()
     # get_reg("54321", 1)
