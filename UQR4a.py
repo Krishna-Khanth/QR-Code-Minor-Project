@@ -31,7 +31,7 @@ def chkos():
         screen1_5geo = "490x145"
         screen2geo = "500x310"
         screen3geo = "360x125"
-        screen4geo = "250x258"
+        screen4geo = "250x288"
         #screen5geo = "675x525"
         screen5geo = "690x470"
         screen6geo = "390x190"
@@ -42,7 +42,7 @@ def chkos():
         screen1_5geo = "390x145"
         screen2geo = "520x310"
         screen3geo = "320x125"
-        screen4geo = "250x258"
+        screen4geo = "250x288"
         #screen5geo = "760x420"
         screen5geo = "770x460"
         screen6geo = "455x190"
@@ -444,15 +444,18 @@ def mgm_page():
     icon = PhotoImage(file="./resc/process.png")
     screen4.iconphoto(False, icon)
     screen4.focus_force()
-    btn = Button(screen4, width=15, borderwidth=0, text="QR Generator", command=QRP)
+    btn = Button(screen4, width=15, borderwidth=0, text="Event Registry", command=QRP)
     btn.grid(row=1, column=1, padx=5, pady=5, columnspan=1)
     btn.place(relx=0.5, rely=0.25, anchor=N)
-    bnt = Button(screen4, width=15, borderwidth=0, text="QR Scanner", command=QRScan)
+    bnt = Button(screen4, width=15, borderwidth=0, text="Event Entry", command=QRScan)
     bnt.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
-    bnt.place(relx=0.5, rely=0.5, anchor=CENTER)
+    bnt.place(relx=0.5, rely=0.40, anchor=N)
     tbn = Button(screen4, width=15, borderwidth=0, text="Event Management", command=eventmgm)
     tbn.grid(row=3, column=1, padx=5, pady=5, columnspan=1)
-    tbn.place(relx=0.5, rely=0.75, anchor=S)
+    tbn.place(relx=0.5, rely=0.60, anchor=S)
+    tbn = Button(screen4, width=15, borderwidth=0, text="Event Report", command=report_gen)
+    tbn.grid(row=4, column=1, padx=5, pady=5, columnspan=1)
+    tbn.place(relx=0.5, rely=0.80, anchor=S)
     screen4.bind("<Control-g>", lambda event=None: btn.invoke())
     screen4.bind("<Control-s>", lambda event=None: bnt.invoke())
     screen4.bind("<Control-e>", lambda event=None: tbn.invoke())

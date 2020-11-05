@@ -14,8 +14,8 @@ import mysql.connector
 def sql_connect():
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="minor",
-        password="1234"
+        user="root",
+        password="pass"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
