@@ -1,19 +1,23 @@
+import datetime
 import requests
 import hashlib
 # SHA hash algorithms.
 
+# security(password)
+
 # login (uid, passw)
 # add_user (name, email_id, password, phone, perm)
-# ToDo functions
+# remove event
+# ToDo Untested
 # add_part (p_id, name, e_id, phone, events)
 # add_event (name, date, time)
+# ToDo functions
 # get_events ()
 # check_part (p_id, event_id)
 # ToDo List
-# remove event
+# existing part reg
 # Report
 
-# security(password)
 
 url = "http://127.0.0.1:5000"
 
@@ -21,38 +25,73 @@ url = "http://127.0.0.1:5000"
 def login(uid, password):
     password = security(password)
     r = requests.post(url + "/login", json={"id": uid, "password": password})
-    print(r)
-    print(type(r.text))
-    print(r.json())
-    print(r.json()["body"])
+    # print(r)
+    # print(type(r.text))
+    # print(r.json())
+    print("login", r.json()["body"])
     return r.json()["body"]["permission"]
 
 
 def add_user(name, email_id, password, phone, perm):
     password = security(password)
     r = requests.post(url + "/add_user", json={"name": name, "email_id": email_id, "password": password, "phone": phone, "permission": perm})
-    print(r.json()["body"])
+    print("add user", r.json()["body"])
     return r.json()["body"]["response"]
 
 
 def add_part(p_id, name, email_id, phone, events):
     r = requests.post(url + "/add_part", json={"p_id": p_id, "name": name, "email_id": email_id, "phone": phone, "events": events})
-    print(r.json()["body"])
+    print("add part", r.json()["body"])
+    return r.json()["body"]["response"]
 
 
 def add_event(name, date, time):
+    print(date, time)
+    try:
+        datetime.datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        return 2
+    try:
+        datetime.datetime.strptime(time, '%H:%M')
+    except ValueError:
+        return 3
+    time = time + ":00"
     r = requests.post(url + "/add_event", json={"name": name, "date": date, "time": time})
-    print(r.json()["body"])
+    print("add event", r.json()["body"])
+    return r.json()["body"]["response"]
 
 
 def get_events():
     r = requests.get(url + "/get_events")
-    print(r.json()["body"])
+    print("get events", r.json()["body"])
+    return r.json()["body"]["response"]
 
 
 def check_part(p_id, event_id):
     r = requests.post(url + "/check_part", json={"p_id": p_id, "event_id": event_id})
-    print(r.json()["body"])
+    print("check part", r.json()["body"])
+
+
+def remove_event(name, date, time):
+    print("Remove", date, time)
+    try:
+        datetime.datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        return 2
+    try:
+        datetime.datetime.strptime(time, '%H:%M')
+    except ValueError:
+        return 3
+    time = time + ":00"
+    r = requests.post(url + "/remove_event", json={"name": name, "date": date, "time": time})
+    print("rem event", r.json()["body"])
+    return r.json()["body"]["response"]
+
+
+def get_report():
+    r = requests.get(url + "/get_report")
+    print("get report", r.json()["body"])
+    return r.json()["body"]["response"]
 
 
 def security(password):

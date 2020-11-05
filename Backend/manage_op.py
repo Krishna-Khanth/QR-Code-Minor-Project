@@ -11,6 +11,7 @@ except:
 # add_event (name, date, time)
 # get_events ()
 # check_part (p_id, event_id)
+# remove_event (name, date, time)
 
 
 def login(uid, passw):
@@ -50,7 +51,10 @@ def add_part(p_id, name, email, phone, events):
         p_id = db.get_pid(phone)
 
     for i in events:
-        resp = db.add_reg(p_id=p_id, event_id=i)
+        print("for event = ", i)
+        e_id = db.get_event_id(i)
+        print("event id = ", e_id[0][0])
+        resp = db.add_reg(p_id=p_id, event_id=e_id[0][0])
         if resp == 0:
             print("Error - manage_op, add_part")
             return 0
@@ -66,11 +70,17 @@ def add_event(name, date, time):
 
 def get_events():
     events = db.get_events()
-    # list of tupple(event_id and name)
+    # list of tupple(name)
     return events
 
 
 def check_part(p_id, event_id):
     resp = db.get_reg(p_id=p_id, event_id=event_id)
     # "0" Not Registered, "1" Registered, "2" Entered
+    return resp
+
+
+def remove_event(name, date, time):
+    resp = db.remove_event(name=name, date=date, time=time)
+    # "1" success, "0" event participant registered, "4" wrong event details
     return resp

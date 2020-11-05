@@ -67,8 +67,8 @@ path = "./data/regdata.xlsx"
 def QRScan():
     #start device camera
     cap = cv2.VideoCapture(0)
-    cap.set(3,640)
-    cap.set(4,480)
+    cap.set(3, 640)
+    cap.set(4, 480)
     time.sleep(2)
 
     """
@@ -82,14 +82,14 @@ def QRScan():
     screen7.iconphoto(False, icon)
     """
 
-    #find content of QR
+    # find content of QR
     def decode(im):
         decodedObjects = pyzbar.decode(im)
         return decodedObjects
 
     font = cv2.FONT_HERSHEY_SIMPLEX
 
-    #check if data of scanned QR in excel
+    # check if data of scanned QR in excel
     def regbk(bar):
         wb = load_workbook(path)
         ws = wb.active
@@ -103,7 +103,7 @@ def QRScan():
                     cell.font = Font(color="00FF00")
                     wb.save(path)
 
-    #check if data of scanned QR in SQL
+    # check if data of scanned QR in SQL
     def regdb():
         print ("Sharad")
         """
@@ -124,14 +124,14 @@ def QRScan():
             decodedObjects = decode(im)
             for decodedObject in decodedObjects:
                 points = decodedObject.polygon
-                if len(points) > 4 :
+                if len(points) > 4:
                   hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
                   hull = list(map(tuple, np.squeeze(hull)))
-                else :
-                  hull = points;
+                else:
+                  hull = points
                 n = len(hull)
                 for j in range(0,n):
-                  #while scanning
+                  # while scanning
                   cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
                 x = decodedObject.rect.left
                 y = decodedObject.rect.top
@@ -169,6 +169,7 @@ def QRP():
     #codde for GUI of QR generator
     def QRGen():
         global screen5
+        evts = fi.get_events()
         gcolor = "#161a2d"
         screen5 = Toplevel(screen4)
         screen5.title("QR Generator")
@@ -217,13 +218,13 @@ def QRP():
         label = Label(screen5, text="2nd Event Name : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=8, column=1, padx=5, pady=10)
-        screen5.entry1 = ttk.Combobox(screen5, width=27, textvariable=qrevent1)#, state="readonly")
+        screen5.entry1 = ttk.Combobox(screen5, width=27, textvariable=qrevent1, state="readonly")
         screen5.entry1.grid(row=7, column=2, padx=5, pady=10, columnspan=2)
-        screen5.entry1['values'] = () #add data from db here
+        screen5.entry1['values'] = evts #add data from db here
         screen5.entry1.current()
-        screen5.entry2 = ttk.Combobox(screen5, width=27, textvariable=qrevent2)#, state="readonly")
+        screen5.entry2 = ttk.Combobox(screen5, width=27, textvariable=qrevent2, state="readonly")
         screen5.entry2.grid(row=8, column=2, padx=5, pady=10, columnspan=2)
-        screen5.entry2['values'] = () #add data from db here
+        screen5.entry2['values'] = evts #add data from db here
         screen5.entry2.current()
         label = Label(screen5, text="QR Code : ", bg=gcolor)
         label.configure(foreground="white")
@@ -274,24 +275,27 @@ def QRP():
                     phno = int(qrphno.get())
                     rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
                     if(re.search(rege,qrmail.get())):
-                        content = qrName.get() + "-" + qrphno.get()
-                        qrGenerate = pyqrcode.create(content)
-                        qrCodePath = './data/'
-                        qrCodeName = qrCodePath + qrphno.get() + ".png"
-                        qrGenerate.png(qrCodeName, scale=10)
-                        image = Image.open(qrCodeName)
-                        image = image.resize((350, 350), Image.ANTIALIAS)
-                        image = ImageTk.PhotoImage(image)
-                        screen5.imageLabel.config(image=image)
-                        screen5.imageLabel.photo = image
-                        QRdatamgSQL()
-                        QRdatamgXL()
+                        content = qrName.get().lower() + "-" + qrphno.get()
+                        i = QRdatamgSQL(content)
+                        if i == 0:
+                            messagebox.showerror("ALERT", "Internal error in registration")
+                        else:
+                            qrGenerate = pyqrcode.create(content)
+                            qrCodePath = './data/'
+                            qrCodeName = qrCodePath + qrphno.get() + ".png"
+                            qrGenerate.png(qrCodeName, scale=10)
+                            image = Image.open(qrCodeName)
+                            image = image.resize((350, 350), Image.ANTIALIAS)
+                            image = ImageTk.PhotoImage(image)
+                            screen5.imageLabel.config(image=image)
+                            screen5.imageLabel.photo = image
+                            QRdatamgXL()
                     else:
                         messagebox.showerror("ALERT", "Invalid Email ID")
                         screen5.focus_force()
                         screen5.entrymail.focus_set()
                 except:
-                    messagebox.showerror("ALERT", "Phone: Not a Number")
+                    messagebox.showerror("ALERT", "Error in Generating QR or Phone NAN")
                     screen5.focus_force()
                     screen5.entryphno.focus_set()
             else:
@@ -299,7 +303,7 @@ def QRP():
                 screen5.focus_force()
                 screen5.entryphno.focus_set()
         elif (qrID.get() != '') and (qrevent1.get() != ''):
-            print ("lol")
+            print("lol")
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen5.focus_force()
@@ -308,24 +312,18 @@ def QRP():
     def QRdatamgXL():
         wb = load_workbook(path)
         sheet = wb.active
-        row = ((qrName.get(), qrphno.get(), qrmail.get(), qrevent1.get()))
+        row = ((qrName.get(), qrphno.get(), qrmail.get(), qrevent1.get(), qrevent2.get()))
         sheet.append(row)
         wb.save(path)
 
     #code add participant ddata to SQL
-    def QRdatamgSQL():
-        print("SHARAD")
-        """
-        ek new function bana to check if data
-        being entered is already in db.
-        ek new function bana for SQL db creation,
-        iss function se SQL db connection and
-        add collected data to database.
-        database ke table mei 5 columns rakh,
-        4 for collected data, 1 for marking present.
-        add if to check if email already in db,
-        if yes give GUI prompt to confirms
-        """
+    def QRdatamgSQL(content):
+        eve = [qrevent1.get(), qrevent2.get()]
+        if qrevent2.get() == "":
+            eve = [qrevent1.get()]
+        resp = fi.add_part(p_id=content, name=qrName.get(), email_id=qrmail.get(), phone=qrphno.get(), events=eve)
+        return resp
+
 
     #code initializing varaibles of GUI
     qrName = StringVar()
@@ -338,9 +336,6 @@ def QRP():
     QRGen()
 
 #code to maintain event list
-"""
-sharad please decide how you want this function to work
-"""
 def eventmgm():
     global screen6
     #clear fields
@@ -354,7 +349,15 @@ def eventmgm():
     def addevent():
         if (adevent.get() != "") and (adeveti.get() != "") and (adevedt.get() != ""):
             print("add event to SQL")
-            #add entered event in db
+            resp = fi.add_event(name=adevent.get(), date=adeveti.get(), time=adevedt.get())
+            if resp == 0:
+                messagebox.showerror("ALERT", "Another event entry with same name already exists")
+            elif resp == 2:
+                messagebox.showerror("ALERT", "Wrong date format: \n Correct format: YYYY-MM-DD")
+            elif resp == 3:
+                messagebox.showerror("ALERT", "Wrong Time format: \n Correct format: HH:MM")
+            else:
+                messagebox.showinfo("Success", "Event added successfully")
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
 
@@ -362,7 +365,17 @@ def eventmgm():
     def remevent():
         if (adevent.get() != "") and (adeveti.get() != "") and (adevedt.get() != ""):
             print("remove event from sql")
-            #remove entered event from db
+            resp = fi.remove_event(name=adevent.get(), date=adeveti.get(), time=adevedt.get())
+            if resp == 0:
+                messagebox.showerror("ALERT", "Someone is registered in this event")
+            elif resp == 1:
+                messagebox.showinfo("Success", "Event removed successfully")
+            elif resp == 2:
+                messagebox.showerror("ALERT", "Wrong date format: \nCorrect format: YYYY-MM-DD")
+            elif resp == 3:
+                messagebox.showerror("ALERT", "Wrong Time format: \nCorrect format: HH:MM")
+            elif resp == 4:
+                messagebox.showerror("ALERT", "Invalid event details")
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
 
@@ -413,6 +426,11 @@ def eventmgm():
         screen6.destroy()
     screen6.protocol("WM_DELETE_WINDOW", on_closing)
 
+
+def report_gen():
+    rep = fi.get_report()
+
+
 #code to manage organizer/user tasks
 def mgm_page():
     #GUI for organizer management
@@ -444,10 +462,7 @@ def mgm_page():
         screen1.destroy()
     screen4.protocol("WM_DELETE_WINDOW", on_closing)
 
-"""
-sharad please optimize organizer registration &
-login technique as you see fit.
-"""
+
 #GUI & code for login & signup
 def main_page():
     global username_verify, password_verify, username1, password1
@@ -494,17 +509,6 @@ def main_page():
             screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
 
         disab()
-        #check if password is strong
-        # if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
-        #     username_info = username.get()
-        #     password_info = password.get()
-        #     file = open(username_info, "w")
-        #     file.write(username_info+"\n")
-        #     file.write(password_info)
-        #     file.close()
-        #     disab()
-        # else:
-        #     messagebox.showerror("ALERT", "Password not Strong")
 
     #GUI code for adding organizer
     def register():
@@ -640,20 +644,6 @@ def main_page():
         #validate dara in input
         username1 = username_verify.get()
         password1 = password_verify.get()
-        # list_of_dir = os.listdir()
-        # if username1 in list_of_dir:
-        #     file = open (username1, "r")
-        #     verify = file.read().splitlines()
-        #     if (password1 and "Admin") in verify:
-        #         adminlogin()
-        #     elif password1 in verify:
-        #         userlogin()
-        #     else:
-        #         on_closing()
-        #         messagebox.showerror("ALERT", "Invalid Password")
-        # else :
-        #     on_closing()
-        #     messagebox.showerror("ALERT", "Invalid User")
 
         resp = fi.login(uid=username1, password=password1)
         if resp == 2:

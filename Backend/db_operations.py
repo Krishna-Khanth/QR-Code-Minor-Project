@@ -4,24 +4,29 @@ import mysql.connector
 # add_participant (p_id, name, email, phone)
 # add_user (name, email, phone, passw, perm)
 # add_reg (p_id, event_id)
+# get_event_id (name)
 # get_events ()
 # get_user ()
 # get_reg (p_id, event_id)
 # get_pid (phone)
 
 
-def add_event(name, date, time):
+def sql_connect():
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="root",
-        password="pass"
+        user="minor",
+        password="1234"
     )
     mycursor = mydb.cursor()
     db_name = "minor_db"
+    return db_name, mycursor, mydb
+
+
+def add_event(name, date, time):
+    db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
     # Date "yyyy-mm-dd" Time "hh:mm:ss"
-    time = time + ":00"
     try:
         sql = "INSERT INTO events (name, date, time) VALUES (%s, %s, %s)"
         val = (name, date, time)
@@ -36,13 +41,7 @@ def add_event(name, date, time):
 
 
 def add_participant(p_id, name, email, phone):
-    mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="pass"
-    )
-    mycursor = mydb.cursor()
-    db_name = "minor_db"
+    db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
     try:
@@ -59,13 +58,7 @@ def add_participant(p_id, name, email, phone):
 
 
 def add_user(name, email, phone, passw, perm):
-    mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="pass"
-    )
-    mycursor = mydb.cursor()
-    db_name = "minor_db"
+    db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
     phone = str(phone)
     passw = str(passw)
@@ -79,18 +72,12 @@ def add_user(name, email, phone, passw, perm):
         print(name, email, phone, passw, perm, "inserted")
         return 1
     except:
-        print("Error: db_op \nEmail already exists.")
+        print("Error: db_op - Email already exists.")
         return 0
 
 
 def add_reg(p_id, event_id):
-    mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="pass"
-    )
-    mycursor = mydb.cursor()
-    db_name = "minor_db"
+    db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
     try:
@@ -105,30 +92,29 @@ def add_reg(p_id, event_id):
         return 0
 
 
-def get_events():
-    mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="pass"
-    )
-    mycursor = mydb.cursor()
-    db_name = "minor_db"
+def get_event_id(name):
+    db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
-    mycursor.execute("SELECT event_id, name FROM events")
+    sql = "SELECT event_id FROM events WHERE name = \"" + name + "\""
+    mycursor.execute(sql)
+    myresult = mycursor.fetchall()
+    print(myresult)
+    return myresult
+
+
+def get_events():
+    db_name, mycursor, mydb = sql_connect()
+    mycursor.execute("USE " + db_name)
+
+    mycursor.execute("SELECT name FROM events")
     myresult = mycursor.fetchall()
     print(myresult)
     return myresult
 
 
 def get_user():
-    mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="pass"
-    )
-    mycursor = mydb.cursor()
-    db_name = "minor_db"
+    db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
     mycursor.execute("SELECT email_id, password, permission FROM user")
@@ -139,13 +125,7 @@ def get_user():
 
 
 def get_reg(p_id, event_id):
-    mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="pass"
-    )
-    mycursor = mydb.cursor()
-    db_name = "minor_db"
+    db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
     event_id = str(event_id)
 
@@ -161,13 +141,7 @@ def get_reg(p_id, event_id):
 
 
 def get_pid(phone):
-    mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="root",
-        password="pass"
-    )
-    mycursor = mydb.cursor()
-    db_name = "minor_db"
+    db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
     phone = str(phone)
 
@@ -176,12 +150,34 @@ def get_pid(phone):
     print(myresult)
     print(len(myresult))
     print(myresult[0][0])
+    return myresult[0][0]
+
+
+def remove_event(name, date, time):
+    db_name, mycursor, mydb = sql_connect()
+    mycursor.execute("USE " + db_name)
+
+    # Date "yyyy-mm-dd" Time "hh:mm:ss"
+    try:
+        sql = "DELETE FROM events WHERE name = %s AND date = %s AND time = %s"
+        val = (name, date, time)
+        mycursor.execute(sql, val)
+        mydb.commit()
+        print("row = ", mycursor.rowcount)
+        if mycursor.rowcount == 0:
+            print("no change")
+            return 4
+        print(name, date, time, "deleted")
+        return 1
+    except:
+        print("Error: db_op -  Someone is registered")
+        return 0
 
 
 # if __name__ == "__main__":
     # add_event("jkl", "2020-09-30", "10:10")
-    # add_participant("54321", "sharad", "mp@gmail.in", pass567890)
-    # add_user("sharad", "mp@gmail.in", pass567890, "abc", 2)
+    # add_participant("54321", "sharad", "mp@gmail.in", 1234567890)
+    # add_user("sharad", "mp@gmail.in", 1234567890, "abc", 2)
     # add_reg(54321, 1)
     # get_events()
     # get_user()

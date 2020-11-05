@@ -18,6 +18,7 @@ CORS(app)
 # add_event
 # get_events
 # check_part
+# remove_event
 
 
 @app.route('/')
@@ -29,10 +30,9 @@ def hello_world():
 def login():
     req_data = request.get_json()
     # permission = "Custom Response"
-    print(req_data)
     id = req_data["id"]
     passw = req_data["password"]
-    print(id, passw)
+    print("b api", id, passw)
 
     # permission = id + passw
     # "1"/"2" Password match, "0" Wrong password, "-1" User dose not exists
@@ -58,9 +58,7 @@ def add_user():
     phone = req_data["phone"]
     name = req_data["name"]
     perm = req_data["permission"]
-    print(name, e_id, phone, passw, perm)
-    print(type(phone))
-    print(type(passw))
+    print("b api", name, e_id, phone, passw, perm)
 
     # "1" if added, "0" if exists
     response = op.add_user(name=name, email_id=e_id, phone=phone, perm=perm, password=passw)
@@ -85,7 +83,7 @@ def add_part():
     p_id = req_data["p_id"]
     phone = req_data["phone"]
     name = req_data["name"]
-    print(p_id, name, e_id, phone, events)
+    print("b api", p_id, name, e_id, phone, events)
 
     # "0" some error, "1" success
     response = op.add_part(p_id=p_id, name=name, email=e_id, phone=phone, events=events)
@@ -108,7 +106,7 @@ def add_event():
     date = req_data["date"]
     time = req_data["time"]
     name = req_data["name"]
-    print(name, date, time)
+    print("b api", name, date, time)
 
     # "1" success, "0" event name exists
     response = op.add_event(name=name, date=date, time=time)
@@ -148,10 +146,33 @@ def check_part():
     response = "Custom Response"
     p_id = req_data["p_id"]
     event_id = req_data["event_id"]
-    print(p_id, event_id)
+    print("b api", p_id, event_id)
 
     # "0" Not Registered, "1" Registered, "2" Entered
     response = op.check_part(p_id=p_id, event_id=event_id)
+
+    return jsonify({
+        "method": "POST",
+        "headers": {
+            "content-type": "application/json"
+        },
+        "body": {
+            "response": response
+        }
+    })
+
+
+@app.route('/remove_event', methods=["Post"])
+def remove_event():
+    req_data = request.get_json()
+    response = "Custom Response"
+    date = req_data["date"]
+    time = req_data["time"]
+    name = req_data["name"]
+    print("b api", name, date, time)
+
+    # "1" success, "0" event participant registered, "4" wrong event details
+    response = op.remove_event(name=name, date=date, time=time)
 
     return jsonify({
         "method": "POST",
