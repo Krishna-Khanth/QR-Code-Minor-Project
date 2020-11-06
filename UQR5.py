@@ -220,6 +220,7 @@ def QRP():
                 return bar
             except:
                 messagebox.showerror("ALERT", "No QR Detected")
+                return "ERROR"
 
             cap.release()
             cv2.destroyAllWindows()
