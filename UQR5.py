@@ -34,7 +34,7 @@ def chkos():
         screen4geo = "585x458"
         screen5geo = "690x470"
         screen6geo = "390x190"
-        screen7geo = ""
+        screen7geo = "300x230"
 
     elif oname == "Linux":
         screen1geo = "375x300"
@@ -44,7 +44,7 @@ def chkos():
         screen4geo = "680x458"
         screen5geo = "770x460"
         screen6geo = "455x190"
-        screen7geo = ""
+        screen7geo = "300x300"
 
     else:
         screen1geo = "375x300"
@@ -54,36 +54,111 @@ def chkos():
         screen4geo = "250x258"
         screen5geo = "760x460"
         screen6geo = "455x190"
-        screen7geo = ""
+        screen7geo = "300x300"
 
 #path for excel file
 path = "./data/regdata.xlsx"
 
 #QR Scanner code
 def QRScan():
-    #start device camera
-    cap = cv2.VideoCapture(0)
-    cap.set(3, 640)
-    cap.set(4, 480)
-    time.sleep(2)
+    def camscan():
+        #start device camera
+        cap = cv2.VideoCapture(0)
+        cap.set(3, 640)
+        cap.set(4, 480)
+        time.sleep(2)
 
-    """
-    screen7 = Toplevel(screen4)
-    screen7.title("QR Scanner")
-    screen7.geometry(screen7geo)
-    screen7.resizable(False, False)
-    screen7.config(background=gcolor)
-    screen7.focus_force()
-    icon = PhotoImage(file="./resc/qr-code-scan.png")
-    screen7.iconphoto(False, icon)
-    """
+        # find content of QR
+        def decode(im):
+            decodedObjects = pyzbar.decode(im)
+            return decodedObjects
 
-    # find content of QR
-    def decode(im):
-        decodedObjects = pyzbar.decode(im)
-        return decodedObjects
+        font = cv2.FONT_HERSHEY_SIMPLEX
 
-    font = cv2.FONT_HERSHEY_SIMPLEX
+        #scan the QR
+        def app():
+            decodedObject = ""
+            while(cap.isOpened()):
+                ret, frame = cap.read()
+                im = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                decodedObjects = decode(im)
+                for decodedObject in decodedObjects:
+                    points = decodedObject.polygon
+                    if len(points) > 4:
+                      hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
+                      hull = list(map(tuple, np.squeeze(hull)))
+                    else:
+                      hull = points
+                    n = len(hull)
+                    for j in range(0,n):
+                      # while scanning
+                      cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
+                    x = decodedObject.rect.left
+                    y = decodedObject.rect.top
+                    cv2.putText(frame, str(decodedObject.data), (x, y), font, 1, (0,255,255), 2, cv2.LINE_AA)
+
+                cv2.imshow('frame', frame)
+                key = cv2.waitKey(1)
+                if key & 0xFF == ord('q'):
+                    cap.release()
+                    cv2.destroyAllWindows()
+                    break
+                elif key & 0xFF == ord('s'):
+                    if (bar != "") or (bar is not None):
+                        iname = "./scan/" + bar + ".png"
+                    else:
+                        iname = "./scan/" + random.randint(1, 101) + ".png"
+                    cv2.imwrite(iname, frame)
+
+            try:
+                barCode = str(decodedObject.data)
+                bar = barCode
+                qrpid.set(bar)
+            except:
+                messagebox.showerror("ALERT", "No QR Detected")
+
+        app()
+        cap.release()
+        cv2.destroyAllWindows()
+
+    #attendance marker
+    def marker():
+        print("Marked")
+
+    #code for QR scanner GUI
+    def QRSGUI():
+        screen7 = Toplevel(screen4)
+        screen7.title("Event Entry Mgm")
+        screen7.geometry(screen7geo)
+        screen7.resizable(False, False)
+        screen7.config(background=colr)
+        screen7.focus_force()
+        icon = PhotoImage(file="./resc/qr-code-scan.png")
+        screen7.iconphoto(False, icon)
+        evts = fi.get_events()
+        qreve = StringVar()
+        qrpid = StringVar()
+        label = Label(screen7, text="Participant Entry", bg=colr, font=("Times New Roman", 20, 'bold'))
+        label.configure(foreground="white", anchor="center")
+        label.grid(row=1, column=1, padx=20, pady=(20,15), columnspan=3)
+        label = Label(screen7, width=15, text="Select Event : ", bg=colr)
+        label.configure(foreground="white")
+        label.grid(row=3, column=1, padx=5, pady=10)
+        screen7.entry1 = ttk.Combobox(screen7, width=17, textvariable=qreve, state="readonly")
+        screen7.entry1.grid(row=3, column=2, padx=5, pady=10, columnspan=1)
+        screen7.entry1['values'] = evts
+        screen7.entry1.current()
+        buton = Button(screen7, width=15, text="Scan", command=camscan)
+        buton.grid(row=5, column=1, padx=15, pady=(20,10), columnspan=1)
+        screen7.bind("<Control-s>", lambda event=None: buton.invoke())
+        button = Button(screen7, width=15, text="Mark", command=marker)
+        button.grid(row=5, column=2, padx=15, pady=(20,10), columnspan=1)
+        screen7.bind('<Return>', lambda event=None: button.invoke())
+        label = Label(screen7, width=15, text="QR ID : ", bg=colr)
+        label.configure(foreground="white")
+        label.grid(row=4, column=1, padx=5, pady=10)
+        screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
+        screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
 
     # check if data of scanned QR in excel
     def regbk(bar):
@@ -111,53 +186,7 @@ def QRScan():
         GUI alert pop karva.
         """
 
-    #scan the QR
-    def app():
-        decodedObject = ""
-        while(cap.isOpened()):
-            ret, frame = cap.read()
-            im = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            decodedObjects = decode(im)
-            for decodedObject in decodedObjects:
-                points = decodedObject.polygon
-                if len(points) > 4:
-                  hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
-                  hull = list(map(tuple, np.squeeze(hull)))
-                else:
-                  hull = points
-                n = len(hull)
-                for j in range(0,n):
-                  # while scanning
-                  cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
-                x = decodedObject.rect.left
-                y = decodedObject.rect.top
-                cv2.putText(frame, str(decodedObject.data), (x, y), font, 1, (0,255,255), 2, cv2.LINE_AA)
-
-            cv2.imshow('frame', frame)
-            key = cv2.waitKey(1)
-            if key & 0xFF == ord('q'):
-                cap.release()
-                cv2.destroyAllWindows()
-                break
-            elif key & 0xFF == ord('s'):
-                if (bar != "") or (bar is not None):
-                    iname = "./scan/" + bar + ".png"
-                else:
-                    iname = "./scan/" + random.randint(1, 101) + ".png"
-                cv2.imwrite(iname, frame)
-
-        try:
-            barCode = str(decodedObject.data)
-            barC = barCode.split('-')
-            bar = barC[1]
-            regbk(bar)
-            regdb()
-        except:
-            messagebox.showerror("ALERT", "No QR Detected")
-
-    app()
-    cap.release()
-    cv2.destroyAllWindows()
+    QRSGUI()
     screen4.focus_force()
 
 #code to register & generate QR for participant
@@ -723,8 +752,8 @@ def main_page():
         username1 = username_verify.get()
         password1 = password_verify.get()
 
-        resp = fi.login(uid=username1, password=password1)
-        #resp = 2
+        #resp = fi.login(uid=username1, password=password1)
+        resp = 2
         if resp == 2:
             adminlogin()
         elif resp == 1:
