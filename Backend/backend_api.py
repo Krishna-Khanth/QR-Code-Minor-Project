@@ -19,6 +19,7 @@ CORS(app)
 # get_events
 # check_part
 # remove_event
+# get_report
 
 
 @app.route('/')
@@ -173,6 +174,24 @@ def remove_event():
 
     # "1" success, "0" event participant registered, "4" wrong event details
     response = op.remove_event(name=name, date=date, time=time)
+
+    return jsonify({
+        "method": "POST",
+        "headers": {
+            "content-type": "application/json"
+        },
+        "body": {
+            "response": response
+        }
+    })
+
+
+@app.route('/get_report')
+def get_report():
+    response = "Custom Response"
+
+    # list of tupple(event_id and name)
+    response = op.get_report()
 
     return jsonify({
         "method": "POST",

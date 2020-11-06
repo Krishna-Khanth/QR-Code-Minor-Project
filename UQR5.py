@@ -520,6 +520,29 @@ def eventmgm():
 
 def report_gen():
     rep = fi.get_report()
+    try:
+        p = "./data/report.xlsx"
+        wb = load_workbook(p)
+        sheet = wb.active
+        sheet.delete_cols(1, 20)
+        sheet.delete_rows(1, 1000)
+        row = (("S.No.", "QR ID", "Name", "E-mail", "Phone no."))
+        sheet.append(row)
+        wb.save(p)
+        count = 1
+        for i in rep:
+            row = ((count, i[0], i[1], i[2], i[3]))
+            col = 6
+            count += 1
+            sheet.append(row)
+            for x in i[4].split(","):
+                sheet.cell(row=1, column=col).value = "Event " + str(col - 5)
+                sheet.cell(row=count, column=col).value = x
+                col += 1
+            wb.save(p)
+        messagebox.showinfo("Success", "Report Generated successfully \nAt path = " + p)
+    except PermissionError:
+        messagebox.showerror("Alert", "File access denied. \nClose the excel sheet OR Run program as Administrator to fix this issue.")
 
 
 #code to manage organizer/user tasks

@@ -30,6 +30,13 @@ SELECT * FROM participants;
 SELECT * FROM events;
 SELECT * FROM registration;
 
+SELECT `minor_db`.`participants`.*, GROUP_CONCAT(`minor_db`.`events`.name) as "events"
+FROM ((`minor_db`.`participants`
+INNER JOIN `minor_db`.`registration` ON `minor_db`.`participants`.p_id = `minor_db`.`registration`.p_id)
+INNER JOIN `minor_db`.`events` ON `minor_db`.`events`.event_id = `minor_db`.`registration`.event_id)
+group by p_id;
+
+
 CREATE TABLE `minor_db`.`participants` (
   `p_id` VARCHAR(50) NOT NULL,
   `name` VARCHAR(50) NOT NULL,
@@ -41,11 +48,11 @@ CREATE TABLE `minor_db`.`participants` (
 
 CREATE TABLE `minor_db`.`events` (
   `event_id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(50) NOT NULL,
+  `e_name` VARCHAR(50) NOT NULL,
   `date` DATE NOT NULL,
   `time` TIME NOT NULL,
   PRIMARY KEY (`event_id`),
-  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+  UNIQUE INDEX `e_name_UNIQUE` (`e_name` ASC) VISIBLE,
   UNIQUE INDEX `event_id_UNIQUE` (`event_id` ASC) VISIBLE);
 
 CREATE TABLE `minor_db`.`registration` (

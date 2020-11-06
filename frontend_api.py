@@ -8,6 +8,7 @@ import hashlib
 # login (uid, passw)
 # add_user (name, email_id, password, phone, perm)
 # remove event
+# Report
 # ToDo Untested
 # add_part (p_id, name, e_id, phone, events)
 # add_event (name, date, time)
@@ -16,7 +17,6 @@ import hashlib
 # check_part (p_id, event_id)
 # ToDo List
 # existing part reg
-# Report
 
 
 url = "http://127.0.0.1:5000"

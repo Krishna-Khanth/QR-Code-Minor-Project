@@ -1,5 +1,6 @@
 import mysql.connector
 
+# sql_connect()
 # add_event (name, date, time)
 # add_participant (p_id, name, email, phone)
 # add_user (name, email, phone, passw, perm)
@@ -9,19 +10,21 @@ import mysql.connector
 # get_user ()
 # get_reg (p_id, event_id)
 # get_pid (phone)
+# remove_event (name, date, time)
+# get_report ()
 
 
 def sql_connect():
-    # mydb = mysql.connector.connect(
-    #    host="127.0.0.1",
-    #    user="minor",
-    #    password="1234"
-    #)
     mydb = mysql.connector.connect(
         host="127.0.0.1",
-        user="root",
-        password="pass"
+        user="minor",
+        password="1234"
     )
+    # mydb = mysql.connector.connect(
+    #     host="127.0.0.1",
+    #     user="root",
+    #     password="pass"
+    # )
     mycursor = mydb.cursor()
     db_name = "minor_db"
     return db_name, mycursor, mydb
@@ -77,7 +80,7 @@ def add_user(name, email, phone, passw, perm):
         print(name, email, phone, passw, perm, "inserted")
         return 1
     except:
-        print("Error: db_op - Email already exists.")
+        print("Error: db_op - Phone already exists.")
         return 0
 
 
@@ -125,7 +128,6 @@ def get_user():
     mycursor.execute("SELECT email_id, password, permission FROM user")
     myresult = mycursor.fetchall()
     print(myresult)
-
     return myresult
 
 
@@ -138,7 +140,6 @@ def get_reg(p_id, event_id):
         mycursor.execute("SELECT present FROM registration WHERE p_id = \"" + p_id + "\" AND event_id = " + event_id)
         myresult = mycursor.fetchall()
         print(myresult)
-        print(len(myresult))
         return myresult[0][0]
     except:
         print("db_op - Dose not exist")
@@ -152,8 +153,6 @@ def get_pid(phone):
 
     mycursor.execute("SELECT p_id FROM participants WHERE phone = " + phone)
     myresult = mycursor.fetchall()
-    print(myresult)
-    print(len(myresult))
     print(myresult[0][0])
     return myresult[0][0]
 
@@ -179,6 +178,17 @@ def remove_event(name, date, time):
         return 0
 
 
+def get_report():
+    db_name, mycursor, mydb = sql_connect()
+    mycursor.execute("USE " + db_name)
+
+    sql = "SELECT `minor_db`.`participants`.*, GROUP_CONCAT(`minor_db`.`events`.name) as \"events\" FROM ((`minor_db`.`participants` INNER JOIN `minor_db`.`registration` ON `minor_db`.`participants`.p_id = `minor_db`.`registration`.p_id) INNER JOIN `minor_db`.`events` ON `minor_db`.`events`.event_id = `minor_db`.`registration`.event_id) group by p_id;"
+    mycursor.execute(sql)
+    myresult = mycursor.fetchall()
+    print(myresult)
+    return myresult
+
+
 # if __name__ == "__main__":
     # add_event("jkl", "2020-09-30", "10:10")
     # add_participant("54321", "sharad", "mp@gmail.in", 1234567890)
@@ -187,3 +197,4 @@ def remove_event(name, date, time):
     # get_events()
     # get_user()
     # get_reg("54321", 1)
+    # get_report()

@@ -12,6 +12,7 @@ except:
 # get_events ()
 # check_part (p_id, event_id)
 # remove_event (name, date, time)
+# get_report ()
 
 
 def login(uid, passw):
@@ -84,3 +85,7 @@ def remove_event(name, date, time):
     resp = db.remove_event(name=name, date=date, time=time)
     # "1" success, "0" event participant registered, "4" wrong event details
     return resp
+
+
+def get_report():
+    return db.get_report()
