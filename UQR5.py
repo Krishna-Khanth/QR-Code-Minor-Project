@@ -44,7 +44,7 @@ def chkos():
         screen4geo = "680x458"
         screen5geo = "770x460"
         screen6geo = "455x190"
-        screen7geo = "300x300"
+        screen7geo = "360x250"
 
     else:
         screen1geo = "375x300"
@@ -100,6 +100,7 @@ def QRScan():
                 cv2.imshow('frame', frame)
                 key = cv2.waitKey(1)
                 if key & 0xFF == ord('q'):
+                    qrpid.set(str(decodedObject.data))
                     cap.release()
                     cv2.destroyAllWindows()
                     break
@@ -113,7 +114,6 @@ def QRScan():
             try:
                 barCode = str(decodedObject.data)
                 bar = barCode
-                qrpid.set(bar)
             except:
                 messagebox.showerror("ALERT", "No QR Detected")
 
@@ -124,6 +124,7 @@ def QRScan():
     #attendance marker
     def marker():
         print("Marked")
+        qrpid.set("")
 
     #code for QR scanner GUI
     def QRSGUI():
