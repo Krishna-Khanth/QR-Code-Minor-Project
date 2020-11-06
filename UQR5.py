@@ -100,7 +100,6 @@ def QRScan():
                 cv2.imshow('frame', frame)
                 key = cv2.waitKey(1)
                 if key & 0xFF == ord('q'):
-                    qrpid.set(str(decodedObject.data))
                     cap.release()
                     cv2.destroyAllWindows()
                     break
@@ -114,6 +113,7 @@ def QRScan():
             try:
                 barCode = str(decodedObject.data)
                 bar = barCode
+                qrpid.set(bar)
             except:
                 messagebox.showerror("ALERT", "No QR Detected")
 
@@ -124,7 +124,10 @@ def QRScan():
     #attendance marker
     def marker():
         print("Marked")
+        id = qrpid.get()
         qrpid.set("")
+
+
 
     #code for QR scanner GUI
     def QRSGUI():
@@ -300,6 +303,7 @@ def QRP():
         screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
         sbtn = Button(screen5, width=8, text="Scanner", command=QRS)
         sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
+        screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
         ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
         label = Label(screen5, text="1st Event Name : ", bg=gcolor)
         label.configure(foreground="white")
