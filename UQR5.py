@@ -165,7 +165,7 @@ def QRScan():
         ws = wb.active
         for row in ws.iter_rows():
             for cell in row:
-                bar = bar.replace("'","")
+                bar = bar.replace("'", "")
                 value = cell.value + "'"
                 if(cell.value == bar):
                     print(cell.coordinate)
@@ -243,9 +243,7 @@ def QRP():
 
             try:
                 barCode = str(decodedObject.data)
-                barC = barCode.split('-')
-                bar = barC[1]
-                return bar
+                return barCode
             except:
                 messagebox.showerror("ALERT", "No QR Detected")
                 return "ERROR"
@@ -401,6 +399,11 @@ def QRP():
 
     #code add participant ddata to excel sheet
     def QRdatamgXL():
+        try:
+            wb = load_workbook(path)
+        except FileNotFoundError:
+            wb = Workbook(path)
+            wb.save(path)
         wb = load_workbook(path)
         sheet = wb.active
         row = ((qrName.get(), qrphno.get(), qrmail.get(), qrevent1.get(), qrevent2.get()))
@@ -520,8 +523,13 @@ def eventmgm():
 
 def report_gen():
     rep = fi.get_report()
+    p = "./data/report.xlsx"
     try:
-        p = "./data/report.xlsx"
+        wb = load_workbook(p)
+    except FileNotFoundError:
+        wb = Workbook(p)
+        wb.save(p)
+    try:
         wb = load_workbook(p)
         sheet = wb.active
         sheet.delete_cols(1, 20)
