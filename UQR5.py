@@ -31,9 +31,7 @@ def chkos():
         screen1_5geo = "490x145"
         screen2geo = "500x310"
         screen3geo = "360x125"
-        #screen4geo = "250x288"
         screen4geo = "585x458"
-        #screen5geo = "675x525"
         screen5geo = "690x470"
         screen6geo = "390x190"
         screen7geo = ""
@@ -56,7 +54,6 @@ def chkos():
         screen2geo = "520x310"
         screen3geo = "320x125"
         screen4geo = "250x258"
-        #screen5geo = "760x420"
         screen5geo = "760x460"
         screen6geo = "455x190"
         screen7geo = ""
@@ -167,7 +164,73 @@ def QRScan():
 
 #code to register & generate QR for participant
 def QRP():
-    #codde for GUI of QR generator
+    #code for GUI of QR generator
+    def QRS():
+        #start device camera
+        cap = cv2.VideoCapture(0)
+        cap.set(3, 640)
+        cap.set(4, 480)
+        time.sleep(2)
+
+        # find content of QR
+        def decode(im):
+            decodedObjects = pyzbar.decode(im)
+            return decodedObjects
+
+        font = cv2.FONT_HERSHEY_SIMPLEX
+
+        def cam():
+            decodedObject = ""
+            while(cap.isOpened()):
+                ret, frame = cap.read()
+                im = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                decodedObjects = decode(im)
+                for decodedObject in decodedObjects:
+                    points = decodedObject.polygon
+                    if len(points) > 4:
+                      hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
+                      hull = list(map(tuple, np.squeeze(hull)))
+                    else:
+                      hull = points
+                    n = len(hull)
+                    for j in range(0,n):
+                      # while scanning
+                      cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
+                    x = decodedObject.rect.left
+                    y = decodedObject.rect.top
+                    cv2.putText(frame, str(decodedObject.data), (x, y), font, 1, (0,255,255), 2, cv2.LINE_AA)
+
+                cv2.imshow('frame', frame)
+                key = cv2.waitKey(1)
+                if key & 0xFF == ord('q'):
+                    cap.release()
+                    cv2.destroyAllWindows()
+                    break
+                elif key & 0xFF == ord('s'):
+                    if (bar != "") or (bar is not None):
+                        iname = "./scan/" + bar + ".png"
+                    else:
+                        iname = "./scan/" + random.randint(1, 101) + ".png"
+                    cv2.imwrite(iname, frame)
+
+            try:
+                barCode = str(decodedObject.data)
+                barC = barCode.split('-')
+                bar = barC[1]
+                return bar
+            except:
+                messagebox.showerror("ALERT", "No QR Detected")
+
+            cap.release()
+            cv2.destroyAllWindows()
+
+        def strt():
+            val = cam()
+            qrID.set(val)
+
+        strt()
+
+
     def QRGen():
         global screen5
         evts = fi.get_events()
@@ -207,7 +270,7 @@ def QRP():
         label.grid(row=5, column=1, padx=5, pady=10)
         screen5.entry = Entry(screen5, width=15, textvariable=qrID)
         screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
-        sbtn = Button(screen5, width=8, text="Scanner", command=QRScan)
+        sbtn = Button(screen5, width=8, text="Scanner", command=QRS)
         sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
         ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
         label = Label(screen5, text="1st Event Name : ", bg=gcolor)
@@ -218,11 +281,11 @@ def QRP():
         label.grid(row=8, column=1, padx=5, pady=10)
         screen5.entry1 = ttk.Combobox(screen5, width=27, textvariable=qrevent1, state="readonly")
         screen5.entry1.grid(row=7, column=2, padx=5, pady=10, columnspan=2)
-        screen5.entry1['values'] = evts #add data from db here
+        screen5.entry1['values'] = evts
         screen5.entry1.current()
         screen5.entry2 = ttk.Combobox(screen5, width=27, textvariable=qrevent2, state="readonly")
         screen5.entry2.grid(row=8, column=2, padx=5, pady=10, columnspan=2)
-        screen5.entry2['values'] = evts #add data from db here
+        screen5.entry2['values'] = evts
         screen5.entry2.current()
         label = Label(screen5, text="QR Code : ", bg=gcolor)
         label.configure(foreground="white")
@@ -660,8 +723,8 @@ def main_page():
         username1 = username_verify.get()
         password1 = password_verify.get()
 
-        #resp = fi.login(uid=username1, password=password1)
-        resp = 2
+        resp = fi.login(uid=username1, password=password1)
+        #resp = 2
         if resp == 2:
             adminlogin()
         elif resp == 1:
