@@ -164,7 +164,7 @@ def QRScan():
 
 #code to register & generate QR for participant
 def QRP():
-    #code for GUI of QR generator
+    #code for QR scanner2
     def QRS():
         #start device camera
         cap = cv2.VideoCapture(0)
@@ -231,6 +231,7 @@ def QRP():
         strt()
 
 
+    #code for GUI of QR generator
     def QRGen():
         global screen5
         evts = fi.get_events()
