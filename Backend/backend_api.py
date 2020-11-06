@@ -146,11 +146,11 @@ def check_part():
     req_data = request.get_json()
     response = "Custom Response"
     p_id = req_data["p_id"]
-    event_id = req_data["event_id"]
-    print("b api", p_id, event_id)
+    event = req_data["event"]
+    print("b api", p_id, event)
 
     # "0" Not Registered, "1" Registered, "2" Entered
-    response = op.check_part(p_id=p_id, event_id=event_id)
+    response = op.check_part(p_id=p_id, event=event)
 
     return jsonify({
         "method": "POST",
@@ -204,5 +204,5 @@ def get_report():
     })
 
 
-app.run(debug=True)
-# app.run()
+# app.run(debug=True)
+app.run()

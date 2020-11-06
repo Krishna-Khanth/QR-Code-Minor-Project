@@ -12,19 +12,22 @@ import mysql.connector
 # get_pid (phone)
 # remove_event (name, date, time)
 # get_report ()
+# mark_entry (p_id, event_id)
 
 
 def sql_connect():
-    mydb = mysql.connector.connect(
-        host="127.0.0.1",
-        user="minor",
-        password="1234"
-    )
-    # mydb = mysql.connector.connect(
-    #     host="127.0.0.1",
-    #     user="root",
-    #     password="pass"
-    # )
+    try:
+        mydb = mysql.connector.connect(
+            host="127.0.0.1",
+            user="minor",
+            password="1234"
+        )
+    except:
+        mydb = mysql.connector.connect(
+            host="127.0.0.1",
+            user="root",
+            password="pass"
+        )
     mycursor = mydb.cursor()
     db_name = "minor_db"
     return db_name, mycursor, mydb
@@ -182,11 +185,22 @@ def get_report():
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
-    sql = "SELECT `minor_db`.`participants`.*, GROUP_CONCAT(`minor_db`.`events`.name) as \"events\" FROM ((`minor_db`.`participants` INNER JOIN `minor_db`.`registration` ON `minor_db`.`participants`.p_id = `minor_db`.`registration`.p_id) INNER JOIN `minor_db`.`events` ON `minor_db`.`events`.event_id = `minor_db`.`registration`.event_id) group by p_id;"
+    sql = "SELECT `minor_db`.`participants`.*, GROUP_CONCAT(`minor_db`.`events`.name, `minor_db`.`registration`.present) as \"events\" FROM ((`minor_db`.`participants` INNER JOIN `minor_db`.`registration` ON `minor_db`.`participants`.p_id = `minor_db`.`registration`.p_id) INNER JOIN `minor_db`.`events` ON `minor_db`.`events`.event_id = `minor_db`.`registration`.event_id) group by p_id;"
     mycursor.execute(sql)
     myresult = mycursor.fetchall()
     print(myresult)
     return myresult
+
+
+def mark_entry(p_id, event_id):
+    db_name, mycursor, mydb = sql_connect()
+    mycursor.execute("USE " + db_name)
+
+    sql = "UPDATE `minor_db`.`registration` SET `present` = '2' WHERE p_id = %s AND event_id = %s"
+    val = (p_id, event_id)
+    mycursor.execute(sql, val)
+    mydb.commit()
+    print("entry row = ", mycursor.rowcount)
 
 
 # if __name__ == "__main__":
@@ -196,5 +210,6 @@ def get_report():
     # add_reg(54321, 1)
     # get_events()
     # get_user()
-    # get_reg("54321", 1)
+    # get_reg("dummy1-1111111111", "1")
+    # mark_entry("dummy1-1111111111", "1")
     # get_report()

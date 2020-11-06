@@ -1,4 +1,4 @@
-#importing libraries & modules
+# importing libraries & modules
 import os
 import re
 import cv2
@@ -21,6 +21,7 @@ try:
     import App.frontend_api as fi
 except:
     import frontend_api as fi
+
 
 # check OS
 def chkos():
@@ -56,13 +57,15 @@ def chkos():
         screen6geo = "455x190"
         screen7geo = "300x300"
 
-#path for excel file
+
+# path for excel file
 path = "./data/regdata.xlsx"
 
-#QR Scanner code
+
+# QR Scanner code
 def QRScan():
     def camscan():
-        #start device camera
+        # start device camera
         cap = cv2.VideoCapture(0)
         cap.set(3, 640)
         cap.set(4, 480)
@@ -75,7 +78,7 @@ def QRScan():
 
         font = cv2.FONT_HERSHEY_SIMPLEX
 
-        #scan the QR
+        # scan the QR
         def app():
             decodedObject = ""
             while(cap.isOpened()):
@@ -121,15 +124,20 @@ def QRScan():
         cap.release()
         cv2.destroyAllWindows()
 
-    #attendance marker
+    # attendance marker
     def marker():
-        print("Marked")
-        id = qrpid.get()
+        id = qrpid.get()[2:-1]
+        eve = qreve.get()
+        resp = fi.check_part(p_id=id, event=eve)
+        if resp == 0:
+            messagebox.showerror("ALERT", "No participant registered with this QR ID in this event")
+        elif resp == 1:
+            messagebox.showinfo("Success", "Participant entry marked. \nEntry Granted")
+        else:
+            messagebox.showerror("ALERT", "Participant already entered. \nEntry Denied")
         qrpid.set("")
 
-
-
-    #code for QR scanner GUI
+    # code for QR scanner GUI
     def QRSGUI():
         screen7 = Toplevel(screen4)
         screen7.title("Event Entry Mgm")
@@ -170,34 +178,23 @@ def QRScan():
             for cell in row:
                 bar = bar.replace("'", "")
                 value = cell.value + "'"
-                if(cell.value == bar):
+                if cell.value == bar:
                     print(cell.coordinate)
                     cell.fill = PatternFill(bgColor="00FF00", fill_type="solid")
                     cell.font = Font(color="00FF00")
                     wb.save(path)
-
-    # check if data of scanned QR in SQL
-    def regdb():
-        print ("Sharad")
-        """
-        iss function se connect kar existing SQL db se,
-        aur check kar if data being scanned db mei hai ya nahi,
-        if present add present in present column
-        and scanner wale hull ka color green
-        if already marked present hull color red,
-        GUI alert pop karva.
-        """
 
     qreve = StringVar()
     qrpid = StringVar()
     QRSGUI()
     screen4.focus_force()
 
-#code to register & generate QR for participant
+
+# code to register & generate QR for participant
 def QRP():
-    #code for QR scanner2
+    # code for QR scanner2
     def QRS():
-        #start device camera
+        # start device camera
         cap = cv2.VideoCapture(0)
         cap.set(3, 640)
         cap.set(4, 480)
@@ -212,21 +209,21 @@ def QRP():
 
         def cam():
             decodedObject = ""
-            while(cap.isOpened()):
+            while cap.isOpened():
                 ret, frame = cap.read()
                 im = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 decodedObjects = decode(im)
                 for decodedObject in decodedObjects:
                     points = decodedObject.polygon
                     if len(points) > 4:
-                      hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
-                      hull = list(map(tuple, np.squeeze(hull)))
+                        hull = cv2.convexHull(np.array([point for point in points], dtype=np.float32))
+                        hull = list(map(tuple, np.squeeze(hull)))
                     else:
-                      hull = points
+                        hull = points
                     n = len(hull)
                     for j in range(0,n):
-                      # while scanning
-                      cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
+                        # while scanning
+                        cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
                     x = decodedObject.rect.left
                     y = decodedObject.rect.top
                     cv2.putText(frame, str(decodedObject.data), (x, y), font, 1, (0,255,255), 2, cv2.LINE_AA)
@@ -249,7 +246,7 @@ def QRP():
                 return barCode
             except:
                 messagebox.showerror("ALERT", "No QR Detected")
-                return "ERROR"
+                return "No QR detected"
 
             cap.release()
             cv2.destroyAllWindows()
@@ -260,8 +257,7 @@ def QRP():
 
         strt()
 
-
-    #code for GUI of QR generator
+    # code for GUI of QR generator
     def QRGen():
         global screen5
         evts = fi.get_events()
@@ -336,7 +332,7 @@ def QRP():
         screen5.imageLabel.config(image=image)
         screen5.imageLabel.photo = image
 
-    #reload wait image
+    # reload wait image
     def ld():
         image = Image.open("./resc/wait.png")
         image = image.resize((350, 350), Image.ANTIALIAS)
@@ -360,14 +356,14 @@ def QRP():
         screen5.imageLabel.photo = image
         screen5.after(500, ld)
 
-    #code to generate QR with participant data
+    # code to generate QR with participant data
     def QRCodeGenerate():
         if (qrName.get() != '') and (qrphno.get() != '') and (qrmail.get() != '') and (qrevent1.get() != ''):
             if (len(qrphno.get()) == 10):
                 try:
                     phno = int(qrphno.get())
                     rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-                    if(re.search(rege,qrmail.get())):
+                    if re.search(rege, qrmail.get()):
                         content = qrName.get().lower() + "-" + qrphno.get()
                         i = QRdatamgSQL(content)
                         if i == 0:
@@ -401,7 +397,7 @@ def QRP():
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen5.focus_force()
 
-    #code add participant ddata to excel sheet
+    # code add participant ddata to excel sheet
     def QRdatamgXL():
         try:
             wb = load_workbook(path)
@@ -414,7 +410,7 @@ def QRP():
         sheet.append(row)
         wb.save(path)
 
-    #code add participant ddata to SQL
+    # code add participant ddata to SQL
     def QRdatamgSQL(content):
         eve = [qrevent1.get(), qrevent2.get()]
         if qrevent2.get() == "":
@@ -423,7 +419,7 @@ def QRP():
         return resp
 
 
-    #code initializing varaibles of GUI
+    # code initializing varaibles of GUI
     qrName = StringVar()
     qrphno = StringVar()
     qrmail = StringVar()
@@ -433,17 +429,19 @@ def QRP():
     qrID = StringVar()
     QRGen()
 
-#code to maintain event list
+
+# code to maintain event list
 def eventmgm():
     global screen6
-    #clear fields
+
+    # clear fields
     def clrevent():
         adevent.focus_set()
         evename.set("")
         evedate.set("")
         evetime.set("")
 
-    #add events to database
+    # add events to database
     def addevent():
         if (adevent.get() != "") and (adeveti.get() != "") and (adevedt.get() != ""):
             print("add event to SQL")
@@ -459,7 +457,7 @@ def eventmgm():
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
 
-    #remove events from database
+    # remove events from database
     def remevent():
         if (adevent.get() != "") and (adeveti.get() != "") and (adevedt.get() != ""):
             print("remove event from sql")
@@ -477,7 +475,7 @@ def eventmgm():
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
 
-    #GUI code for event manager
+    # GUI code for event manager
     evename = StringVar()
     evetime = StringVar()
     evedate = StringVar()
@@ -518,7 +516,7 @@ def eventmgm():
     screen6.bind("<Control-d>", lambda event=None: tnb.invoke())
     screen6.bind("<Control-r>", lambda event=None: bnt.invoke())
 
-    #code to monitor app close event
+    # code to monitor app close event
     def on_closing():
         screen4.deiconify()
         screen6.destroy()
@@ -549,7 +547,10 @@ def report_gen():
             sheet.append(row)
             for x in i[4].split(","):
                 sheet.cell(row=1, column=col).value = "Event " + str(col - 5)
-                sheet.cell(row=count, column=col).value = x
+                sheet.cell(row=count, column=col).value = x[:-1]
+                col += 1
+                sheet.cell(row=1, column=col).value = "E-" + str(col - 6) + " Entry"
+                sheet.cell(row=count, column=col).value = x[-1].replace("1", "Registered").replace("2", "Entered")
                 col += 1
             wb.save(p)
         messagebox.showinfo("Success", "Report Generated successfully \nAt path = " + p)
@@ -557,9 +558,9 @@ def report_gen():
         messagebox.showerror("Alert", "File access denied. \nClose the excel sheet OR Run program as Administrator to fix this issue.")
 
 
-#code to manage organizer/user tasks
+# code to manage organizer/user tasks
 def mgm_page():
-    #GUI for organizer management
+    # GUI for organizer management
     screen3.withdraw()
     global screen4, background_label
     screen4 = Toplevel(screen3)
@@ -603,32 +604,32 @@ def mgm_page():
     screen4.bind("<Control-e>", lambda event=None: tbn.invoke())
     screen4.bind("<Control-r>", lambda event=None: ttbn.invoke())
 
-    #code to monitor app close event
+    # code to monitor app close event
     def on_closing():
         screen1.destroy()
     screen4.protocol("WM_DELETE_WINDOW", on_closing)
 
 
-#GUI & code for login & signup
+# GUI & code for login & signup
 def main_page():
     global username_verify, password_verify, username1, password1
 
-    #code to clear login data fields after successful login
+    # code to clear login data fields after successful login
     def clrlogin():
         username_verify.set("")
         password_verify.set("")
         username_entry1.focus_set()
         mgm_page()
 
-    #code to organizer management
+    # code to organizer management
     def register_user():
-        #code to monitor screen1 close event
+        # code to monitor screen1 close event
         def on_closing():
             screen2.destroy()
             screen1.deiconify()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
-        #user add success
+        # user add success
         def disab():
             global screen1_5
             screen1_5 = Toplevel(screen1)
@@ -638,7 +639,7 @@ def main_page():
             screen1_5.config(background="green")
             screen1_5.focus_force()
 
-            #code to call login success screen
+            # code to call login success screen
             def calllog():
                 screen1_5.destroy()
                 screen2.destroy()
@@ -655,7 +656,7 @@ def main_page():
 
         disab()
 
-    #GUI code for adding organizer
+    # GUI code for adding organizer
     def register():
         global screen2, labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, regbtn
         screen2 = Toplevel(screen1)
@@ -733,13 +734,13 @@ def main_page():
         regbtn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)
         screen2.bind('<Return>', lambda event=None: regbtn.invoke())
 
-        #code to monitor screen2 close event
+        # code to monitor screen2 close event
         def on_closing():
             screen3.deiconify()
             screen2.destroy()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
-    #GUI if data is of admin
+    # GUI if data is of admin
     def adminlogin():
         screen3.geometry(screen3geo)
         label = Label(screen3, text="Login Success", width='30', bg="green")
@@ -752,7 +753,7 @@ def main_page():
         screen3.bind('<Return>', lambda event=None: bttnn.invoke())
         screen3.bind("<Control-a>", lambda event=None: bttn.invoke())
 
-    #GUI if data is of user
+    # GUI if data is of user
     def userlogin():
         screen3.geometry(screen3geo)
         label = Label(screen3, text="", bg="green")
@@ -764,7 +765,7 @@ def main_page():
         bttn.grid(row=3, column=1, pady=5)
         screen3.bind('<Return>', lambda event=None: bttn.invoke())
 
-    #code for GUI & user details verification
+    # code for GUI & user details verification
     def login_verify():
         screen1.withdraw()
         global screen3
@@ -777,18 +778,18 @@ def main_page():
         icon = PhotoImage(file="./resc/check.png")
         screen3.iconphoto(False, icon)
 
-        #code to monitor screen3 close event
+        # code to monitor screen3 close event
         def on_closing():
             clrlogin()
             screen1.deiconify()
             screen3.destroy()
         screen3.protocol("WM_DELETE_WINDOW", on_closing)
 
-        #validate dara in input
+        # validate dara in input
         username1 = username_verify.get()
         password1 = password_verify.get()
 
-        #resp = fi.login(uid=username1, password=password1)
+        # resp = fi.login(uid=username1, password=password1)
         resp = 2
         if resp == 2:
             adminlogin()
@@ -801,7 +802,7 @@ def main_page():
             on_closing()
             messagebox.showerror("ALERT", "Invalid User")
 
-    #code for login GUI
+    # code for login GUI
     def login():
         global screen1, username_verify, password_verify, username_entry1
         screen1 = Tk()
@@ -835,25 +836,26 @@ def main_page():
         btnn.grid(row=9, column=1, padx=5, pady=5, columnspan=1)
         screen1.bind('<Return>', lambda event=None: btnn.invoke())
 
-        #monitor app close
+        # monitor app close
         def on_closing(event):
             sys.exit()
-        #binding Escape key as shortcut
+        # binding Escape key as shortcut
         screen1.bind('<Escape>', on_closing)
 
         screen1.mainloop()
 
-    #calling the login module
+    # calling the login module
     login()
 
-#setting a main colour theme
+
+# setting a main colour theme
 global colr
 colr = "#1c44a5"
 
-#checking OS
+# checking OS
 chkos()
 
 os.system("start cmd /c python .\Backend\\backend_api.py")
 
-#start of program
+# start of program
 main_page()

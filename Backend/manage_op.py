@@ -75,8 +75,12 @@ def get_events():
     return events
 
 
-def check_part(p_id, event_id):
-    resp = db.get_reg(p_id=p_id, event_id=event_id)
+def check_part(p_id, event):
+    event_id = db.get_event_id(event)
+    print("mop check - ", event_id[0][0])
+    resp = db.get_reg(p_id=p_id, event_id=event_id[0][0])
+    if resp == 1:
+        db.mark_entry(p_id=p_id, event_id=event_id[0][0])
     # "0" Not Registered, "1" Registered, "2" Entered
     return resp
 
