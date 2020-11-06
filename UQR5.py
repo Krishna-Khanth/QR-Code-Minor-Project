@@ -137,8 +137,6 @@ def QRScan():
         icon = PhotoImage(file="./resc/qr-code-scan.png")
         screen7.iconphoto(False, icon)
         evts = fi.get_events()
-        qreve = StringVar()
-        qrpid = StringVar()
         label = Label(screen7, text="Participant Entry", bg=colr, font=("Times New Roman", 20, 'bold'))
         label.configure(foreground="white", anchor="center")
         label.grid(row=1, column=1, padx=20, pady=(20,15), columnspan=3)
@@ -187,6 +185,8 @@ def QRScan():
         GUI alert pop karva.
         """
 
+    qreve = StringVar()
+    qrpid = StringVar()
     QRSGUI()
     screen4.focus_force()
 
