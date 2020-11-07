@@ -390,8 +390,6 @@ def QRP():
 
 # code to maintain event list
 def eventmgm():
-    global screen6
-
     # clear fields
     def clrevent():
         evename.set("")
@@ -640,7 +638,7 @@ def main_page():
 
     # GUI code for adding organizer
     def register():
-        global labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, regbtn
+        global screen2, username, password, username_entry, password_entry, emailid, phno, emailid_entry, phno_entry, perm_entry
         screen2 = Toplevel(screen1)
         screen2.title("Register")
         screen2.geometry(screen2geo)
@@ -650,11 +648,6 @@ def main_page():
         screen1.withdraw()
         icon = PhotoImage(file="./resc/add.png")
         screen2.iconphoto(False, icon)
-        username = StringVar()
-        password = StringVar()
-        emailid = StringVar()
-        phno = StringVar()
-        rights = StringVar()
         labl = Label(screen2, text="Please enter user information", width="30", bg=colr)
         labl.configure(foreground="white", font=("Times New Roman", 20, 'bold'))
         labl.grid(row=1, column=1, padx=5, pady=5, columnspan=2)
@@ -698,6 +691,12 @@ def main_page():
             screen3.deiconify()
             screen2.destroy()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
+
+    username = StringVar()
+    password = StringVar()
+    emailid = StringVar()
+    phno = StringVar()
+    rights = StringVar()
 
     # GUI if data is of admin
     def adminlogin():
