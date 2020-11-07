@@ -347,7 +347,7 @@ def QRP():
         elif resp == 3:
             messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
         elif resp == 4:
-            messagebox.showerror("ALERT", "Participant already registered in provided events. \nRegistration Aborted")
+            messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
         else:
             messagebox.showinfo("Success", "Registration Completed")
 
@@ -390,8 +390,6 @@ def QRP():
 
 # code to maintain event list
 def eventmgm():
-    global screen6
-
     # clear fields
     def clrevent():
         evename.set("")
@@ -524,7 +522,7 @@ def report_gen():
 def mgm_page():
     # GUI for organizer management
     screen3.withdraw()
-    global screen4, background_label
+    global screen4
     screen4 = Toplevel(screen3)
     screen4.title("Select")
     screen4.geometry(screen4geo)
@@ -574,13 +572,12 @@ def mgm_page():
 
 # GUI & code for login & signup
 def main_page():
-    global username_verify, password_verify, username1, password1
+    global username_verify, password_verify , username1, password1
 
     # code to clear login data fields after successful login
     def clrlogin():
         username_verify.set("")
         password_verify.set("")
-        username_entry1.focus_set()
         mgm_page()
 
     # code to organizer management
@@ -593,7 +590,6 @@ def main_page():
 
         # user add success
         def disab():
-            global screen1_5
             screen1_5 = Toplevel(screen1)
             screen1_5.title("Success")
             screen1_5.geometry(screen1_5geo)
@@ -643,7 +639,7 @@ def main_page():
 
     # GUI code for adding organizer
     def register():
-        global screen2, labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, regbtn
+        global screen2, password, username_entry, password_entry, emailid, phno, emailid_entry, phno_entry, perm_entry
         screen2 = Toplevel(screen1)
         screen2.title("Register")
         screen2.geometry(screen2geo)
@@ -750,8 +746,8 @@ def main_page():
         username1 = username_verify.get()
         password1 = password_verify.get()
 
-        resp = fi.login(uid=username1, password=password1)
-        # resp = 2
+        # resp = fi.login(uid=username1, password=password1)
+        resp = 2
         if resp == 2:
             adminlogin()
         elif resp == 1:
@@ -764,49 +760,45 @@ def main_page():
             messagebox.showerror("ALERT", "Invalid User")
 
     # code for login GUI
-    def login():
-        global screen1, username_verify, password_verify, username_entry1
-        screen1 = Tk()
-        screen1.title("Login")
-        screen1.geometry(screen1geo)
-        screen1.config(background=colr)
-        screen1.resizable(False, False)
-        icon = PhotoImage(file="./resc/login.png")
-        screen1.iconphoto(False, icon)
-        username_verify = StringVar()
-        password_verify = StringVar()
-        label = Label(text="", bg=colr)
-        label.grid(row=1, column=1)
-        label = Label(text="Please Enter your Login \nInformation", width='30', bg=colr)
-        label.configure(foreground="white", font=("Times New Roman", 18, 'bold'))
-        label.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
-        label = Label(text="Username : ", width='30', bg=colr)
-        label.configure(foreground="white")
-        label.grid(row=4, column=1, padx=25, pady=5, columnspan=1)
-        username_entry1 = Entry(width="21", textvariable=username_verify)
-        username_entry1.grid(row=5, column=1, padx=5, pady=5, columnspan=1)
-        username_entry1.focus_set()
-        label = Label(text="Password : ", width='30', bg=colr)
-        label.configure(foreground="white")
-        label.grid(row=6, column=1, padx=5, pady=5, columnspan=1)
-        password_entry1 = Entry(width='21', show="*", textvariable=password_verify)
-        password_entry1.grid(row=7, column=1, padx=5, pady=5, columnspan=1)
-        label = Label(text="", bg=colr)
-        label.grid(row=8, column=1)
-        btnn = Button(text="Login", width="18", command=login_verify)
-        btnn.grid(row=9, column=1, padx=5, pady=5, columnspan=1)
-        screen1.bind('<Return>', lambda event=None: btnn.invoke())
+    global screen1, username_verify, password_verify
+    screen1 = Tk()
+    screen1.title("Login")
+    screen1.geometry(screen1geo)
+    screen1.config(background=colr)
+    screen1.resizable(False, False)
+    icon = PhotoImage(file="./resc/login.png")
+    screen1.iconphoto(False, icon)
+    username_verify = StringVar()
+    password_verify = StringVar()
+    label = Label(text="", bg=colr)
+    label.grid(row=1, column=1)
+    label = Label(text="Please Enter your Login \nInformation", width='30', bg=colr)
+    label.configure(foreground="white", font=("Times New Roman", 18, 'bold'))
+    label.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
+    label = Label(text="Username : ", width='30', bg=colr)
+    label.configure(foreground="white")
+    label.grid(row=4, column=1, padx=25, pady=5, columnspan=1)
+    username_entry1 = Entry(width="21", textvariable=username_verify)
+    username_entry1.grid(row=5, column=1, padx=5, pady=5, columnspan=1)
+    username_entry1.focus_set()
+    label = Label(text="Password : ", width='30', bg=colr)
+    label.configure(foreground="white")
+    label.grid(row=6, column=1, padx=5, pady=5, columnspan=1)
+    password_entry1 = Entry(width='21', show="*", textvariable=password_verify)
+    password_entry1.grid(row=7, column=1, padx=5, pady=5, columnspan=1)
+    label = Label(text="", bg=colr)
+    label.grid(row=8, column=1)
+    btnn = Button(text="Login", width="18", command=login_verify)
+    btnn.grid(row=9, column=1, padx=5, pady=5, columnspan=1)
+    screen1.bind('<Return>', lambda event=None: btnn.invoke())
 
-        # monitor app close
-        def on_closing(event):
-            sys.exit()
-        # binding Escape key as shortcut
-        screen1.bind('<Escape>', on_closing)
+    # monitor app close
+    def on_closing(event):
+        sys.exit()
+    # binding Escape key as shortcut
+    screen1.bind('<Escape>', on_closing)
+    screen1.mainloop()
 
-        screen1.mainloop()
-
-    # calling the login module
-    login()
 
 
 # setting a main colour theme

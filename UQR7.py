@@ -639,7 +639,7 @@ def main_page():
 
     # GUI code for adding organizer
     def register():
-        global screen2, username, password, username_entry, password_entry, emailid, phno, emailid_entry, phno_entry, perm_entry
+        global screen2, password, username_entry, password_entry, emailid, phno, emailid_entry, phno_entry, perm_entry
         screen2 = Toplevel(screen1)
         screen2.title("Register")
         screen2.geometry(screen2geo)
