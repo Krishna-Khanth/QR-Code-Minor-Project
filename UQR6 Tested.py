@@ -511,7 +511,7 @@ def report_gen():
                 sheet.cell(row=count, column=col).value = x[:-1]
                 col += 1
                 sheet.cell(row=1, column=col).value = "E-" + str(col - 6) + " Entry"
-                sheet.cell(row=count, column=col).value = x[-1].replace("1", "Registered").replace("2", "Entered")
+                sheet.cell(row=count, column=col).value = x[-1].replace("1", "Not Entered").replace("2", "Entered")
                 col += 1
             wb.save(p)
         messagebox.showinfo("Success", "Report Generated successfully \nAt path = " + p)
