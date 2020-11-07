@@ -57,7 +57,7 @@ def chkos():
         screen6geo = "455x190"
         screen7geo = "300x300"
 
-def scnn():
+def scanner():
     # start device camera
     cap = cv2.VideoCapture(0)
     cap.set(3, 640)
@@ -163,7 +163,7 @@ def QRScan():
         screen7.entry1.grid(row=3, column=2, padx=5, pady=10, columnspan=1)
         screen7.entry1['values'] = evts
         screen7.entry1.current()
-        buton = Button(screen7, width=15, text="Scan", command=scnn)
+        buton = Button(screen7, width=15, text="Scan", command=scanner)
         buton.grid(row=5, column=1, padx=15, pady=(20,10), columnspan=1)
         screen7.bind("<Control-s>", lambda event=None: buton.invoke())
         button = Button(screen7, width=15, text="Mark", command=marker)
@@ -175,7 +175,6 @@ def QRScan():
         screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
         screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
 
-    # code initializing varaibles of GUI
     qreve = StringVar()
     global qrpid
     qrpid = StringVar()
@@ -227,7 +226,7 @@ def QRP():
         label.grid(row=5, column=1, padx=5, pady=10)
         screen5.entry = Entry(screen5, width=15, textvariable=qrID)
         screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
-        sbtn = Button(screen5, width=8, text="Scanner", command=scnn)#QRS)
+        sbtn = Button(screen5, width=8, text="Scanner", command=scanner)
         sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
         screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
         ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
@@ -315,6 +314,7 @@ def QRP():
                             screen5.imageLabel.config(image=image)
                             screen5.imageLabel.photo = image
                             QRdatamgXL()
+                        screen5.focus_force()
                     else:
                         messagebox.showerror("ALERT", "Invalid Email ID")
                         screen5.focus_force()
@@ -329,6 +329,7 @@ def QRP():
                 screen5.entryphno.focus_set()
         elif (qrID.get() != '') and (qrevent1.get() != ''):
             autofil()
+            screen5.focus_force()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen5.focus_force()
@@ -376,7 +377,6 @@ def QRP():
         return resp
 
 
-    # code initializing varaibles of GUI
     qrName = StringVar()
     qrphno = StringVar()
     qrmail = StringVar()
@@ -416,7 +416,6 @@ def eventmgm():
     def remevent():
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
             print("remove event from sql")
-            # resp = fi.remove_event(name=adevent.get(), date=adeveti.get(), time=adevedt.get())
             resp = fi.remove_event(name=evename.get(), date=evedate.get(), time=evetime.get())
             if resp == 0:
                 messagebox.showerror("ALERT", "Someone is registered in this event")
@@ -453,13 +452,13 @@ def eventmgm():
         lbl = Label(screen6, text="Event Date", bg="green")
         lbl.configure(foreground="white")
         lbl.grid(row=2, column=1, padx=(40,5), pady=5, columnspan=1)
-        adeveti = Entry(screen6, width='17', textvariable=evedate)
-        adeveti.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
+        adevedt = Entry(screen6, width='17', textvariable=evedate)
+        adevedt.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
         lbl = Label(screen6, text="Event Time", bg="green")
         lbl.configure(foreground="white")
         lbl.grid(row=3, column=1, padx=(40,5), pady=5, columnspan=1)
-        adevedt = Entry(screen6, width='17', textvariable=evetime)
-        adevedt.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
+        adeveti = Entry(screen6, width='17', textvariable=evetime)
+        adeveti.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
         bnt = Button(screen6, text="Clear", command=clrevent, width='13')
         bnt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)
         nbt = Button(screen6, text="Add Event", command=addevent, width='13')
@@ -572,7 +571,6 @@ def mgm_page():
 
 # GUI & code for login & signup
 def main_page():
-    global username_verify, password_verify , username1, password1
 
     # code to clear login data fields after successful login
     def clrlogin():
@@ -599,6 +597,10 @@ def main_page():
 
             # code to call login success screen
             def calllog():
+                username.set("")
+                emailid.set("")
+                phno.set("")
+                password.set("")
                 screen1_5.destroy()
                 screen2.destroy()
                 adminlogin()
@@ -614,50 +616,52 @@ def main_page():
 
         disab()
 
+
     # registry data validation
     def valinp():
-        if (username_entry.get() != "") and (emailid_entry.get() != "") and (phno_entry.get() != "") and (password_entry.get() != "") and (perm_entry.get() != "Select"):
-            if (len(phno_entry.get()) == 10):
+        if (username.get() != "") and (emailid.get() != "") and (phno.get() != "") and (password.get() != "") and (perm_entry.get() != "Select"):
+            if (len(phno.get()) == 10):
                 rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-                if(re.search(rege, emailid_entry.get())):
+                if(re.search(rege, emailid.get())):
                     if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
                         perm = perm_entry.get()
                         perm = 2 if perm == "Admin" else 1
-                        resp = fi.add_user(name=username_entry.get(), email_id=emailid_entry.get(), password=password_entry.get(), phone=int(phno_entry.get()), perm=perm)
+                        resp = fi.add_user(name=username.get(), email_id=emailid.get(), password=password.get(), phone=int(phno.get()), perm=perm)
+                        print (resp)
                         if resp == 0:
                             messagebox.showerror("ALERT", "User email already exists")
+                            screen2.focus_force()
                         else:
                             register_user()
                     else:
                         messagebox.showerror("ALERT", "Password not Strong")
+                        screen2.focus_force()
                 else:
                     messagebox.showerror("ALERT", "Invalid Email")
+                    screen2.focus_force()
             else:
                 messagebox.showerror("ALERT", "Invalid Phone Number")
+                screen2.focus_force()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
+            screen2.focus_force()
 
     # GUI code for adding organizer
     def register():
-        global screen2, password, username_entry, password_entry, emailid, phno, emailid_entry, phno_entry, perm_entry
+        screen3.withdraw()
+        global screen2, perm_entry
         screen2 = Toplevel(screen1)
         screen2.title("Register")
         screen2.geometry(screen2geo)
         screen2.resizable(False, False)
         screen2.config(background=colr)
-        screen3.focus_force()
-        screen1.withdraw()
         icon = PhotoImage(file="./resc/add.png")
         screen2.iconphoto(False, icon)
-        username = StringVar()
-        password = StringVar()
-        emailid = StringVar()
-        phno = StringVar()
-        rights = StringVar()
+        screen2.focus_force()
         labl = Label(screen2, text="Please enter user information", width="30", bg=colr)
         labl.configure(foreground="white", font=("Times New Roman", 20, 'bold'))
         labl.grid(row=1, column=1, padx=5, pady=5, columnspan=2)
-        labl = Label(screen2, text="Username", width='30', bg=colr)
+        labl = Label(screen2, text="User Name", width='30', bg=colr)
         labl.configure(foreground="white")
         labl.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
         username_entry = Entry(screen2, textvariable=username)
@@ -743,11 +747,9 @@ def main_page():
             screen3.destroy()
         screen3.protocol("WM_DELETE_WINDOW", on_closing)
 
-        username1 = username_verify.get()
-        password1 = password_verify.get()
 
-        # resp = fi.login(uid=username1, password=password1)
-        resp = 2
+        resp = fi.login(uid=username_verify.get(), password=password_verify.get())
+        # resp = 2
         if resp == 2:
             adminlogin()
         elif resp == 1:
@@ -755,12 +757,28 @@ def main_page():
         elif resp == 0:
             on_closing()
             messagebox.showerror("ALERT", "Invalid User/password")
+            username_entry1.focus_set()
         else:
             on_closing()
             messagebox.showerror("ALERT", "Invalid User")
+            username_entry1.focus_set()
+
+    # check if fields are complete
+    def chk_login_verify():
+        if (username_verify.get() != "") and (password_verify.get() != ""):
+            login_verify()
+        elif username_verify.get() == "":
+            messagebox.showerror("ALERT", "Username Field Incomplete")
+            username_entry1.focus_set()
+        elif password_verify.get() == "":
+            messagebox.showerror("ALERT", "Password Field Incomplete")
+            password_entry1.focus_set()
+        else:
+            messagebox.showerror("ALERT", "Fields Incomplete")
+            username_entry1.focus_set()
 
     # code for login GUI
-    global screen1, username_verify, password_verify
+    global screen1
     screen1 = Tk()
     screen1.title("Login")
     screen1.geometry(screen1geo)
@@ -768,6 +786,11 @@ def main_page():
     screen1.resizable(False, False)
     icon = PhotoImage(file="./resc/login.png")
     screen1.iconphoto(False, icon)
+    username = StringVar()
+    password = StringVar()
+    emailid = StringVar()
+    phno = StringVar()
+    rights = StringVar()
     username_verify = StringVar()
     password_verify = StringVar()
     label = Label(text="", bg=colr)
@@ -775,7 +798,7 @@ def main_page():
     label = Label(text="Please Enter your Login \nInformation", width='30', bg=colr)
     label.configure(foreground="white", font=("Times New Roman", 18, 'bold'))
     label.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
-    label = Label(text="Username : ", width='30', bg=colr)
+    label = Label(text="User Email ID : ", width='30', bg=colr)
     label.configure(foreground="white")
     label.grid(row=4, column=1, padx=25, pady=5, columnspan=1)
     username_entry1 = Entry(width="21", textvariable=username_verify)
@@ -788,7 +811,7 @@ def main_page():
     password_entry1.grid(row=7, column=1, padx=5, pady=5, columnspan=1)
     label = Label(text="", bg=colr)
     label.grid(row=8, column=1)
-    btnn = Button(text="Login", width="18", command=login_verify)
+    btnn = Button(text="Login", width="18", command=chk_login_verify)
     btnn.grid(row=9, column=1, padx=5, pady=5, columnspan=1)
     screen1.bind('<Return>', lambda event=None: btnn.invoke())
 
