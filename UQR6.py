@@ -23,7 +23,6 @@ except:
     import frontend_api as fi
 
 
-
 # check OS to set GUI size
 def chkos():
     oname = platform.system()
@@ -76,8 +75,9 @@ def scnn():
     # scan the QR
     def app():
         decodedObject = ""
-        while(cap.isOpened()):
+        while cap.isOpened():
             ret, frame = cap.read()
+            print("cam debug 1 - ", frame)
             im = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             decodedObjects = decode(im)
             for decodedObject in decodedObjects:
@@ -88,7 +88,7 @@ def scnn():
                 else:
                     hull = points
                 n = len(hull)
-                for j in range(0,n):
+                for j in range(0, n):
                     # while scanning
                     cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
                     x = decodedObject.rect.left
@@ -304,7 +304,7 @@ def QRP():
                         elif i == 3:
                             messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
                         elif i == 4:
-                            messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
+                            messagebox.showerror("ALERT", "Participant already registered in provided events. \nRegistration Aborted")
                         else:
                             qrGenerate = pyqrcode.create(content)
                             qrCodePath = './data/'
@@ -348,7 +348,7 @@ def QRP():
         elif resp == 3:
             messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
         elif resp == 4:
-            messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
+            messagebox.showerror("ALERT", "Participant already registered in provided events. \nRegistration Aborted")
         else:
             messagebox.showinfo("Success", "Registration Completed")
 
