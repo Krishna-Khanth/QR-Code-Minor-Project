@@ -23,7 +23,7 @@ except:
     import frontend_api as fi
 
 
-# check OS
+# check OS to set GUI size
 def chkos():
     oname = platform.system()
     global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo
@@ -64,6 +64,7 @@ path = "./data/regdata.xlsx"
 
 # QR Scanner code
 def QRScan():
+    # QR Scanner
     def camscan():
         # start device camera
         cap = cv2.VideoCapture(0)
@@ -76,6 +77,7 @@ def QRScan():
             decodedObjects = pyzbar.decode(im)
             return decodedObjects
 
+        # font for hull
         font = cv2.FONT_HERSHEY_SIMPLEX
 
         # scan the QR
@@ -113,6 +115,7 @@ def QRScan():
                         iname = "./scan/" + random.randint(1, 101) + ".png"
                     cv2.imwrite(iname, frame)
 
+            # check if any QR detected
             try:
                 barCode = str(decodedObject.data)
                 bar = barCode
@@ -120,11 +123,13 @@ def QRScan():
             except:
                 messagebox.showerror("ALERT", "No QR Detected")
 
+        # start scanner
         app()
+        # close camera
         cap.release()
         cv2.destroyAllWindows()
 
-    # attendance marker
+    # entry marker
     def marker():
         id = qrpid.get()[2:-1]
         eve = qreve.get()
@@ -170,23 +175,12 @@ def QRScan():
         screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
         screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
 
-    # check if data of scanned QR in excel
-    def regbk(bar):
-        wb = load_workbook(path)
-        ws = wb.active
-        for row in ws.iter_rows():
-            for cell in row:
-                bar = bar.replace("'", "")
-                value = cell.value + "'"
-                if cell.value == bar:
-                    print(cell.coordinate)
-                    cell.fill = PatternFill(bgColor="00FF00", fill_type="solid")
-                    cell.font = Font(color="00FF00")
-                    wb.save(path)
-
+    # code initializing varaibles of GUI
     qreve = StringVar()
     qrpid = StringVar()
+    # starting GUI of scanner
     QRSGUI()
+    # focus setting for main window if app closed
     screen4.focus_force()
 
 
@@ -205,8 +199,10 @@ def QRP():
             decodedObjects = pyzbar.decode(im)
             return decodedObjects
 
+        # font of hull
         font = cv2.FONT_HERSHEY_SIMPLEX
 
+        # scan QR
         def cam():
             decodedObject = ""
             while cap.isOpened():
@@ -392,12 +388,17 @@ def QRP():
                 screen5.focus_force()
                 screen5.entryphno.focus_set()
         elif (qrID.get() != '') and (qrevent1.get() != ''):
-            print("lol")
+            autofil()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen5.focus_force()
 
-    # code add participant ddata to excel sheet
+    # code for autofill
+    def autofil():
+        print("lol")
+
+
+    # code to add participant data to excel sheet
     def QRdatamgXL():
         try:
             wb = load_workbook(path)
@@ -410,7 +411,7 @@ def QRP():
         sheet.append(row)
         wb.save(path)
 
-    # code add participant ddata to SQL
+    # code to add participant data to SQL
     def QRdatamgSQL(content):
         eve = [qrevent1.get(), qrevent2.get()]
         if qrevent2.get() == "":
