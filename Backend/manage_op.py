@@ -69,7 +69,7 @@ def event_registry(p_id, events):
         # Registering participant in selected events
         print("for event = ", i)
         e_id = db.get_event_id(i)
-        resp = db.get_reg(p_id=p_id, event_id=e_id)
+        resp = db.get_reg(p_id=p_id, event_id=e_id[0][0])
         if resp == 0:
             print("event id = ", e_id[0][0])
             resp = db.add_reg(p_id=p_id, event_id=e_id[0][0])
@@ -80,12 +80,15 @@ def event_registry(p_id, events):
         else:
             ex_event.append(1)
     # "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant
-    if ex_event[0] == 1 and ex_event[1] == 1:
-        return 4
+    if len(ex_event) == 2:
+        if ex_event[0] == 1 and ex_event[1] == 1:
+            return 4
+        elif ex_event[0] == 1:
+            return 2
+        elif ex_event[1] == 1:
+            return 3
     elif ex_event[0] == 1:
-        return 2
-    elif ex_event[1] == 1:
-        return 3
+        return 4
     return 1
 
 

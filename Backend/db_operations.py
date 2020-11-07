@@ -138,11 +138,13 @@ def get_reg(p_id, event_id):
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
     event_id = str(event_id)
-
+    print("db get reg pid eid", p_id, event_id)
     try:
-        mycursor.execute("SELECT present FROM registration WHERE p_id = \"" + p_id + "\" AND event_id = " + event_id)
+        sql = "SELECT present FROM registration WHERE p_id = %s AND event_id = %s"
+        val = (p_id, event_id)
+        mycursor.execute(sql, val)
         myresult = mycursor.fetchall()
-        print(myresult)
+        print("db get reg", myresult)
         return myresult[0][0]
     except:
         print("db_op - Dose not exist")
@@ -215,7 +217,7 @@ def check_part(p_id):
     return mycursor.rowcount
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # add_event("jkl", "2020-09-30", "10:10")
     # add_participant("54321", "sharad", "mp@gmail.in", 1234567890)
     # add_user("sharad", "mp@gmail.in", 1234567890, "abc", 2)
@@ -225,4 +227,4 @@ if __name__ == "__main__":
     # get_reg("dummy1-1111111111", "1")
     # mark_entry("dummy1-1111111111", "1")
     # get_report()
-    check_part("dummy5-1111111111")
+    # check_part("dummy5-1111111111")

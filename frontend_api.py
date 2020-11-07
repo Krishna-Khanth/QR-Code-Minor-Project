@@ -7,16 +7,12 @@ import hashlib
 
 # login (uid, passw)
 # add_user (name, email_id, password, phone, perm)
+# add_part (p_id, name, e_id, phone, events)
 # add_event (name, date, time)
 # get_events ()
 # mark_entry (p_id, event)
 # remove event
 # Report
-# ToDo Untested
-# add_part (p_id, name, e_id, phone, events)
-# ToDo functions
-# ToDo List
-# existing part reg
 
 url = "http://127.0.0.1:5000"
 

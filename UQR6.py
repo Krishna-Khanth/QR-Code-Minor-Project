@@ -77,7 +77,6 @@ def scnn():
         decodedObject = ""
         while cap.isOpened():
             ret, frame = cap.read()
-            print("cam debug 1 - ", frame)
             im = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             decodedObjects = decode(im)
             for decodedObject in decodedObjects:
