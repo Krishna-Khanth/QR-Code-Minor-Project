@@ -504,15 +504,16 @@ def report_gen():
         for i in rep:
             row = ((count, i[0], i[1], i[2], i[3]))
             col = 6
+            e_count = 1
             count += 1
             sheet.append(row)
             for x in i[4].split(","):
-                sheet.cell(row=1, column=col).value = "Event " + str(col - 5)
+                sheet.cell(row=1, column=col).value = "Event " + str(e_count)
                 sheet.cell(row=count, column=col).value = x[:-1]
-                col += 1
-                sheet.cell(row=1, column=col).value = "E-" + str(col - 6) + " Entry"
-                sheet.cell(row=count, column=col).value = x[-1].replace("1", "Registered").replace("2", "Entered")
-                col += 1
+                sheet.cell(row=1, column=col+1).value = "E-" + str(e_count) + " Entry"
+                sheet.cell(row=count, column=col+1).value = x[-1].replace("1", "Not Entered").replace("2", "Entered")
+                col += 2
+                e_count += 1
             wb.save(p)
         messagebox.showinfo("Success", "Report Generated successfully \nAt path = " + p)
     except PermissionError:
