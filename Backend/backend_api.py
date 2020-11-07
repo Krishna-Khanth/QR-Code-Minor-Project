@@ -17,7 +17,7 @@ CORS(app)
 # add_part
 # add_event
 # get_events
-# check_part
+# mark_entry
 # remove_event
 # get_report
 
@@ -86,7 +86,7 @@ def add_part():
     name = req_data["name"]
     print("b api", p_id, name, e_id, phone, events)
 
-    # "0" some error, "1" success
+    # "0" some error / no registration for this participant, "1" success
     response = op.add_part(p_id=p_id, name=name, email=e_id, phone=phone, events=events)
 
     return jsonify({
@@ -141,8 +141,8 @@ def get_events():
     })
 
 
-@app.route('/check_part', methods=["Post"])
-def check_part():
+@app.route('/mark_entry', methods=["Post"])
+def mark_entry():
     req_data = request.get_json()
     response = "Custom Response"
     p_id = req_data["p_id"]
@@ -150,7 +150,7 @@ def check_part():
     print("b api", p_id, event)
 
     # "0" Not Registered, "1" Registered, "2" Entered
-    response = op.check_part(p_id=p_id, event=event)
+    response = op.mark_entry(p_id=p_id, event=event)
 
     return jsonify({
         "method": "POST",

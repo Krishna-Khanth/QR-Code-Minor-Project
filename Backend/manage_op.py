@@ -10,7 +10,7 @@ except:
 # add_part (p_id, name, e_id, phone, events)
 # add_event (name, date, time)
 # get_events ()
-# check_part (p_id, event_id)
+# mark_entry (p_id, event_id)
 # remove_event (name, date, time)
 # get_report ()
 
@@ -44,14 +44,22 @@ def add_user(name, email_id, password, phone, perm):
 
 def add_part(p_id, name, email, phone, events):
 
-    status = db.add_participant(p_id=p_id, name=name, email=email, phone=phone)
-
-    if status == 0:
-        # User exists
-        print("manage_op - Participant exists")
-        p_id = db.get_pid(phone)
+    if name == "":
+        print("mop existing user")
+        resp = db.check_part(p_id)
+        if resp == 0:
+            # No registration for this participant
+            return 0
+    else:
+        # Registering participant
+        status = db.add_participant(p_id=p_id, name=name, email=email, phone=phone)
+        if status == 0:
+            # User exists
+            print("manage_op - Participant exists")
+            p_id = db.get_pid(phone)
 
     for i in events:
+        # Registering participant in selected events
         print("for event = ", i)
         e_id = db.get_event_id(i)
         print("event id = ", e_id[0][0])
@@ -75,9 +83,9 @@ def get_events():
     return events
 
 
-def check_part(p_id, event):
+def mark_entry(p_id, event):
     event_id = db.get_event_id(event)
-    print("mop check - ", event_id[0][0])
+    print("mop mark - ", event_id[0][0])
     resp = db.get_reg(p_id=p_id, event_id=event_id[0][0])
     if resp == 1:
         db.mark_entry(p_id=p_id, event_id=event_id[0][0])

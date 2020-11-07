@@ -9,7 +9,7 @@ import hashlib
 # add_user (name, email_id, password, phone, perm)
 # add_event (name, date, time)
 # get_events ()
-# check_part (p_id, event)
+# mark_entry (p_id, event)
 # remove event
 # Report
 # ToDo Untested
@@ -66,7 +66,7 @@ def get_events():
     return r.json()["body"]["response"]
 
 
-def check_part(p_id, event):
+def mark_entry(p_id, event):
     r = requests.post(url + "/check_part", json={"p_id": p_id, "event": event})
     print("check part", r.json()["body"])
     return r.json()["body"]["response"]

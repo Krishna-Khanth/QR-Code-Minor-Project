@@ -1,6 +1,6 @@
 import mysql.connector
 
-# sql_connect()
+# sql_connect ()
 # add_event (name, date, time)
 # add_participant (p_id, name, email, phone)
 # add_user (name, email, phone, passw, perm)
@@ -203,7 +203,19 @@ def mark_entry(p_id, event_id):
     print("entry row = ", mycursor.rowcount)
 
 
-# if __name__ == "__main__":
+def check_part(p_id):
+    db_name, mycursor, mydb = sql_connect()
+    mycursor.execute("USE " + db_name)
+
+    sql = "SELECT * FROM participants WHERE p_id = \"" + p_id + "\""
+    mycursor.execute(sql)
+    myresult = mycursor.fetchall()
+    print(myresult)
+    print("check_part-", mycursor.rowcount)
+    return mycursor.rowcount
+
+
+if __name__ == "__main__":
     # add_event("jkl", "2020-09-30", "10:10")
     # add_participant("54321", "sharad", "mp@gmail.in", 1234567890)
     # add_user("sharad", "mp@gmail.in", 1234567890, "abc", 2)
@@ -213,3 +225,4 @@ def mark_entry(p_id, event_id):
     # get_reg("dummy1-1111111111", "1")
     # mark_entry("dummy1-1111111111", "1")
     # get_report()
+    check_part("dummy5-1111111111")
