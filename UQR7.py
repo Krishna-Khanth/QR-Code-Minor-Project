@@ -523,7 +523,7 @@ def report_gen():
 def mgm_page():
     # GUI for organizer management
     screen3.withdraw()
-    global screen4, background_label
+    global screen4
     screen4 = Toplevel(screen3)
     screen4.title("Select")
     screen4.geometry(screen4geo)
@@ -573,13 +573,12 @@ def mgm_page():
 
 # GUI & code for login & signup
 def main_page():
-    global username_verify, password_verify, username1, password1
+    global username_verify, password_verify , username1, password1
 
     # code to clear login data fields after successful login
     def clrlogin():
         username_verify.set("")
         password_verify.set("")
-        username_entry1.focus_set()
         mgm_page()
 
     # code to organizer management
@@ -592,7 +591,6 @@ def main_page():
 
         # user add success
         def disab():
-            global screen1_5
             screen1_5 = Toplevel(screen1)
             screen1_5.title("Success")
             screen1_5.geometry(screen1_5geo)
@@ -642,7 +640,7 @@ def main_page():
 
     # GUI code for adding organizer
     def register():
-        global screen2, labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, regbtn
+        global labl, buutn, username, password, username_entry, password_entry, emailid, phno, rights, emailid_entry, phno_entry, perm_entry, regbtn
         screen2 = Toplevel(screen1)
         screen2.title("Register")
         screen2.geometry(screen2geo)
@@ -764,7 +762,7 @@ def main_page():
 
     # code for login GUI
     def login():
-        global screen1, username_verify, password_verify, username_entry1
+        global screen1, username_verify, password_verify
         screen1 = Tk()
         screen1.title("Login")
         screen1.geometry(screen1geo)
@@ -804,7 +802,7 @@ def main_page():
 
         screen1.mainloop()
 
-    # calling the login module
+    # calling the login / first module
     login()
 
 

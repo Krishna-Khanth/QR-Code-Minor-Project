@@ -23,6 +23,7 @@ except:
     import frontend_api as fi
 
 
+
 # check OS to set GUI size
 def chkos():
     oname = platform.system()
