@@ -86,7 +86,8 @@ def add_part():
     name = req_data["name"]
     print("b api", p_id, name, e_id, phone, events)
 
-    # "0" some error / no registration for this participant, "1" success
+    # "0" some error / no registration for this participant, "1" success,
+    # ("2"/"3"/"4") event (1/2/both) registered for this participant
     response = op.add_part(p_id=p_id, name=name, email=e_id, phone=phone, events=events)
 
     return jsonify({

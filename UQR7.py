@@ -298,6 +298,12 @@ def QRP():
                         i = QRdatamgSQL(content)
                         if i == 0:
                             messagebox.showerror("ALERT", "Internal error in registration")
+                        elif i == 2:
+                            messagebox.showinfo("Pay Attention", "Participant already registered in event 1. \nRegistration for event 2 complete")
+                        elif i == 3:
+                            messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
+                        elif i == 4:
+                            messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
                         else:
                             qrGenerate = pyqrcode.create(content)
                             qrCodePath = './data/'
@@ -336,6 +342,12 @@ def QRP():
         resp = fi.add_part(p_id=id, name="", email_id="", phone="", events=eve)
         if resp == 0:
             messagebox.showerror("ALERT", "No Registration found on this QR ID \nRegistration Aborted")
+        elif resp == 2:
+            messagebox.showinfo("Pay Attention", "Participant already registered in event 1. \nRegistration for event 2 complete")
+        elif resp == 3:
+            messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
+        elif resp == 4:
+            messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
         else:
             messagebox.showinfo("Success", "Registration Completed")
 

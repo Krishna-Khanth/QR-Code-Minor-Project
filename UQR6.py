@@ -113,7 +113,8 @@ def scnn():
             bar = barCode
             try:
                 qrpid.set(bar)
-            except:    
+                qrID.set(bar)
+            except:
                 qrID.set(bar)
         except:
             messagebox.showerror("ALERT", "No QR Detected")
@@ -176,6 +177,7 @@ def QRScan():
 
     # code initializing varaibles of GUI
     qreve = StringVar()
+    global qrpid
     qrpid = StringVar()
     # starting GUI of scanner
     QRSGUI()
@@ -296,6 +298,12 @@ def QRP():
                         i = QRdatamgSQL(content)
                         if i == 0:
                             messagebox.showerror("ALERT", "Internal error in registration")
+                        elif i == 2:
+                            messagebox.showinfo("Pay Attention", "Participant already registered in event 1. \nRegistration for event 2 complete")
+                        elif i == 3:
+                            messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
+                        elif i == 4:
+                            messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
                         else:
                             qrGenerate = pyqrcode.create(content)
                             qrCodePath = './data/'
@@ -327,7 +335,21 @@ def QRP():
 
     # code for autofill
     def autofil():
-        print("lol")
+        id = qrID.get()[2:-1]
+        eve = [qrevent1.get(), qrevent2.get()]
+        if qrevent2.get() == "":
+            eve = [qrevent1.get()]
+        resp = fi.add_part(p_id=id, name="", email_id="", phone="", events=eve)
+        if resp == 0:
+            messagebox.showerror("ALERT", "No Registration found on this QR ID \nRegistration Aborted")
+        elif resp == 2:
+            messagebox.showinfo("Pay Attention", "Participant already registered in event 1. \nRegistration for event 2 complete")
+        elif resp == 3:
+            messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
+        elif resp == 4:
+            messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
+        else:
+            messagebox.showinfo("Success", "Registration Completed")
 
 
     # code to add participant data to excel sheet
@@ -361,6 +383,7 @@ def QRP():
     workbook = Workbook()
     qrevent1 = StringVar()
     qrevent2 = StringVar()
+    global qrID
     qrID = StringVar()
     QRGen()
 
@@ -371,7 +394,6 @@ def eventmgm():
 
     # clear fields
     def clrevent():
-        adevent.focus_set()
         evename.set("")
         evedate.set("")
         evetime.set("")

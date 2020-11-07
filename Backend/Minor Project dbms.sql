@@ -30,6 +30,8 @@ SELECT * FROM participants;
 SELECT * FROM events;
 SELECT * FROM registration;
 
+SELECT * FROM participants WHERE p_id = "dummy7-7111111111";
+
 SELECT `minor_db`.`participants`.*, GROUP_CONCAT(`minor_db`.`events`.name, `minor_db`.`registration`.present) as "events"
 FROM ((`minor_db`.`participants`
 INNER JOIN `minor_db`.`registration` ON `minor_db`.`participants`.p_id = `minor_db`.`registration`.p_id)

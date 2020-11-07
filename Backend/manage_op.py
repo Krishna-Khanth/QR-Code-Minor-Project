@@ -8,6 +8,7 @@ except:
 # login (uid, passw)
 # add_user (name, email_id, password, phone, perm)
 # add_part (p_id, name, e_id, phone, events)
+# event_registry (p_id, events)
 # add_event (name, date, time)
 # get_events ()
 # mark_entry (p_id, event_id)
@@ -58,16 +59,33 @@ def add_part(p_id, name, email, phone, events):
             print("manage_op - Participant exists")
             p_id = db.get_pid(phone)
 
+    # "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant
+    return event_registry(p_id=p_id, events=events)
+
+
+def event_registry(p_id, events):
+    ex_event = []
     for i in events:
         # Registering participant in selected events
         print("for event = ", i)
         e_id = db.get_event_id(i)
-        print("event id = ", e_id[0][0])
-        resp = db.add_reg(p_id=p_id, event_id=e_id[0][0])
+        resp = db.get_reg(p_id=p_id, event_id=e_id)
         if resp == 0:
-            print("Error - manage_op, add_part")
-            return 0
-    # "0" some error, "1" success
+            print("event id = ", e_id[0][0])
+            resp = db.add_reg(p_id=p_id, event_id=e_id[0][0])
+            if resp == 0:
+                print("Error - manage_op, add_part")
+                return 0
+            ex_event.append(0)
+        else:
+            ex_event.append(1)
+    # "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant
+    if ex_event[0] == 1 and ex_event[1] == 1:
+        return 4
+    elif ex_event[0] == 1:
+        return 2
+    elif ex_event[1] == 1:
+        return 3
     return 1
 
 
