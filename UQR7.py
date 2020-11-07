@@ -648,6 +648,11 @@ def main_page():
         screen1.withdraw()
         icon = PhotoImage(file="./resc/add.png")
         screen2.iconphoto(False, icon)
+        username = StringVar()
+        password = StringVar()
+        emailid = StringVar()
+        phno = StringVar()
+        rights = StringVar()
         labl = Label(screen2, text="Please enter user information", width="30", bg=colr)
         labl.configure(foreground="white", font=("Times New Roman", 20, 'bold'))
         labl.grid(row=1, column=1, padx=5, pady=5, columnspan=2)
@@ -691,12 +696,6 @@ def main_page():
             screen3.deiconify()
             screen2.destroy()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
-
-    username = StringVar()
-    password = StringVar()
-    emailid = StringVar()
-    phno = StringVar()
-    rights = StringVar()
 
     # GUI if data is of admin
     def adminlogin():
