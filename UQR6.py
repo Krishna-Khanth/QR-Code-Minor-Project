@@ -89,7 +89,7 @@ def scnn():
                 n = len(hull)
                 for j in range(0, n):
                     # while scanning
-                    cv2.line(frame, hull[j], hull[ (j+1) % n], (255,0,0), 3)
+                    cv2.line(frame, hull[j], hull[(j+1) % n], (255, 0, 0), 3)
                     x = decodedObject.rect.left
                     y = decodedObject.rect.top
                     cv2.putText(frame, str(decodedObject.data), (x, y), font, 1, (0,255,255), 2, cv2.LINE_AA)
