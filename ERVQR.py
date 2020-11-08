@@ -29,6 +29,7 @@ def chkos():
     This function identifies the Operating system being used to
     set the geometry of the Windows in this app.
     """
+
     oname = platform.system()
     global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo
     if oname == "Windows":
@@ -70,6 +71,7 @@ def scanner():
 
     :return: it returns the data obtained from the QR Code.
     """
+
     # start device camera
     cap = cv2.VideoCapture(0)
     cap.set(3, 640)
@@ -84,6 +86,7 @@ def scanner():
         :param im: it is the image obtained from the device camera.
         :return: it returns the data obtained by decoding the image.
         """
+
         decodedObjects = pyzbar.decode(im)
         return decodedObjects
 
@@ -98,6 +101,7 @@ def scanner():
 
         :return: it returns the data obtained by the scanner.
         """
+
         decodedObject = ""
         while cap.isOpened():
             ret, frame = cap.read()
@@ -163,11 +167,13 @@ def QRScan():
     This function is a module that manages aspects of participant entry
     using serveral sub modules.
     """
+
     # call scanner
     def callscan():
         """
         This function calls the QR Scanner to scan the QR of participants.
         """
+
         resp = scanner()
         if resp == 0:
             screen7.focus_force()
@@ -181,6 +187,7 @@ def QRScan():
         This function validates the QR provided by a participant and marks their entry
         by matching it against data in the server.
         """
+
         if (qrpid.get() != "") and (qreve.get() != ""):
             uid = qrpid.get()[2:-1]
             eve = qreve.get()
@@ -203,7 +210,7 @@ def QRScan():
 
     # GUI of entry marker
     screen7 = Toplevel(screen4)
-    screen7.title("Event Entry Mgm")
+    screen7.title("Event Entry Management")
     screen7.geometry(screen7geo)
     screen7.resizable(False, False)
     screen7.config(background=colr)
@@ -250,11 +257,13 @@ def QRP():
     This function is a module that manages aspects of participant registration
     using serveral sub modules.
     """
+
     # call scanner
     def callscan():
         """
         This function calls the QR Scanner to register existing participant in another event.
         """
+
         resp = scanner()
         if resp == 0:
             screen5.focus_force()
@@ -267,6 +276,7 @@ def QRP():
         """
         This function loads the GUI of participant registration window.
         """
+
         global screen5
         evts = fi.get_events()
         gcolor = "#161a2d"
@@ -348,6 +358,7 @@ def QRP():
         """
         This function loads the waiting screen image after fields are cleared.
         """
+
         image = Image.open("./resc/wait.png")
         image = image.resize((350, 350), Image.ANTIALIAS)
         image = ImageTk.PhotoImage(image)
@@ -359,6 +370,7 @@ def QRP():
         """
         This function clears the fields in participant registration window.
         """
+
         screen5.entryname.focus_set()
         qrName.set("")
         qrphno.set("")
@@ -378,6 +390,7 @@ def QRP():
         """
         This function generates QR Code for participant after validating the information provided by them.
         """
+
         if (qrName.get() != '') and (qrphno.get() != '') and (qrmail.get() != '') and (qrevent1.get() != ''):
             if len(qrphno.get()) == 10:
                 try:
@@ -430,6 +443,7 @@ def QRP():
         """
         This function registers an existing participant in another event.
         """
+
         uid = qrID.get()[2:-1]
         eve = [qrevent1.get(), qrevent2.get()]
         if qrevent2.get() == "":
@@ -452,6 +466,7 @@ def QRP():
         This function adds the participant data to an Excel sheet in local machine
         as soon as the participant data is added to the server.
         """
+
         # path for excel file
         path = "./data/regdata.xlsx"
         try:
@@ -473,6 +488,7 @@ def QRP():
         :param content: it contains the data to be used as participant ID from the QR Code.
         :return: it returns the response provided by the server, to check if data has been stored.
         """
+
         eve = [qrevent1.get(), qrevent2.get()]
         if qrevent2.get() == "":
             eve = [qrevent1.get()]
@@ -495,11 +511,13 @@ def eventmgm():
     This function is a module that loads the GUI of event management window &
     contains sub modules to manage aspects of events.
     """
+
     # clear fields
     def clrevent():
         """
         This function clears all the fields in the event management window.
         """
+
         adevent.focus_set()
         evename.set("")
         evedate.set("")
@@ -511,6 +529,7 @@ def eventmgm():
         This function contacts the server to add an event data & performs validation
         on the data provided & stops if event already exists.
         """
+
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
             print("add event to SQL")
             resp = fi.add_event(name=evename.get(), date=evedate.get(), time=evetime.get())
@@ -537,6 +556,7 @@ def eventmgm():
         validating the information & stops the process if information is invalid
         or if any participant is registered to the event.
         """
+
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
             print("remove event from sql")
             resp = fi.remove_event(name=evename.get(), date=evedate.get(), time=evetime.get())
@@ -608,6 +628,7 @@ def eventmgm():
         This function monitors event management window close event &
         reopens tasks window.
         """
+
         screen4.deiconify()
         screen6.destroy()
     screen6.protocol("WM_DELETE_WINDOW", on_closing)
@@ -619,6 +640,7 @@ def report_gen():
     This function is a module that contacts the server to generate report of
     participants & their attendance in various events.
     """
+
     rep = fi.get_report()
     # path to report excel file
     p = "./data/report.xlsx"
@@ -664,6 +686,7 @@ def mgm_page():
     This function loads the GUI of main tasks window of the app & guides its users of its purpose,
     It contains the participant registration, participant entry, event management & report generation modules.
     """
+
     # GUI for organizer management
     screen3.withdraw()
     global screen4
@@ -718,6 +741,7 @@ def mgm_page():
         This function monitors the close event main tasks window of the app.
         it also terminates the entire app.
         """
+
         screen1.destroy()
     screen4.protocol("WM_DELETE_WINDOW", on_closing)
 
@@ -728,11 +752,13 @@ def main_page():
     This function is a module that loads the GUI of login window and contains
     user login & registration modules, which are managed by sub modules.
     """
+
     # code to clear login data fields after successful login
     def clrlogin():
         """
         This function clears the fields of login window
         """
+
         username_verify.set("")
         password_verify.set("")
         mgm_page()
@@ -742,11 +768,13 @@ def main_page():
         """
         This function manages user registration success window.
         """
+
         # code to monitor screen1 close event
         def on_closing():
             """
             This function monitors the Registration window close event.
             """
+
             screen2.destroy()
             screen1.deiconify()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
@@ -756,6 +784,7 @@ def main_page():
             """
             This function sets the GUI of user registration success window.
             """
+
             screen1_5 = Toplevel(screen1)
             screen1_5.title("Success")
             screen1_5.geometry(screen1_5geo)
@@ -769,6 +798,7 @@ def main_page():
                 This function monitors the user Registration window close event &
                 clears the fields present in it & reopens the admin login window.
                 """
+
                 username.set("")
                 emailid.set("")
                 phno.set("")
@@ -796,6 +826,7 @@ def main_page():
         This function validates the data provided by admin to add more users,
         and sends the validated data to the server.
         """
+
         if (username.get() != "") and (emailid.get() != "") and (phno.get() != "") and (password.get() != "") and (perm_entry.get() != "Select"):
             if len(phno.get()) == 10:
                 rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -828,6 +859,7 @@ def main_page():
         """
         This function sets the GUI of user registration window.
         """
+
         screen3.withdraw()
         global screen2, perm_entry
         screen2 = Toplevel(screen1)
@@ -883,6 +915,7 @@ def main_page():
             This function monitors the user registration window close event &
             it reopens the admin login success window.
             """
+
             screen3.deiconify()
             screen2.destroy()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
@@ -892,6 +925,7 @@ def main_page():
         """
         This functions sets the GUI if user is an admin.
         """
+
         screen3.geometry(screen3geo)
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
@@ -910,6 +944,7 @@ def main_page():
         """
         This function sets the GUI if the user is an organizer.
         """
+
         screen3.geometry(screen3geo)
         label = Label(screen3, text="", bg="green")
         label.grid(row=1, column=1, pady=5)
@@ -927,6 +962,7 @@ def main_page():
         This function sets the GUI for login success screen &
         it sends the login credentials to be verified & authenticated to the server.
         """
+
         screen1.withdraw()
         global screen3
         screen3 = Toplevel(screen1)
@@ -945,6 +981,7 @@ def main_page():
             and reopens login window.
             It is the equivalent of logging out.
             """
+
             clrlogin()
             screen1.deiconify()
             screen3.destroy()
@@ -969,6 +1006,7 @@ def main_page():
         """
         This function ensures that the fields in login screen are completed.
         """
+
         if (username_verify.get() != "") and (password_verify.get() != ""):
             login_verify()
         elif username_verify.get() == "":
@@ -1028,6 +1066,7 @@ def main_page():
 
         :param event: checks keyboard interrupt.
         """
+        
         sys.exit()
     # binding Escape key as shortcut to close app
     screen1.bind('<Escape>', on_closing)
