@@ -118,13 +118,10 @@ def scanner():
         try:
             barCode = str(decodedObject.data)
             bar = barCode
-            try:
-                qrpid.set(bar)
-                qrID.set(bar)
-            except:
-                qrID.set(bar)
+            return bar
         except:
             messagebox.showerror("ALERT", "No QR Detected")
+            return 0
 
     # start scanner
     app()
@@ -133,9 +130,18 @@ def scanner():
     cv2.destroyAllWindows()
 
 
-
 # QR Scanner code
 def QRScan():
+    # call scanner
+    def callscan():
+        resp = scanner()
+        if resp == 0:
+            screen7.focus_force()
+        else:
+            qrpid.set(resp)
+            screen7.focus_force()
+
+
     # entry marker
     def marker():
         if (qrpid.get() != "") and (qreve.get() != ""):
@@ -168,7 +174,6 @@ def QRScan():
     icon = PhotoImage(file="./resc/qr-code-scan.png")
     screen7.iconphoto(False, icon)
     evts = fi.get_events()
-    global qrpid
     qrpid = StringVar()
     qreve = StringVar()
     label = Label(screen7, text="Participant Entry", bg=colr, font=("Times New Roman", 20, 'bold'))
@@ -181,7 +186,7 @@ def QRScan():
     screen7.entry1.grid(row=3, column=2, padx=5, pady=10, columnspan=1)
     screen7.entry1['values'] = evts
     screen7.entry1.current()
-    buton = Button(screen7, width=15, text="Scan", command=scanner)
+    buton = Button(screen7, width=15, text="Scan", command=callscan)
     buton.grid(row=5, column=1, padx=15, pady=(20,10), columnspan=1)
     screen7.bind("<Control-s>", lambda event=None: buton.invoke())
     button = Button(screen7, width=15, text="Mark", command=marker)
@@ -199,6 +204,15 @@ def QRScan():
 
 # code to register & generate QR for participant
 def QRP():
+    # call scanner
+    def callscan():
+        resp = scanner()
+        if resp == 0:
+            screen5.focus_force()
+        else:
+            qrID.set(resp)
+            screen5.focus_force()
+
     # code for GUI of QR generator
     def QRGen():
         global screen5
@@ -239,7 +253,7 @@ def QRP():
         label.grid(row=5, column=1, padx=5, pady=10)
         screen5.entry = Entry(screen5, width=15, textvariable=qrID)
         screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
-        sbtn = Button(screen5, width=8, text="Scanner", command=scanner)
+        sbtn = Button(screen5, width=8, text="Scanner", command=callscan)
         sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
         screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
         ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
@@ -394,8 +408,7 @@ def QRP():
     qrmail = StringVar()
     workbook = Workbook()
     qrevent1 = StringVar()
-    qrevent2 = StringVar()
-    global qrID
+    qrevent2 = StringVar
     qrID = StringVar()
     QRGen()
 
