@@ -83,7 +83,7 @@ def add_user(name, email, phone, passw, perm):
         print(name, email, phone, passw, perm, "inserted")
         return 1
     except:
-        print("Error: db_op - Phone already exists.")
+        print("Error: db_op - E-mail already exists.")
         return 0
 
 
@@ -130,7 +130,7 @@ def get_user():
 
     mycursor.execute("SELECT email_id, password, permission FROM user")
     myresult = mycursor.fetchall()
-    print(myresult)
+    print("db - login working" if len(myresult) > 0 else "db - No login data")
     return myresult
 
 

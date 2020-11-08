@@ -1,7 +1,7 @@
 
 # A very simple Flask Hello World app for you to get started with...
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
 
 try:
@@ -35,7 +35,6 @@ def login():
     passw = req_data["password"]
     print("b api", id, passw)
 
-    # permission = id + passw
     # "1"/"2" Password match, "0" Wrong password, "-1" User dose not exists
     permission = op.login(uid=id, passw=passw)
 
@@ -59,10 +58,16 @@ def add_user():
     phone = req_data["phone"]
     name = req_data["name"]
     perm = req_data["permission"]
+    uid = req_data["uid"]
+    upassw = req_data["upassw"]
     print("b api", name, e_id, phone, passw, perm)
 
-    # "1" if added, "0" if exists
-    response = op.add_user(name=name, email_id=e_id, phone=phone, perm=perm, password=passw)
+    if op.login(uid=uid, passw=upassw) == 2:
+        print("auth success")
+        # "1" if added, "0" if exists
+        response = op.add_user(name=name, email_id=e_id, phone=phone, perm=perm, password=passw)
+    else:
+        abort(404)
 
     return jsonify({
         "method": "POST",
@@ -84,11 +89,17 @@ def add_part():
     p_id = req_data["p_id"]
     phone = req_data["phone"]
     name = req_data["name"]
+    uid = req_data["uid"]
+    upassw = req_data["upassw"]
     print("b api", p_id, name, e_id, phone, events)
 
-    # "0" some error / no registration for this participant, "1" success,
-    # ("2"/"3"/"4") event (1/2/both) registered for this participant
-    response = op.add_part(p_id=p_id, name=name, email=e_id, phone=phone, events=events)
+    if op.login(uid=uid, passw=upassw) >= 1:
+        print("auth success")
+        # "0" some error / no registration for this participant, "1" success,
+        # ("2"/"3"/"4") event (1/2/both) registered for this participant
+        response = op.add_part(p_id=p_id, name=name, email=e_id, phone=phone, events=events)
+    else:
+        abort(404)
 
     return jsonify({
         "method": "POST",
@@ -108,10 +119,16 @@ def add_event():
     date = req_data["date"]
     time = req_data["time"]
     name = req_data["name"]
+    uid = req_data["uid"]
+    upassw = req_data["upassw"]
     print("b api", name, date, time)
 
-    # "1" success, "0" event name exists
-    response = op.add_event(name=name, date=date, time=time)
+    if op.login(uid=uid, passw=upassw) >= 1:
+        print("auth success")
+        # "1" success, "0" event name exists
+        response = op.add_event(name=name, date=date, time=time)
+    else:
+        abort(404)
 
     return jsonify({
         "method": "POST",
@@ -148,10 +165,16 @@ def mark_entry():
     response = "Custom Response"
     p_id = req_data["p_id"]
     event = req_data["event"]
+    uid = req_data["uid"]
+    upassw = req_data["upassw"]
     print("b api", p_id, event)
 
-    # "0" Not Registered, "1" Registered, "2" Entered
-    response = op.mark_entry(p_id=p_id, event=event)
+    if op.login(uid=uid, passw=upassw) >= 1:
+        print("auth success")
+        # "0" Not Registered, "1" Registered, "2" Entered
+        response = op.mark_entry(p_id=p_id, event=event)
+    else:
+        abort(404)
 
     return jsonify({
         "method": "POST",
@@ -171,10 +194,16 @@ def remove_event():
     date = req_data["date"]
     time = req_data["time"]
     name = req_data["name"]
+    uid = req_data["uid"]
+    upassw = req_data["upassw"]
     print("b api", name, date, time)
 
-    # "1" success, "0" event participant registered, "4" wrong event details
-    response = op.remove_event(name=name, date=date, time=time)
+    if op.login(uid=uid, passw=upassw) >= 1:
+        print("auth success")
+        # "1" success, "0" event participant registered, "4" wrong event details
+        response = op.remove_event(name=name, date=date, time=time)
+    else:
+        abort(404)
 
     return jsonify({
         "method": "POST",

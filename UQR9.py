@@ -121,16 +121,18 @@ def scanner():
         try:
             barCode = str(decodedObject.data)
             bar = barCode
+            print("bar-", bar)
             return bar
         except:
             messagebox.showerror("ALERT", "No QR Detected")
             return 0
 
     # start scanner
-    app()
+    bar = app()
     # close camera
     cap.release()
     cv2.destroyAllWindows()
+    return bar
 
 
 # QR Scanner code
@@ -325,7 +327,6 @@ def QRP():
         if (qrName.get() != '') and (qrphno.get() != '') and (qrmail.get() != '') and (qrevent1.get() != ''):
             if (len(qrphno.get()) == 10):
                 try:
-                    phno = int(qrphno.get())
                     rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
                     if re.search(rege, qrmail.get()):
                         content = qrName.get().lower() + "-" + qrphno.get()
@@ -354,7 +355,8 @@ def QRP():
                         messagebox.showerror("ALERT", "Invalid Email ID")
                         screen5.focus_force()
                         screen5.entrymail.focus_set()
-                except:
+                except Exception as e:
+                    print("Error - ", e)
                     messagebox.showerror("ALERT", "Error in Generating QR or Phone NaN")
                     screen5.focus_force()
                     screen5.entryphno.focus_set()
@@ -383,7 +385,7 @@ def QRP():
         elif resp == 3:
             messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
         elif resp == 4:
-            messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
+            messagebox.showerror("ALERT", "Participant already registered in provided events. \nRegistration Aborted")
         else:
             messagebox.showinfo("Success", "Registration Completed")
 
@@ -416,7 +418,7 @@ def QRP():
     qrmail = StringVar()
     workbook = Workbook()
     qrevent1 = StringVar()
-    qrevent2 = StringVar
+    qrevent2 = StringVar()
     qrID = StringVar()
     QRGen()
 
@@ -798,6 +800,14 @@ def main_page():
         screen3.focus_force()
         icon = PhotoImage(file="./resc/check.png")
         screen3.iconphoto(False, icon)
+
+        # code to monitor screen3 close event
+        def on_closing():
+            clrlogin()
+            screen1.deiconify()
+            screen3.destroy()
+        screen3.protocol("WM_DELETE_WINDOW", on_closing)
+
         resp = fi.login(uid=username_verify.get(), password=password_verify.get())
         if resp == 2:
             adminlogin()
@@ -811,13 +821,6 @@ def main_page():
             on_closing()
             messagebox.showerror("ALERT", "Invalid User")
             username_entry1.focus_set()
-
-        # code to monitor screen3 close event
-        def on_closing():
-            clrlogin()
-            screen1.deiconify()
-            screen3.destroy()
-        screen3.protocol("WM_DELETE_WINDOW", on_closing)
 
 
     # check if fields are complete
