@@ -419,7 +419,7 @@ def QRP():
                             messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
                         elif i == 4:
                             messagebox.showerror("ALERT", "Participant already registered in provided events. \nRegistration Aborted")
-                        else:
+                        elif i == 1:
                             qrGenerate = pyqrcode.create(content)
                             qrCodePath = './data/'
                             qrCodeName = qrCodePath + qrphno.get() + ".png"
