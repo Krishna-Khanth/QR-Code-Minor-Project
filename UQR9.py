@@ -25,6 +25,9 @@ except:
 
 # check OS to set GUI size
 def chkos():
+    """
+
+    """
     oname = platform.system()
     global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo
     if oname == "Windows":
@@ -57,8 +60,13 @@ def chkos():
         screen6geo = "455x190"
         screen7geo = "300x300"
 
+
 # code for QR scanner
 def scanner():
+    """
+
+    :return:
+    """
     # start device camera
     cap = cv2.VideoCapture(0)
     cap.set(3, 640)
@@ -67,6 +75,11 @@ def scanner():
 
     # find content of QR
     def decode(im):
+        """
+
+        :param im:
+        :return:
+        """
         decodedObjects = pyzbar.decode(im)
         return decodedObjects
 
@@ -75,6 +88,10 @@ def scanner():
 
     # scan the QR
     def app():
+        """
+
+        :return:
+        """
         decodedObject = ""
         while cap.isOpened():
             ret, frame = cap.read()
@@ -93,7 +110,7 @@ def scanner():
                     cv2.line(frame, hull[j], hull[(j+1) % n], (255, 0, 0), 3)
                     x = decodedObject.rect.left
                     y = decodedObject.rect.top
-                    cv2.putText(frame, str(decodedObject.data), (x, y), font, 1, (0,255,255), 2, cv2.LINE_AA)
+                    cv2.putText(frame, str(decodedObject.data), (x, y), font, 1, (0, 255, 255), 2, cv2.LINE_AA)
 
             try:
                 barCode = str(decodedObject.data)
@@ -137,8 +154,16 @@ def scanner():
 
 # QR Scanner code
 def QRScan():
+    """
+
+    :return:
+    """
     # call scanner
     def callscan():
+        """
+
+        :return:
+        """
         resp = scanner()
         if resp == 0:
             screen7.focus_force()
@@ -146,13 +171,16 @@ def QRScan():
             qrpid.set(resp)
             screen7.focus_force()
 
-
     # entry marker
     def marker():
+        """
+
+        :return:
+        """
         if (qrpid.get() != "") and (qreve.get() != ""):
-            id = qrpid.get()[2:-1]
+            uid = qrpid.get()[2:-1]
             eve = qreve.get()
-            resp = fi.mark_entry(p_id=id, event=eve)
+            resp = fi.mark_entry(p_id=uid, event=eve)
             if resp == 0:
                 messagebox.showerror("ALERT", "No participant registered with this QR ID in this event")
             elif resp == 1:
@@ -161,9 +189,9 @@ def QRScan():
                 messagebox.showerror("ALERT", "Participant already entered. \nEntry Denied")
             screen7.focus_force()
             qrpid.set("")
-        elif (qrpid.get() != ""):
+        elif qrpid.get() != "":
             messagebox.showerror("ALERT", "No Event selected")
-        elif (qreve.get() != ""):
+        elif qreve.get() != "":
             messagebox.showerror("ALERT", "No QR ID found")
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
@@ -183,7 +211,7 @@ def QRScan():
     qreve = StringVar()
     label = Label(screen7, text="Participant Entry", bg=colr, font=("Times New Roman", 20, 'bold'))
     label.configure(foreground="white", anchor="center")
-    label.grid(row=1, column=1, padx=20, pady=(20,15), columnspan=3)
+    label.grid(row=1, column=1, padx=20, pady=(20, 15), columnspan=3)
     label = Label(screen7, width=15, text="Select Event : ", bg=colr)
     label.configure(foreground="white")
     label.grid(row=3, column=1, padx=5, pady=10)
@@ -192,11 +220,11 @@ def QRScan():
     screen7.entry1['values'] = evts
     screen7.entry1.current()
     buton = Button(screen7, width=15, text="Scan", command=callscan)
-    buton.grid(row=5, column=1, padx=15, pady=(20,10), columnspan=1)
+    buton.grid(row=5, column=1, padx=15, pady=(20, 10), columnspan=1)
     # binding Ctrl + s key as shortcut to open scanner
     screen7.bind("<Control-s>", lambda event=None: buton.invoke())
     button = Button(screen7, width=15, text="Mark", command=marker)
-    button.grid(row=5, column=2, padx=15, pady=(20,10), columnspan=1)
+    button.grid(row=5, column=2, padx=15, pady=(20, 10), columnspan=1)
     # binding Enter key as shortcut to mark the entry
     screen7.bind('<Return>', lambda event=None: button.invoke())
     label = Label(screen7, width=15, text="QR ID : ", bg=colr)
@@ -211,8 +239,16 @@ def QRScan():
 
 # code to register & generate QR for participant
 def QRP():
+    """
+
+    :return:
+    """
     # call scanner
     def callscan():
+        """
+
+        :return:
+        """
         resp = scanner()
         if resp == 0:
             screen5.focus_force()
@@ -222,6 +258,10 @@ def QRP():
 
     # code for GUI of QR generator
     def QRGen():
+        """
+
+        :return:
+        """
         global screen5
         evts = fi.get_events()
         gcolor = "#161a2d"
@@ -291,7 +331,7 @@ def QRP():
         # binding Ctrl + r key as shortcut to clear fields
         screen5.bind("<Control-r>", lambda event=None: buton.invoke())
         screen5.imageLabel = Label(screen5, background=gcolor)
-        screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10,5), pady=10)
+        screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10, 5), pady=10)
         image = Image.open("./resc/wait.png")
         image = image.resize((350, 350), Image.ANTIALIAS)
         image = ImageTk.PhotoImage(image)
@@ -300,6 +340,10 @@ def QRP():
 
     # reload wait image
     def ld():
+        """
+
+        :return:
+        """
         image = Image.open("./resc/wait.png")
         image = image.resize((350, 350), Image.ANTIALIAS)
         image = ImageTk.PhotoImage(image)
@@ -308,6 +352,10 @@ def QRP():
 
     # code for clearing values of GUI fields
     def QRClear():
+        """
+
+        :return:
+        """
         screen5.entryname.focus_set()
         qrName.set("")
         qrphno.set("")
@@ -324,8 +372,12 @@ def QRP():
 
     # code to generate QR with participant data
     def QRCodeGenerate():
+        """
+
+        :return:
+        """
         if (qrName.get() != '') and (qrphno.get() != '') and (qrmail.get() != '') and (qrevent1.get() != ''):
-            if (len(qrphno.get()) == 10):
+            if len(qrphno.get()) == 10:
                 try:
                     rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
                     if re.search(rege, qrmail.get()):
@@ -373,11 +425,15 @@ def QRP():
 
     # code for autofill
     def autofil():
-        id = qrID.get()[2:-1]
+        """
+
+        :return:
+        """
+        uid = qrID.get()[2:-1]
         eve = [qrevent1.get(), qrevent2.get()]
         if qrevent2.get() == "":
             eve = [qrevent1.get()]
-        resp = fi.add_part(p_id=id, name="", email_id="", phone="", events=eve)
+        resp = fi.add_part(p_id=uid, name="", email_id="", phone="", events=eve)
         if resp == 0:
             messagebox.showerror("ALERT", "No Registration found on this QR ID \nRegistration Aborted")
         elif resp == 2:
@@ -391,6 +447,10 @@ def QRP():
 
     # code to add participant data to excel sheet
     def QRdatamgXL():
+        """
+
+        :return:
+        """
         # path for excel file
         path = "./data/regdata.xlsx"
         try:
@@ -400,18 +460,22 @@ def QRP():
             wb.save(path)
         wb = load_workbook(path)
         sheet = wb.active
-        row = ((qrName.get(), qrphno.get(), qrmail.get(), qrevent1.get(), qrevent2.get()))
+        row = (qrName.get(), qrphno.get(), qrmail.get(), qrevent1.get(), qrevent2.get())
         sheet.append(row)
         wb.save(path)
 
     # code to add participant data to SQL
     def QRdatamgSQL(content):
+        """
+
+        :param content:
+        :return:
+        """
         eve = [qrevent1.get(), qrevent2.get()]
         if qrevent2.get() == "":
             eve = [qrevent1.get()]
         resp = fi.add_part(p_id=content, name=qrName.get(), email_id=qrmail.get(), phone=qrphno.get(), events=eve)
         return resp
-
 
     qrName = StringVar()
     qrphno = StringVar()
@@ -425,8 +489,16 @@ def QRP():
 
 # code to maintain event list
 def eventmgm():
+    """
+
+    :return:
+    """
     # clear fields
     def clrevent():
+        """
+
+        :return:
+        """
         adevent.focus_set()
         evename.set("")
         evedate.set("")
@@ -434,6 +506,10 @@ def eventmgm():
 
     # add events to database
     def addevent():
+        """
+
+        :return:
+        """
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
             print("add event to SQL")
             resp = fi.add_event(name=evename.get(), date=evedate.get(), time=evetime.get())
@@ -455,6 +531,10 @@ def eventmgm():
 
     # remove events from database
     def remevent():
+        """
+
+        :return:
+        """
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
             print("remove event from sql")
             resp = fi.remove_event(name=evename.get(), date=evedate.get(), time=evetime.get())
@@ -476,7 +556,6 @@ def eventmgm():
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen6.focus_force()
 
-
     # GUI code for event manager
     screen6 = Toplevel(screen4)
     screen6.title("Event Manager")
@@ -491,21 +570,21 @@ def eventmgm():
     evedate = StringVar()
     label = Label(screen6, text="Event Management", bg="green", font=("Times New Roman", 20, 'bold'))
     label.configure(foreground="white", anchor="center")
-    label.grid(row=0, column=1, padx=(17,0), pady=(10,15), columnspan=4)
+    label.grid(row=0, column=1, padx=(17, 0), pady=(10, 15), columnspan=4)
     lbl = Label(screen6, text="Event Name", bg="green")
     lbl.configure(foreground="white")
-    lbl.grid(row=1, column=1, padx=(40,5), pady=5, columnspan=1)
+    lbl.grid(row=1, column=1, padx=(40, 5), pady=5, columnspan=1)
     adevent = Entry(screen6, width='17', textvariable=evename)
     adevent.grid(row=1, column=2, padx=5, pady=5, columnspan=1)
     adevent.focus_set()
     lbl = Label(screen6, text="Event Date", bg="green")
     lbl.configure(foreground="white")
-    lbl.grid(row=2, column=1, padx=(40,5), pady=5, columnspan=1)
+    lbl.grid(row=2, column=1, padx=(40, 5), pady=5, columnspan=1)
     adevedt = Entry(screen6, width='17', textvariable=evedate)
     adevedt.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
     lbl = Label(screen6, text="Event Time", bg="green")
     lbl.configure(foreground="white")
-    lbl.grid(row=3, column=1, padx=(40,5), pady=5, columnspan=1)
+    lbl.grid(row=3, column=1, padx=(40, 5), pady=5, columnspan=1)
     adeveti = Entry(screen6, width='17', textvariable=evetime)
     adeveti.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
     bnt = Button(screen6, text="Clear", command=clrevent, width='13')
@@ -523,12 +602,21 @@ def eventmgm():
 
     # code to monitor app close event
     def on_closing():
+        """
+
+        :return:
+        """
         screen4.deiconify()
         screen6.destroy()
     screen6.protocol("WM_DELETE_WINDOW", on_closing)
 
+
 # code to generate report
 def report_gen():
+    """
+
+    :return:
+    """
     rep = fi.get_report()
     # path to report excel file
     p = "./data/report.xlsx"
@@ -542,12 +630,12 @@ def report_gen():
         sheet = wb.active
         sheet.delete_cols(1, 20)
         sheet.delete_rows(1, 1000)
-        row = (("S.No.", "QR ID", "Name", "E-mail", "Phone no."))
+        row = ("S.No.", "QR ID", "Name", "E-mail", "Phone no.")
         sheet.append(row)
         wb.save(p)
         count = 1
         for i in rep:
-            row = ((count, i[0], i[1], i[2], i[3]))
+            row = (count, i[0], i[1], i[2], i[3])
             col = 6
             e_count = 1
             count += 1
@@ -570,6 +658,10 @@ def report_gen():
 
 # code to manage user tasks
 def mgm_page():
+    """
+
+    :return:
+    """
     # GUI for organizer management
     screen3.withdraw()
     global screen4
@@ -620,29 +712,52 @@ def mgm_page():
 
     # code to monitor app close event
     def on_closing():
+        """
+
+        :return:
+        """
         screen1.destroy()
     screen4.protocol("WM_DELETE_WINDOW", on_closing)
 
 
 # GUI & code for login & signup
 def main_page():
+    """
 
+    :return:
+    """
     # code to clear login data fields after successful login
     def clrlogin():
+        """
+
+        :return:
+        """
         username_verify.set("")
         password_verify.set("")
         mgm_page()
 
     # code to organizer management
     def register_user():
+        """
+
+        :return:
+        """
         # code to monitor screen1 close event
         def on_closing():
+            """
+
+            :return:
+            """
             screen2.destroy()
             screen1.deiconify()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
         # GUI for user add success
         def disab():
+            """
+
+            :return:
+            """
             screen1_5 = Toplevel(screen1)
             screen1_5.title("Success")
             screen1_5.geometry(screen1_5geo)
@@ -652,6 +767,10 @@ def main_page():
 
             # code to call login success screen
             def calllog():
+                """
+
+                :return:
+                """
                 username.set("")
                 emailid.set("")
                 phno.set("")
@@ -673,18 +792,21 @@ def main_page():
 
         disab()
 
-
     # registry data validation
     def valinp():
+        """
+
+        :return:
+        """
         if (username.get() != "") and (emailid.get() != "") and (phno.get() != "") and (password.get() != "") and (perm_entry.get() != "Select"):
-            if (len(phno.get()) == 10):
+            if len(phno.get()) == 10:
                 rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-                if(re.search(rege, emailid.get())):
+                if re.search(rege, emailid.get()):
                     if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
                         perm = perm_entry.get()
                         perm = 2 if perm == "Admin" else 1
                         resp = fi.add_user(name=username.get(), email_id=emailid.get(), password=password.get(), phone=int(phno.get()), perm=perm)
-                        print (resp)
+                        print(resp)
                         if resp == 0:
                             messagebox.showerror("ALERT", "User email already exists")
                             screen2.focus_force()
@@ -705,6 +827,10 @@ def main_page():
 
     # GUI code for adding user
     def register():
+        """
+
+        :return:
+        """
         screen3.withdraw()
         global screen2, perm_entry
         screen2 = Toplevel(screen1)
@@ -756,12 +882,20 @@ def main_page():
 
         # code to monitor screen2 close event
         def on_closing():
+            """
+
+            :return:
+            """
             screen3.deiconify()
             screen2.destroy()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
     # GUI if user is admin
     def adminlogin():
+        """
+
+        :return:
+        """
         screen3.geometry(screen3geo)
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
@@ -777,6 +911,10 @@ def main_page():
 
     # GUI if user is user
     def userlogin():
+        """
+
+        :return:
+        """
         screen3.geometry(screen3geo)
         label = Label(screen3, text="", bg="green")
         label.grid(row=1, column=1, pady=5)
@@ -790,6 +928,10 @@ def main_page():
 
     # code for GUI & user details verification
     def login_verify():
+        """
+
+        :return:
+        """
         screen1.withdraw()
         global screen3
         screen3 = Toplevel(screen1)
@@ -803,6 +945,10 @@ def main_page():
 
         # code to monitor screen3 close event
         def on_closing():
+            """
+
+            :return:
+            """
             clrlogin()
             screen1.deiconify()
             screen3.destroy()
@@ -822,9 +968,12 @@ def main_page():
             messagebox.showerror("ALERT", "Invalid User")
             username_entry1.focus_set()
 
-
     # check if fields are complete
     def chk_login_verify():
+        """
+
+        :return:
+        """
         if (username_verify.get() != "") and (password_verify.get() != ""):
             login_verify()
         elif username_verify.get() == "":
@@ -878,11 +1027,15 @@ def main_page():
 
     # monitor app close
     def on_closing(event):
+        """
+        
+        :param event:
+        :return:
+        """
         sys.exit()
     # binding Escape key as shortcut to close app
     screen1.bind('<Escape>', on_closing)
     screen1.mainloop()
-
 
 
 # setting a main color theme
@@ -891,7 +1044,7 @@ colr = "#1c44a5"
 # checking OS to set GUI geometry
 chkos()
 
-os.system("start cmd /c python .\Backend\\backend_api.py")
+os.system("start cmd /c python .\\Backend\\backend_api.py")
 
 # start program by calling 1st module of login
 main_page()
