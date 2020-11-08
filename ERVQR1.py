@@ -241,11 +241,11 @@ def QRScan():
         screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
         screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
         buton = Button(screen7, width=15, text="Scan (ctrl + s)", command=callscan)
-        buton.grid(row=5, column=1, padx=15, pady=(20, 10), columnspan=1)
+        buton.grid(row=5, column=1, padx=15, pady=(20, 0), columnspan=1)
         # binding Ctrl + s key as shortcut to open scanner
         screen7.bind("<Control-s>", lambda event=None: buton.invoke())
         button = Button(screen7, width=15, text="Mark (↵)", command=marker)
-        button.grid(row=5, column=2, padx=15, pady=(20, 10), columnspan=1)
+        button.grid(row=5, column=2, padx=15, pady=(20, 0), columnspan=1)
         # binding Enter key as shortcut to mark the entry
         screen7.bind('<Return>', lambda event=None: button.invoke())
         label = Label(screen7, width=35, text="Press 'Esc' or 'q' to close camera \nPress 's' to save image.", bg=colr)
