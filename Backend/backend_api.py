@@ -1,6 +1,5 @@
 
 # A very simple Flask Hello World app for you to get started with...
-import os
 from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
 
@@ -40,11 +39,10 @@ def login():
 
     :return: "1"/"2" Password match, "0" Wrong password, "-1" User dose not exists in JSON format.
     """
+
     req_data = request.get_json()
-    # permission = "Custom Response"
     id = req_data["id"]
     passw = req_data["password"]
-    print("b api", id, passw)
 
     # "1"/"2" Password match, "0" Wrong password, "-1" User dose not exists
     permission = op.login(uid=id, passw=passw)
@@ -68,6 +66,7 @@ def add_user():
 
     :return: "1" if added, "0" Error (User already exists) in JSON format.
     """
+
     req_data = request.get_json()
     response = "Custom Response"
     e_id = req_data["email_id"]
@@ -77,10 +76,8 @@ def add_user():
     perm = req_data["permission"]
     uid = req_data["uid"]
     upassw = req_data["upassw"]
-    print("b api", name, e_id, phone, passw, perm)
 
     if op.login(uid=uid, passw=upassw) == 2:
-        print("auth success")
         # "1" if added, "0" if exists
         response = op.add_user(name=name, email_id=e_id, phone=phone, perm=perm, password=passw)
     else:
@@ -105,6 +102,7 @@ def add_part():
 
     :return: "0" some error / no registration for this participant, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant in JSON format.
     """
+
     req_data = request.get_json()
     response = "Custom Response"
     e_id = req_data["email_id"]
@@ -114,10 +112,8 @@ def add_part():
     name = req_data["name"]
     uid = req_data["uid"]
     upassw = req_data["upassw"]
-    print("b api", p_id, name, e_id, phone, events)
 
     if op.login(uid=uid, passw=upassw) >= 1:
-        print("auth success")
         # "0" some error / no registration for this participant, "1" success,
         # ("2"/"3"/"4") event (1/2/both) registered for this participant
         response = op.add_part(p_id=p_id, name=name, email=e_id, phone=phone, events=events)
@@ -143,6 +139,7 @@ def add_event():
 
     :return: "1" success, "0" event name exists in JSON format.
     """
+
     req_data = request.get_json()
     response = "Custom Response"
     date = req_data["date"]
@@ -150,10 +147,8 @@ def add_event():
     name = req_data["name"]
     uid = req_data["uid"]
     upassw = req_data["upassw"]
-    print("b api", name, date, time)
 
     if op.login(uid=uid, passw=upassw) >= 1:
-        print("auth success")
         # "1" success, "0" event name exists
         response = op.add_event(name=name, date=date, time=time)
     else:
@@ -177,7 +172,6 @@ def get_events():
 
     :return: List of events in JSON format.
     """
-    response = "Custom Response"
 
     # list of tupple(event_id and name)
     response = op.get_events()
@@ -201,16 +195,15 @@ def mark_entry():
 
     :return: "0" Not Registered, "1" Registered, "2" Participant already entered in JSON format.
     """
+
     req_data = request.get_json()
     response = "Custom Response"
     p_id = req_data["p_id"]
     event = req_data["event"]
     uid = req_data["uid"]
     upassw = req_data["upassw"]
-    print("b api", p_id, event)
 
     if op.login(uid=uid, passw=upassw) >= 1:
-        print("auth success")
         # "0" Not Registered, "1" Registered, "2" Entered
         response = op.mark_entry(p_id=p_id, event=event)
     else:
@@ -235,6 +228,7 @@ def remove_event():
 
     :return: "1" success, "0" event participant registered, "4" wrong event details in JSON format.
     """
+
     req_data = request.get_json()
     response = "Custom Response"
     date = req_data["date"]
@@ -242,10 +236,8 @@ def remove_event():
     name = req_data["name"]
     uid = req_data["uid"]
     upassw = req_data["upassw"]
-    print("b api", name, date, time)
 
     if op.login(uid=uid, passw=upassw) >= 1:
-        print("auth success")
         # "1" success, "0" event participant registered, "4" wrong event details
         response = op.remove_event(name=name, date=date, time=time)
     else:
@@ -270,7 +262,6 @@ def get_report():
 
     :return: List of participant and registered events in JSON format.
     """
-    response = "Custom Response"
 
     # list of tupple(event_id and name)
     response = op.get_report()
