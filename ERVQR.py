@@ -980,18 +980,23 @@ def main_page():
             screen3.destroy()
         screen3.protocol("WM_DELETE_WINDOW", on_closing)
 
-        resp = fi.login(uid=username_verify.get(), password=password_verify.get())
-        if resp == 2:
-            adminlogin()
-        elif resp == 1:
-            userlogin()
-        elif resp == 0:
+        try:
+            resp = fi.login(uid=username_verify.get(), password=password_verify.get())
+            if resp == 2:
+                adminlogin()
+            elif resp == 1:
+                userlogin()
+            elif resp == 0:
+                on_closing()
+                messagebox.showerror("ALERT", "Invalid User/password")
+                username_entry1.focus_set()
+            else:
+                on_closing()
+                messagebox.showerror("ALERT", "Invalid User")
+                username_entry1.focus_set()
+        except:
             on_closing()
-            messagebox.showerror("ALERT", "Invalid User/password")
-            username_entry1.focus_set()
-        else:
-            on_closing()
-            messagebox.showerror("ALERT", "Invalid User")
+            messagebox.showerror("ALERT", "No Internet")
             username_entry1.focus_set()
 
     # check if fields are complete
@@ -1059,7 +1064,7 @@ def main_page():
 
         :param event: checks keyboard interrupt.
         """
-        
+
         sys.exit()
     # binding Escape key as shortcut to close app
     screen1.bind('<Escape>', on_closing)
