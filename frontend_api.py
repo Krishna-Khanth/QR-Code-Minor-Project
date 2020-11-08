@@ -27,16 +27,13 @@ def login(uid: str, password: str) -> int:
     :param password: Password of the user.
     :return:"1"/"2" Password match, "0" Wrong password, "-1" User dose not exists.
     """
+
     global upassw, user_id
     password = security(password)
     r = requests.post(url + "/login", json={"id": uid, "password": password}, timeout=4)
     if r.json()["body"]["permission"] >= 1:
         upassw = password
         user_id = uid
-    # print(r)
-    # print(type(r.text))
-    # print(r.json())
-    print("login", r.json()["body"]["permission"])
     return r.json()["body"]["permission"]
 
 
@@ -51,9 +48,9 @@ def add_user(name: str, email_id: str, password: str, phone: str, perm: int) -> 
     :param perm: Level of access provided to the user ("2" for admin, "1" for user).
     :return: "1" Added, "0" Error (Already exists).
     """
+
     password = security(password)
     r = requests.post(url + "/add_user", json={"name": name, "email_id": email_id, "password": password, "phone": phone, "permission": perm, "uid": user_id, "upassw": upassw}, timeout=4)
-    print("add user", r.json()["body"])
     return r.json()["body"]["response"]
 
 
@@ -68,8 +65,8 @@ def add_part(p_id: str, name: str, email_id: str, phone: str, events: [str]) -> 
     :param events: List of events.
     :return: "0" some error OR no registration for this participant, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant.
     """
+
     r = requests.post(url + "/add_part", json={"p_id": p_id, "name": name, "email_id": email_id, "phone": phone, "events": events, "uid": user_id, "upassw": upassw}, timeout=4)
-    print("add part", r.json()["body"])
     return r.json()["body"]["response"]
 
 
@@ -82,7 +79,7 @@ def add_event(name: str, date: str, time: str) -> int:
     :param time: Time of event (Format: HH:MM).
     :return: "1" success, "0" event name exists.
     """
-    print(date, time)
+
     try:
         datetime.datetime.strptime(date, '%Y-%m-%d')
     except ValueError:
@@ -93,7 +90,6 @@ def add_event(name: str, date: str, time: str) -> int:
         return 3
     time = time + ":00"
     r = requests.post(url + "/add_event", json={"name": name, "date": date, "time": time, "uid": user_id, "upassw": upassw}, timeout=4)
-    print("add event", r.json()["body"])
     return r.json()["body"]["response"]
 
 
@@ -103,8 +99,8 @@ def get_events():
 
     :return: List of events.
     """
+
     r = requests.get(url + "/get_events", timeout=4)
-    print("get events", r.json()["body"])
     return r.json()["body"]["response"]
 
 
@@ -116,8 +112,8 @@ def mark_entry(p_id, event):
     :param event: Event in which entry will be marked.
     :return: "0" Not Registered, "1" Registered, "2" Already entered.
     """
+
     r = requests.post(url + "/mark_entry", json={"p_id": p_id, "event": event, "uid": user_id, "upassw": upassw}, timeout=4)
-    print("mark entry", r.json()["body"])
     return r.json()["body"]["response"]
 
 
@@ -130,7 +126,7 @@ def remove_event(name, date, time):
     :param time: Time of the event (Format: HH:SS).
     :return: "1" success, "0" event participant registered, "4" wrong event details.
     """
-    print("Remove", date, time)
+
     try:
         datetime.datetime.strptime(date, '%Y-%m-%d')
     except ValueError:
@@ -141,7 +137,6 @@ def remove_event(name, date, time):
         return 3
     time = time + ":00"
     r = requests.post(url + "/remove_event", json={"name": name, "date": date, "time": time, "uid": user_id, "upassw": upassw}, timeout=4)
-    print("rem event", r.json()["body"])
     return r.json()["body"]["response"]
 
 
@@ -151,8 +146,8 @@ def get_report():
 
     :return: List of tuple containing registry of each participant.
     """
+
     r = requests.get(url + "/get_report", timeout=4)
-    print("get report", r.json()["body"])
     return r.json()["body"]["response"]
 
 
@@ -163,18 +158,10 @@ def security(password: str) -> str:
     :param password: String which will be hashed.
     :return: Hash of the string.
     """
+
     password = password[::-1]
     password = hashlib.sha224(password.encode()).hexdigest()
     password = password[::-1]
     password = hashlib.sha256(password.encode()).hexdigest()
     password = password[::-1]
     return password
-
-
-# if __name__ == "__main__":
-#     login("admin@event.com", "Admin@123")
-    # add_user(0, 0, 0, 0, 0)
-    # add_part(0, 0, 0, 0, 0)
-    # add_event(0, 0, 0)
-    # get_events()
-    # check_part("abc", 123)

@@ -38,8 +38,8 @@ def chkos():
         screen3geo = "360x125"
         screen4geo = "585x458"
         screen5geo = "690x470"
-        screen6geo = "420x190"
-        screen7geo = "300x250"
+        screen6geo = "390x190"
+        screen7geo = "300x230"
 
     elif oname == "Linux":
         screen1geo = "375x300"
@@ -48,8 +48,8 @@ def chkos():
         screen3geo = "320x125"
         screen4geo = "680x458"
         screen5geo = "770x460"
-        screen6geo = "495x190"
-        screen7geo = "360x270"
+        screen6geo = "455x190"
+        screen7geo = "360x250"
 
     else:
         screen1geo = "375x300"
@@ -127,7 +127,7 @@ def scanner():
             cv2.imshow('frame', frame)
             key = cv2.waitKey(1)
             # binding q key as shortcut to close camera
-            if key & 0xFF == ord('q') or key == 27:
+            if key & 0xFF == ord('q'):
                 cap.release()
                 cv2.destroyAllWindows()
                 break
@@ -223,22 +223,19 @@ def QRScan():
     screen7.entry1.grid(row=3, column=2, padx=5, pady=10, columnspan=1)
     screen7.entry1['values'] = evts
     screen7.entry1.current()
+    buton = Button(screen7, width=15, text="Scan", command=callscan)
+    buton.grid(row=5, column=1, padx=15, pady=(20, 10), columnspan=1)
+    # binding Ctrl + s key as shortcut to open scanner
+    screen7.bind("<Control-s>", lambda event=None: buton.invoke())
+    button = Button(screen7, width=15, text="Mark", command=marker)
+    button.grid(row=5, column=2, padx=15, pady=(20, 10), columnspan=1)
+    # binding Enter key as shortcut to mark the entry
+    screen7.bind('<Return>', lambda event=None: button.invoke())
     label = Label(screen7, width=15, text="QR ID : ", bg=colr)
     label.configure(foreground="white")
     label.grid(row=4, column=1, padx=5, pady=10)
     screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
     screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
-    buton = Button(screen7, width=15, text="Scan (ctrl + s)", command=callscan)
-    buton.grid(row=5, column=1, padx=15, pady=(20, 0), columnspan=1)
-    # binding Ctrl + s key as shortcut to open scanner
-    screen7.bind("<Control-s>", lambda event=None: buton.invoke())
-    button = Button(screen7, width=15, text="Mark (↵)", command=marker)
-    button.grid(row=5, column=2, padx=15, pady=(20, 0), columnspan=1)
-    # binding Enter key as shortcut to mark the entry
-    screen7.bind('<Return>', lambda event=None: button.invoke())
-    label = Label(screen7, width=35, text="Press 'Esc' or 'q' to close camera \nPress 's' to save image.", bg=colr)
-    label.configure(foreground="#767777")
-    label.grid(row=6, column=1, padx=5, pady=10, columnspan=2)
 
     # set focus to management window on closing
     screen4.focus_force()
@@ -305,7 +302,7 @@ def QRP():
         label.grid(row=5, column=1, padx=5, pady=10)
         screen5.entry = Entry(screen5, width=15, textvariable=qrID)
         screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
-        sbtn = Button(screen5, width=10, text="Scan (ctrl + s)", command=callscan)
+        sbtn = Button(screen5, width=8, text="Scanner", command=callscan)
         sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
         # binding Ctrl + s key as shortcut to open scanner
         screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
@@ -327,11 +324,11 @@ def QRP():
         label = Label(screen5, text="QR Code : ", bg=gcolor)
         label.configure(foreground="white")
         label.grid(row=9, column=1, padx=5, pady=10)
-        button = Button(screen5, width=10, text="Generate (↵)", command=QRCodeGenerate)
+        button = Button(screen5, width=10, text="Generate", command=QRCodeGenerate)
         button.grid(row=9, column=2, padx=5, pady=10, columnspan=1)
         # binding Enter key as shortcut to generate QR
         screen5.bind('<Return>', lambda event=None: button.invoke())
-        buton = Button(screen5, width=10, text="Clear (ctrl + r)", command=QRClear)
+        buton = Button(screen5, width=10, text="Clear", command=QRClear)
         buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)
         # binding Ctrl + r key as shortcut to clear fields
         screen5.bind("<Control-r>", lambda event=None: buton.invoke())
@@ -409,8 +406,7 @@ def QRP():
                         messagebox.showerror("ALERT", "Invalid Email ID")
                         screen5.focus_force()
                         screen5.entrymail.focus_set()
-                except Exception as e:
-                    print("Error - ", e)
+                except:
                     messagebox.showerror("ALERT", "Error in Generating QR or Phone NaN")
                     screen5.focus_force()
                     screen5.entryphno.focus_set()
@@ -512,7 +508,6 @@ def eventmgm():
         on the data provided & stops if event already exists.
         """
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
-            print("add event to SQL")
             resp = fi.add_event(name=evename.get(), date=evedate.get(), time=evetime.get())
             if resp == 0:
                 messagebox.showerror("ALERT", "Another event entry with same name already exists")
@@ -538,7 +533,6 @@ def eventmgm():
         or if any participant is registered to the event.
         """
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
-            print("remove event from sql")
             resp = fi.remove_event(name=evename.get(), date=evedate.get(), time=evetime.get())
             if resp == 0:
                 messagebox.showerror("ALERT", "Someone is registered in this event")
@@ -589,11 +583,11 @@ def eventmgm():
     lbl.grid(row=3, column=1, padx=(40, 5), pady=5, columnspan=1)
     adeveti = Entry(screen6, width='17', textvariable=evetime)
     adeveti.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
-    bnt = Button(screen6, text="Clear (ctrl + r)", command=clrevent, width=18)
+    bnt = Button(screen6, text="Clear", command=clrevent, width='13')
     bnt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)
-    nbt = Button(screen6, text="Add Event (ctrl + a)", command=addevent, width=18)
+    nbt = Button(screen6, text="Add Event", command=addevent, width='13')
     nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)
-    tnb = Button(screen6, text="Remove Event (ctrl + d)", command=remevent, width=18)
+    tnb = Button(screen6, text="Remove Event", command=remevent, width='13')
     tnb.grid(row=3, column=3, padx=5, pady=5, columnspan=2)
     # binding Ctrl + a key as shortcut to add event
     screen6.bind("<Control-a>", lambda event=None: nbt.invoke())
@@ -650,7 +644,7 @@ def report_gen():
                 col += 2
                 e_count += 1
             wb.save(p)
-        messagebox.showinfo("Success", "Report Generated successfully \nPath = " + p)
+        messagebox.showinfo("Success", "Report Generated successfully \nAt path = " + p)
     except PermissionError:
         messagebox.showerror("Alert", "File access denied. \nClose the excel sheet OR Run program as Administrator to fix this issue.")
 
@@ -679,13 +673,13 @@ def mgm_page():
     label.grid(row=1, column=1, padx=5, pady=(20, 30), columnspan=3)
     label = Label(screen4, text="Participant Registration", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=2, column=1, padx=(30, 40), pady=15, columnspan=1)
-    btn = Button(screen4, width=15, borderwidth=0, text="Registry (ctrl + g)", command=QRP)
+    btn = Button(screen4, width=15, borderwidth=0, text="Registry", command=QRP)
     btn.grid(row=3, column=1, padx=(30, 40), pady=10, columnspan=1)
     label = Label(screen4, text="Register participants in one or more \nevents & Generate QR code, \nunique for everyone", bg=colr, fg="white")
     label.grid(row=4, column=1, padx=(30, 40), pady=10, columnspan=1)
     label = Label(screen4, text="Participant Verification", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=2, column=3, padx=50, pady=15, columnspan=1)
-    bnt = Button(screen4, width=15, borderwidth=0, text="Entry (ctrl + s)", command=QRScan)
+    bnt = Button(screen4, width=15, borderwidth=0, text="Entry", command=QRScan)
     bnt.grid(row=3, column=3, padx=50, pady=10, columnspan=1)
     label = Label(screen4, text="Verify and mark participant's entry, \nusing the QR code provided, \nfor each event", bg=colr, fg="white")
     label.grid(row=4, column=3, padx=50, pady=10, columnspan=1)
@@ -693,13 +687,13 @@ def mgm_page():
     ttk.Separator(screen4, orient=HORIZONTAL).grid(column=2, row=2, rowspan=9, sticky='ns')
     label = Label(screen4, text="Event Management", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=6, column=1, padx=(30, 40), pady=15, columnspan=1)
-    tbn = Button(screen4, width=15, borderwidth=0, text="Manage (ctrl + e)", command=eventmgm)
+    tbn = Button(screen4, width=15, borderwidth=0, text="Manage", command=eventmgm)
     tbn.grid(row=7, column=1, padx=(30, 40), pady=10, columnspan=1)
     label = Label(screen4, text="Add and remove events to be organized, \nalong with their date and time", bg=colr, fg="white")
     label.grid(row=8, column=1, padx=(30, 40), pady=10, columnspan=1)
     label = Label(screen4, text="Report Generator", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=6, column=3, padx=50, pady=15, columnspan=1)
-    ttbn = Button(screen4, width=15, borderwidth=0, text="Report (ctrl + r)", command=report_gen)
+    ttbn = Button(screen4, width=15, borderwidth=0, text="Report", command=report_gen)
     ttbn.grid(row=7, column=3, padx=5, pady=10, columnspan=1)
     label = Label(screen4, text="Generate report for all events and \nparticipants along with their details", bg=colr, fg="white")
     label.grid(row=8, column=3, padx=50, pady=10, columnspan=1)
@@ -783,7 +777,7 @@ def main_page():
             label = Label(screen1_5, text="Registeration Success", width='30', bg="green", font=("Times New Roman", 20, 'bold'))
             label.configure(foreground="white")
             label.grid(pady=5, row=2, column=1, columnspan=1)
-            bttn = Button(screen1_5, text="OK (↵)", width="15", command=calllog)
+            bttn = Button(screen1_5, text="OK", width="15", command=calllog)
             bttn.grid(pady=5, row=3, column=1, columnspan=1)
             # binding Enter key as shortcut to proceed
             screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
@@ -804,7 +798,6 @@ def main_page():
                         perm = perm_entry.get()
                         perm = 2 if perm == "Admin" else 1
                         resp = fi.add_user(name=username.get(), email_id=emailid.get(), password=password.get(), phone=int(phno.get()), perm=perm)
-                        print(resp)
                         if resp == 0:
                             messagebox.showerror("ALERT", "User email already exists")
                             screen2.focus_force()
@@ -872,7 +865,7 @@ def main_page():
         perm_entry.grid(row=7, column=2, columnspan=1, pady=5)
         labl = Label(screen2, text="", bg=colr)
         labl.grid(row=8, column=1, columnspan=2)
-        regbtn = Button(screen2, text="Sumbit (↵)", width='18', command=valinp)
+        regbtn = Button(screen2, text="Sumbit", width='18', command=valinp)
         regbtn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)
         # binding Enter key as shortcut to proceed
         screen2.bind('<Return>', lambda event=None: regbtn.invoke())
@@ -896,9 +889,9 @@ def main_page():
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
         label.grid(row=1, column=1, pady=5, columnspan=1)
-        bttnn = Button(screen3, text="OK (↵)", width="15", command=clrlogin)
+        bttnn = Button(screen3, text="OK", width="15", command=clrlogin)
         bttnn.grid(row=2, column=1, pady=5, columnspan=1)
-        bttn = Button(screen3, text="Add User (ctrl + a)", width="15", command=register)
+        bttn = Button(screen3, text="Add Organizer", width="15", command=register)
         bttn.grid(row=3, column=1, pady=5, columnspan=1)
         # binding Enter key as shortcut to proceed
         screen3.bind('<Return>', lambda event=None: bttnn.invoke())
@@ -916,7 +909,7 @@ def main_page():
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
         label.grid(row=2, column=1, pady=5)
-        bttn = Button(screen3, text="OK (↵)", width="10", command=clrlogin)
+        bttn = Button(screen3, text="OK", width="10", command=clrlogin)
         bttn.grid(row=3, column=1, pady=5)
         # binding Enter key as shortcut to proceed
         screen3.bind('<Return>', lambda event=None: bttn.invoke())
@@ -1015,7 +1008,7 @@ def main_page():
     password_entry1.grid(row=7, column=1, padx=5, pady=5, columnspan=1)
     label = Label(text="", bg=colr)
     label.grid(row=8, column=1)
-    btnn = Button(text="Login (↵)", width="18", command=chk_login_verify)
+    btnn = Button(text="Login", width="18", command=chk_login_verify)
     btnn.grid(row=9, column=1, padx=5, pady=5, columnspan=1)
     # binding Enter key as shortcut to login
     screen1.bind('<Return>', lambda event=None: btnn.invoke())
@@ -1039,8 +1032,6 @@ colr = "#1c44a5"
 
 # checking OS to set GUI geometry
 chkos()
-
-os.system("start cmd /c python .\\Backend\\backend_api.py")
 
 # start program by calling 1st module of login
 main_page()

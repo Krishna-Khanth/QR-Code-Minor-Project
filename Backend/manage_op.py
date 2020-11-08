@@ -24,13 +24,12 @@ def login(uid: str, passw: str) -> int:
     :param passw: Hash of password of user.
     :return: "1"/"2" Password match, "0" Wrong password, "-1" User dose not exists.
     """
+
     try:
         users = db.get_user()
     except:
-        print("user table not exists")
         db_init.db_init()
         users = db.get_user()
-        print("user table created")
 
     for i in users:
         if i[0] == uid:
@@ -55,6 +54,7 @@ def add_user(name: str, email_id: str, password: str, phone: str, perm: int) -> 
     :param perm: Permission level provided to user.
     :return: "1" if added, "0" Error (user already exists).
     """
+
     success = db.add_user(name=name, email=email_id, phone=phone, passw=password, perm=perm)
     # "1" if added, "0" if exists
     return success
@@ -71,8 +71,8 @@ def add_part(p_id: str, name: str, email: str, phone: str, events: str) -> int:
     :param events: List of events in which participant needs to register.
     :return: "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant.
     """
+
     if name == "":
-        print("mop existing user")
         resp = db.check_part(p_id)
         if resp == 0:
             # No registration for this participant
@@ -82,7 +82,6 @@ def add_part(p_id: str, name: str, email: str, phone: str, events: str) -> int:
         status = db.add_participant(p_id=p_id, name=name, email=email, phone=phone)
         if status == 0:
             # User exists
-            print("manage_op - Participant exists")
             p_id = db.get_pid(phone)
 
     # "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant
@@ -97,21 +96,20 @@ def event_registry(p_id: str, events: str) -> int:
     :param events: List of events in which participant needs to register.
     :return: "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant.
     """
+
     ex_event = []
     for i in events:
         # Registering participant in selected events
-        print("for event = ", i)
         e_id = db.get_event_id(i)
         resp = db.get_reg(p_id=p_id, event_id=e_id[0][0])
         if resp == 0:
-            print("event id = ", e_id[0][0])
             resp = db.add_reg(p_id=p_id, event_id=e_id[0][0])
             if resp == 0:
-                print("Error - manage_op, add_part")
                 return 0
             ex_event.append(0)
         else:
             ex_event.append(1)
+
     # "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant
     if len(ex_event) == 2:
         if ex_event[0] == 1 and ex_event[1] == 1:
@@ -134,6 +132,7 @@ def add_event(name: str, date: str, time: str) -> int:
     :param time: Time of event.
     :return: "1" success, "0" event name exists.
     """
+
     resp = db.add_event(name=name, date=date, time=time)
     # "1" success, "0" event name exists
     return resp
@@ -145,6 +144,7 @@ def get_events() -> [str]:
 
     :return: List of events.
     """
+
     events = db.get_events()
     # list of tupple(name)
     return events
@@ -158,8 +158,9 @@ def mark_entry(p_id: str, event: str) -> int:
     :param event: Event name.
     :return: "0" Not Registered, "1" Registered, "2" Entered.
     """
+
     event_id = db.get_event_id(event)
-    print("mop mark - ", event_id[0][0])
+
     resp = db.get_reg(p_id=p_id, event_id=event_id[0][0])
     if resp == 1:
         db.mark_entry(p_id=p_id, event_id=event_id[0][0])
@@ -176,6 +177,7 @@ def remove_event(name: str, date: str, time: str) -> int:
     :param time: Time of event.
     :return: "1" success, "0" event participant registered, "4" wrong event details.
     """
+
     resp = db.remove_event(name=name, date=date, time=time)
     # "1" success, "0" event participant registered, "4" wrong event details
     return resp
@@ -187,4 +189,5 @@ def get_report() -> [[str]]:
 
     :return: List of participant data.
     """
+
     return db.get_report()
