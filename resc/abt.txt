@@ -4,10 +4,6 @@ Intro:
     This app is designed by Krishna Khanth & Sharad Jain.
     The purpose of this app is to make the management of any event easy.
 
-Guide:
-    
- 
-
 Keyboard Shortcuts:
     Login page:
         Login: Enter Key
@@ -30,17 +26,22 @@ Keyboard Shortcuts:
         Event Registration: Ctrl + g
         Event Verification: Ctrl + s
         Event Management: Ctrl + e
+	Report Generate: Ctrl + r
         
     Event registraion page:
         Generate: Enter key
+	Scanner: Ctrl + s
         Clear: Ctrl + r
         
     Event verification page:
-        Quit: "q"
+	Scanner: Ctrl + s
+	Mark: Enter key
+
+    Camera controls:
+        Quit: "q" or "Esc"
         Save: "s"
         
     Event Management page:
         Add event: Ctrl + a
         Remove Event: Ctrl + d
         Clear: Ctrl + r
-
