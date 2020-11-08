@@ -110,8 +110,8 @@ def mark_entry(p_id, event):
     :param event: Event in which entry will be marked
     :return: "0" Not Registered, "1" Registered, "2" Already entered
     """
-    r = requests.post(url + "/check_part", json={"p_id": p_id, "event": event})
-    print("check part", r.json()["body"])
+    r = requests.post(url + "/mark_entry", json={"p_id": p_id, "event": event})
+    print("mark part", r.json()["body"])
     return r.json()["body"]["response"]
 
 

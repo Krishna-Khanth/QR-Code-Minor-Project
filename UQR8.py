@@ -131,55 +131,65 @@ def scanner():
 def QRScan():
     # entry marker
     def marker():
-        id = qrpid.get()[2:-1]
-        eve = qreve.get()
-        resp = fi.mark_entry(p_id=id, event=eve)
-        if resp == 0:
-            messagebox.showerror("ALERT", "No participant registered with this QR ID in this event")
-        elif resp == 1:
-            messagebox.showinfo("Success", "Participant entry marked. \nEntry Granted")
+        if (qrpid.get() != "") and (qreve.get() != ""):
+            id = qrpid.get()[2:-1]
+            eve = qreve.get()
+            resp = fi.mark_entry(p_id=id, event=eve)
+            print (id + ", " + eve + ", " + resp)
+            if resp == 0:
+                messagebox.showerror("ALERT", "No participant registered with this QR ID in this event")
+            elif resp == 1:
+                messagebox.showinfo("Success", "Participant entry marked. \nEntry Granted")
+            else:
+                messagebox.showerror("ALERT", "Participant already entered. \nEntry Denied")
+            screen7.focus_force()
+            qrpid.set("")
+        elif (qrpid.get() != ""):
+            messagebox.showerror("ALERT", "No Event selected")
+        elif (qreve.get() != ""):
+            messagebox.showerror("ALERT", "No QR ID found")
         else:
-            messagebox.showerror("ALERT", "Participant already entered. \nEntry Denied")
-        qrpid.set("")
+            messagebox.showerror("ALERT", "Fields Incomplete")
+        screen7.focus_force()
 
     # code for QR scanner GUI
-    def QRSGUI():
-        screen7 = Toplevel(screen4)
-        screen7.title("Event Entry Mgm")
-        screen7.geometry(screen7geo)
-        screen7.resizable(False, False)
-        screen7.config(background=colr)
-        screen7.focus_force()
-        icon = PhotoImage(file="./resc/qr-code-scan.png")
-        screen7.iconphoto(False, icon)
-        evts = fi.get_events()
-        label = Label(screen7, text="Participant Entry", bg=colr, font=("Times New Roman", 20, 'bold'))
-        label.configure(foreground="white", anchor="center")
-        label.grid(row=1, column=1, padx=20, pady=(20,15), columnspan=3)
-        label = Label(screen7, width=15, text="Select Event : ", bg=colr)
-        label.configure(foreground="white")
-        label.grid(row=3, column=1, padx=5, pady=10)
-        screen7.entry1 = ttk.Combobox(screen7, width=17, textvariable=qreve, state="readonly")
-        screen7.entry1.grid(row=3, column=2, padx=5, pady=10, columnspan=1)
-        screen7.entry1['values'] = evts
-        screen7.entry1.current()
-        buton = Button(screen7, width=15, text="Scan", command=scanner)
-        buton.grid(row=5, column=1, padx=15, pady=(20,10), columnspan=1)
-        screen7.bind("<Control-s>", lambda event=None: buton.invoke())
-        button = Button(screen7, width=15, text="Mark", command=marker)
-        button.grid(row=5, column=2, padx=15, pady=(20,10), columnspan=1)
-        screen7.bind('<Return>', lambda event=None: button.invoke())
-        label = Label(screen7, width=15, text="QR ID : ", bg=colr)
-        label.configure(foreground="white")
-        label.grid(row=4, column=1, padx=5, pady=10)
-        screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
-        screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
-
-    qreve = StringVar()
+    # def QRSGUI():
+    screen7 = Toplevel(screen4)
+    screen7.title("Event Entry Mgm")
+    screen7.geometry(screen7geo)
+    screen7.resizable(False, False)
+    screen7.config(background=colr)
+    screen7.focus_force()
+    icon = PhotoImage(file="./resc/qr-code-scan.png")
+    screen7.iconphoto(False, icon)
+    evts = fi.get_events()
     global qrpid
     qrpid = StringVar()
+    qreve = StringVar()
+    label = Label(screen7, text="Participant Entry", bg=colr, font=("Times New Roman", 20, 'bold'))
+    label.configure(foreground="white", anchor="center")
+    label.grid(row=1, column=1, padx=20, pady=(20,15), columnspan=3)
+    label = Label(screen7, width=15, text="Select Event : ", bg=colr)
+    label.configure(foreground="white")
+    label.grid(row=3, column=1, padx=5, pady=10)
+    screen7.entry1 = ttk.Combobox(screen7, width=17, textvariable=qreve, state="readonly")
+    screen7.entry1.grid(row=3, column=2, padx=5, pady=10, columnspan=1)
+    screen7.entry1['values'] = evts
+    screen7.entry1.current()
+    buton = Button(screen7, width=15, text="Scan", command=scanner)
+    buton.grid(row=5, column=1, padx=15, pady=(20,10), columnspan=1)
+    screen7.bind("<Control-s>", lambda event=None: buton.invoke())
+    button = Button(screen7, width=15, text="Mark", command=marker)
+    button.grid(row=5, column=2, padx=15, pady=(20,10), columnspan=1)
+    screen7.bind('<Return>', lambda event=None: button.invoke())
+    label = Label(screen7, width=15, text="QR ID : ", bg=colr)
+    label.configure(foreground="white")
+    label.grid(row=4, column=1, padx=5, pady=10)
+    screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
+    screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
+
     # starting GUI of scanner
-    QRSGUI()
+    # QRSGUI()
     # focus setting for main window if app closed
     screen4.focus_force()
 
@@ -320,7 +330,7 @@ def QRP():
                         screen5.focus_force()
                         screen5.entrymail.focus_set()
                 except:
-                    messagebox.showerror("ALERT", "Error in Generating QR or Phone NAN")
+                    messagebox.showerror("ALERT", "Error in Generating QR or Phone NaN")
                     screen5.focus_force()
                     screen5.entryphno.focus_set()
             else:
@@ -351,7 +361,6 @@ def QRP():
             messagebox.showerror("ALERT", "Participant already registered in both events. \nRegistration Aborted")
         else:
             messagebox.showinfo("Success", "Registration Completed")
-
 
     # code to add participant data to excel sheet
     def QRdatamgXL():
@@ -392,6 +401,7 @@ def QRP():
 def eventmgm():
     # clear fields
     def clrevent():
+        adevent.focus_set()
         evename.set("")
         evedate.set("")
         evetime.set("")
@@ -403,14 +413,19 @@ def eventmgm():
             resp = fi.add_event(name=evename.get(), date=evedate.get(), time=evetime.get())
             if resp == 0:
                 messagebox.showerror("ALERT", "Another event entry with same name already exists")
+                adevent.focus_set()
             elif resp == 2:
                 messagebox.showerror("ALERT", "Wrong date format: \n Correct format: YYYY-MM-DD")
+                adevedt.focus_set()
             elif resp == 3:
                 messagebox.showerror("ALERT", "Wrong Time format: \n Correct format: HH:MM")
+                adeveti.focus_set()
             else:
                 messagebox.showinfo("Success", "Event added successfully")
+            screen6.focus_force()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
+            screen6.focus_force()
 
     # remove events from database
     def remevent():
@@ -419,66 +434,70 @@ def eventmgm():
             resp = fi.remove_event(name=evename.get(), date=evedate.get(), time=evetime.get())
             if resp == 0:
                 messagebox.showerror("ALERT", "Someone is registered in this event")
+                adevent.focus_set()
             elif resp == 1:
                 messagebox.showinfo("Success", "Event removed successfully")
             elif resp == 2:
                 messagebox.showerror("ALERT", "Wrong date format: \nCorrect format: YYYY-MM-DD")
+                adevedt.focus_set()
             elif resp == 3:
                 messagebox.showerror("ALERT", "Wrong Time format: \nCorrect format: HH:MM")
+                adeveti.focus_set()
             elif resp == 4:
                 messagebox.showerror("ALERT", "Invalid event details")
+            screen6.focus_force()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
+            screen6.focus_force()
+
 
     # GUI code for event manager
-    def evmgm():
-        screen6 = Toplevel(screen4)
-        screen6.title("Event Manager")
-        screen6.geometry(screen6geo)
-        screen6.resizable(False, False)
-        screen6.config(background="green")
-        icon = PhotoImage(file="./resc/team-management.png")
-        screen6.iconphoto(False, icon)
-        screen6.focus_force()
-        label = Label(screen6, text="Event Management", bg="green", font=("Times New Roman", 20, 'bold'))
-        label.configure(foreground="white", anchor="center")
-        label.grid(row=0, column=1, padx=(17,0), pady=(10,15), columnspan=4)
-        lbl = Label(screen6, text="Event Name", bg="green")
-        lbl.configure(foreground="white")
-        lbl.grid(row=1, column=1, padx=(40,5), pady=5, columnspan=1)
-        adevent = Entry(screen6, width='17', textvariable=evename)
-        adevent.grid(row=1, column=2, padx=5, pady=5, columnspan=1)
-        adevent.focus_set()
-        lbl = Label(screen6, text="Event Date", bg="green")
-        lbl.configure(foreground="white")
-        lbl.grid(row=2, column=1, padx=(40,5), pady=5, columnspan=1)
-        adevedt = Entry(screen6, width='17', textvariable=evedate)
-        adevedt.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
-        lbl = Label(screen6, text="Event Time", bg="green")
-        lbl.configure(foreground="white")
-        lbl.grid(row=3, column=1, padx=(40,5), pady=5, columnspan=1)
-        adeveti = Entry(screen6, width='17', textvariable=evetime)
-        adeveti.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
-        bnt = Button(screen6, text="Clear", command=clrevent, width='13')
-        bnt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)
-        nbt = Button(screen6, text="Add Event", command=addevent, width='13')
-        nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)
-        tnb = Button(screen6, text="Remove Event", command=remevent, width='13')
-        tnb.grid(row=3, column=3, padx=5, pady=5, columnspan=2)
-        screen6.bind("<Control-a>", lambda event=None: nbt.invoke())
-        screen6.bind("<Control-d>", lambda event=None: tnb.invoke())
-        screen6.bind("<Control-r>", lambda event=None: bnt.invoke())
-
-        # code to monitor app close event
-        def on_closing():
-            screen4.deiconify()
-            screen6.destroy()
-        screen6.protocol("WM_DELETE_WINDOW", on_closing)
-
+    screen6 = Toplevel(screen4)
+    screen6.title("Event Manager")
+    screen6.geometry(screen6geo)
+    screen6.resizable(False, False)
+    screen6.config(background="green")
+    icon = PhotoImage(file="./resc/team-management.png")
+    screen6.iconphoto(False, icon)
+    screen6.focus_force()
     evename = StringVar()
     evetime = StringVar()
     evedate = StringVar()
-    evmgm()
+    label = Label(screen6, text="Event Management", bg="green", font=("Times New Roman", 20, 'bold'))
+    label.configure(foreground="white", anchor="center")
+    label.grid(row=0, column=1, padx=(17,0), pady=(10,15), columnspan=4)
+    lbl = Label(screen6, text="Event Name", bg="green")
+    lbl.configure(foreground="white")
+    lbl.grid(row=1, column=1, padx=(40,5), pady=5, columnspan=1)
+    adevent = Entry(screen6, width='17', textvariable=evename)
+    adevent.grid(row=1, column=2, padx=5, pady=5, columnspan=1)
+    adevent.focus_set()
+    lbl = Label(screen6, text="Event Date", bg="green")
+    lbl.configure(foreground="white")
+    lbl.grid(row=2, column=1, padx=(40,5), pady=5, columnspan=1)
+    adevedt = Entry(screen6, width='17', textvariable=evedate)
+    adevedt.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
+    lbl = Label(screen6, text="Event Time", bg="green")
+    lbl.configure(foreground="white")
+    lbl.grid(row=3, column=1, padx=(40,5), pady=5, columnspan=1)
+    adeveti = Entry(screen6, width='17', textvariable=evetime)
+    adeveti.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
+    bnt = Button(screen6, text="Clear", command=clrevent, width='13')
+    bnt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)
+    nbt = Button(screen6, text="Add Event", command=addevent, width='13')
+    nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)
+    tnb = Button(screen6, text="Remove Event", command=remevent, width='13')
+    tnb.grid(row=3, column=3, padx=5, pady=5, columnspan=2)
+    screen6.bind("<Control-a>", lambda event=None: nbt.invoke())
+    screen6.bind("<Control-d>", lambda event=None: tnb.invoke())
+    screen6.bind("<Control-r>", lambda event=None: bnt.invoke())
+
+    # code to monitor app close event
+    def on_closing():
+        screen4.deiconify()
+        screen6.destroy()
+    screen6.protocol("WM_DELETE_WINDOW", on_closing)
+
 
 def report_gen():
     rep = fi.get_report()
@@ -515,6 +534,8 @@ def report_gen():
         messagebox.showinfo("Success", "Report Generated successfully \nAt path = " + p)
     except PermissionError:
         messagebox.showerror("Alert", "File access denied. \nClose the excel sheet OR Run program as Administrator to fix this issue.")
+
+    screen4.focus_force()
 
 
 # code to manage organizer/user tasks
