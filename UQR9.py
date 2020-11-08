@@ -57,6 +57,7 @@ def chkos():
         screen6geo = "455x190"
         screen7geo = "300x300"
 
+# code for QR scanner
 def scanner():
     # start device camera
     cap = cv2.VideoCapture(0)
@@ -102,10 +103,12 @@ def scanner():
 
             cv2.imshow('frame', frame)
             key = cv2.waitKey(1)
+            # binding q key as shortcut to close camera
             if key & 0xFF == ord('q'):
                 cap.release()
                 cv2.destroyAllWindows()
                 break
+            # binding s key as shortcut to save image in front of camera
             elif key & 0xFF == ord('s'):
                 if (bar != "") or (bar is not None):
                     iname = "./scan/" + bar + ".png"
@@ -164,7 +167,7 @@ def QRScan():
             messagebox.showerror("ALERT", "Fields Incomplete")
         screen7.focus_force()
 
-    # code for QR scanner GUI
+    # GUI of entry marker
     screen7 = Toplevel(screen4)
     screen7.title("Event Entry Mgm")
     screen7.geometry(screen7geo)
@@ -188,9 +191,11 @@ def QRScan():
     screen7.entry1.current()
     buton = Button(screen7, width=15, text="Scan", command=callscan)
     buton.grid(row=5, column=1, padx=15, pady=(20,10), columnspan=1)
+    # binding Ctrl + s key as shortcut to open scanner
     screen7.bind("<Control-s>", lambda event=None: buton.invoke())
     button = Button(screen7, width=15, text="Mark", command=marker)
     button.grid(row=5, column=2, padx=15, pady=(20,10), columnspan=1)
+    # binding Enter key as shortcut to mark the entry
     screen7.bind('<Return>', lambda event=None: button.invoke())
     label = Label(screen7, width=15, text="QR ID : ", bg=colr)
     label.configure(foreground="white")
@@ -198,7 +203,7 @@ def QRScan():
     screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
     screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
 
-    # focus setting for main window if app closed
+    # set focus to management page on closing
     screen4.focus_force()
 
 
@@ -255,6 +260,7 @@ def QRP():
         screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
         sbtn = Button(screen5, width=8, text="Scanner", command=callscan)
         sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
+        # binding Ctrl + s key as shortcut to open scanner
         screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
         ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
         label = Label(screen5, text="1st Event Name : ", bg=gcolor)
@@ -276,9 +282,11 @@ def QRP():
         label.grid(row=9, column=1, padx=5, pady=10)
         button = Button(screen5, width=10, text="Generate", command=QRCodeGenerate)
         button.grid(row=9, column=2, padx=5, pady=10, columnspan=1)
+        # binding Enter key as shortcut to generate QR
         screen5.bind('<Return>', lambda event=None: button.invoke())
         buton = Button(screen5, width=10, text="Clear", command=QRClear)
         buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)
+        # binding Ctrl + r key as shortcut to clear fields
         screen5.bind("<Control-r>", lambda event=None: buton.invoke())
         screen5.imageLabel = Label(screen5, background=gcolor)
         screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10,5), pady=10)
@@ -504,8 +512,11 @@ def eventmgm():
     nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)
     tnb = Button(screen6, text="Remove Event", command=remevent, width='13')
     tnb.grid(row=3, column=3, padx=5, pady=5, columnspan=2)
+    # binding Ctrl + a key as shortcut to add event
     screen6.bind("<Control-a>", lambda event=None: nbt.invoke())
+    # binding Ctrl + d key as shortcut to remove event
     screen6.bind("<Control-d>", lambda event=None: tnb.invoke())
+    # binding Ctrl + r key as shortcut to clear fields
     screen6.bind("<Control-r>", lambda event=None: bnt.invoke())
 
     # code to monitor app close event
@@ -514,7 +525,7 @@ def eventmgm():
         screen6.destroy()
     screen6.protocol("WM_DELETE_WINDOW", on_closing)
 
-
+# code to generate report
 def report_gen():
     rep = fi.get_report()
     # path to report excel file
@@ -551,10 +562,11 @@ def report_gen():
     except PermissionError:
         messagebox.showerror("Alert", "File access denied. \nClose the excel sheet OR Run program as Administrator to fix this issue.")
 
+    # set focus to management page on closing
     screen4.focus_force()
 
 
-# code to manage organizer/user tasks
+# code to manage user tasks
 def mgm_page():
     # GUI for organizer management
     screen3.withdraw()
@@ -595,9 +607,13 @@ def mgm_page():
     ttbn.grid(row=7, column=3, padx=5, pady=10, columnspan=1)
     label = Label(screen4, text="Generate report for all events and \nparticipants along with their details", bg=colr, fg="white")
     label.grid(row=8, column=3, padx=50, pady=10, columnspan=1)
+    # binding Ctrl + g key as shortcut to open participant adding window
     screen4.bind("<Control-g>", lambda event=None: btn.invoke())
+    # binding Ctrl + s key as shortcut to open participant entry window
     screen4.bind("<Control-s>", lambda event=None: bnt.invoke())
+    # binding Ctrl + e key as shortcut to open event management window
     screen4.bind("<Control-e>", lambda event=None: tbn.invoke())
+    # binding Ctrl + r key as shortcut to generate report
     screen4.bind("<Control-r>", lambda event=None: ttbn.invoke())
 
     # code to monitor app close event
@@ -623,7 +639,7 @@ def main_page():
             screen1.deiconify()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
-        # user add success
+        # GUI for user add success
         def disab():
             screen1_5 = Toplevel(screen1)
             screen1_5.title("Success")
@@ -638,6 +654,7 @@ def main_page():
                 emailid.set("")
                 phno.set("")
                 password.set("")
+                screen3.deiconify()
                 screen1_5.destroy()
                 screen2.destroy()
                 adminlogin()
@@ -649,6 +666,7 @@ def main_page():
             label.grid(pady=5, row=2, column=1, columnspan=1)
             bttn = Button(screen1_5, text="OK", width="15", command=calllog)
             bttn.grid(pady=5, row=3, column=1, columnspan=1)
+            # binding Enter key as shortcut to proceed
             screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
 
         disab()
@@ -683,7 +701,7 @@ def main_page():
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen2.focus_force()
 
-    # GUI code for adding organizer
+    # GUI code for adding user
     def register():
         screen3.withdraw()
         global screen2, perm_entry
@@ -731,6 +749,7 @@ def main_page():
         labl.grid(row=8, column=1, columnspan=2)
         regbtn = Button(screen2, text="Sumbit", width='18', command=valinp)
         regbtn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)
+        # binding Enter key as shortcut to proceed
         screen2.bind('<Return>', lambda event=None: regbtn.invoke())
 
         # code to monitor screen2 close event
@@ -739,7 +758,7 @@ def main_page():
             screen2.destroy()
         screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
-    # GUI if data is of admin
+    # GUI if user is admin
     def adminlogin():
         screen3.geometry(screen3geo)
         label = Label(screen3, text="Login Success", width='30', bg="green")
@@ -749,10 +768,12 @@ def main_page():
         bttnn.grid(row=2, column=1, pady=5, columnspan=1)
         bttn = Button(screen3, text="Add Organizer", width="15", command=register)
         bttn.grid(row=3, column=1, pady=5, columnspan=1)
+        # binding Enter key as shortcut to proceed
         screen3.bind('<Return>', lambda event=None: bttnn.invoke())
+        # binding Ctrl + a key as shortcut to access user adding screen
         screen3.bind("<Control-a>", lambda event=None: bttn.invoke())
 
-    # GUI if data is of user
+    # GUI if user is user
     def userlogin():
         screen3.geometry(screen3geo)
         label = Label(screen3, text="", bg="green")
@@ -762,6 +783,7 @@ def main_page():
         label.grid(row=2, column=1, pady=5)
         bttn = Button(screen3, text="OK", width="10", command=clrlogin)
         bttn.grid(row=3, column=1, pady=5)
+        # binding Enter key as shortcut to proceed
         screen3.bind('<Return>', lambda event=None: bttn.invoke())
 
     # code for GUI & user details verification
@@ -776,17 +798,7 @@ def main_page():
         screen3.focus_force()
         icon = PhotoImage(file="./resc/check.png")
         screen3.iconphoto(False, icon)
-
-        # code to monitor screen3 close event
-        def on_closing():
-            clrlogin()
-            screen1.deiconify()
-            screen3.destroy()
-        screen3.protocol("WM_DELETE_WINDOW", on_closing)
-
-
         resp = fi.login(uid=username_verify.get(), password=password_verify.get())
-        # resp = 2
         if resp == 2:
             adminlogin()
         elif resp == 1:
@@ -799,6 +811,14 @@ def main_page():
             on_closing()
             messagebox.showerror("ALERT", "Invalid User")
             username_entry1.focus_set()
+
+        # code to monitor screen3 close event
+        def on_closing():
+            clrlogin()
+            screen1.deiconify()
+            screen3.destroy()
+        screen3.protocol("WM_DELETE_WINDOW", on_closing)
+
 
     # check if fields are complete
     def chk_login_verify():
@@ -850,25 +870,25 @@ def main_page():
     label.grid(row=8, column=1)
     btnn = Button(text="Login", width="18", command=chk_login_verify)
     btnn.grid(row=9, column=1, padx=5, pady=5, columnspan=1)
+    # binding Enter key as shortcut to login
     screen1.bind('<Return>', lambda event=None: btnn.invoke())
 
     # monitor app close
     def on_closing(event):
         sys.exit()
-    # binding Escape key as shortcut
+    # binding Escape key as shortcut to close app
     screen1.bind('<Escape>', on_closing)
     screen1.mainloop()
 
 
 
-# setting a main colour theme
-global colr
+# setting a main color theme
 colr = "#1c44a5"
 
-# checking OS
+# checking OS to set GUI geometry
 chkos()
 
 os.system("start cmd /c python .\Backend\\backend_api.py")
 
-# start of program
+# start program by calling 1st module of login
 main_page()
