@@ -24,11 +24,22 @@ CORS(app)
 
 @app.route('/')
 def hello_world():
+    """
+    It is demo function to test weather server is working or not.
+
+    :return: A static string.
+    """
     return 'Hello from Flask! This is a test site'
 
 
 @app.route('/login', methods=["Post"])
 def login():
+    """
+    This function will verify credentials.
+    It requires user id and hashed password.
+
+    :return: "1"/"2" Password match, "0" Wrong password, "-1" User dose not exists in JSON format.
+    """
     req_data = request.get_json()
     # permission = "Custom Response"
     id = req_data["id"]
@@ -51,6 +62,12 @@ def login():
 
 @app.route('/add_user', methods=["Post"])
 def add_user():
+    """
+    Handles the request to add a user.
+    It requires user details, their login credentials and operator authentication.
+
+    :return: "1" if added, "0" Error (User already exists) in JSON format.
+    """
     req_data = request.get_json()
     response = "Custom Response"
     e_id = req_data["email_id"]
@@ -82,6 +99,12 @@ def add_user():
 
 @app.route('/add_part', methods=["Post"])
 def add_part():
+    """
+    Handles the request to add a participant.
+    It requires participant details, events list and operator authentication.
+
+    :return: "0" some error / no registration for this participant, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant in JSON format.
+    """
     req_data = request.get_json()
     response = "Custom Response"
     e_id = req_data["email_id"]
@@ -114,6 +137,12 @@ def add_part():
 
 @app.route('/add_event', methods=["Post"])
 def add_event():
+    """
+    Handles the request to add a event.
+    It requires event details and operator authentication.
+
+    :return: "1" success, "0" event name exists in JSON format.
+    """
     req_data = request.get_json()
     response = "Custom Response"
     date = req_data["date"]
@@ -143,6 +172,11 @@ def add_event():
 
 @app.route('/get_events')
 def get_events():
+    """
+    Handles the request for list of events.
+
+    :return: List of events in JSON format.
+    """
     response = "Custom Response"
 
     # list of tupple(event_id and name)
@@ -161,6 +195,12 @@ def get_events():
 
 @app.route('/mark_entry', methods=["Post"])
 def mark_entry():
+    """
+    Handles the request to mark entry of a participant in a event.
+    It requires participant ID, event name and operator authentication.
+
+    :return: "0" Not Registered, "1" Registered, "2" Participant already entered in JSON format.
+    """
     req_data = request.get_json()
     response = "Custom Response"
     p_id = req_data["p_id"]
@@ -189,6 +229,12 @@ def mark_entry():
 
 @app.route('/remove_event', methods=["Post"])
 def remove_event():
+    """
+    Handles the request to remove an event.
+    It requires event name and operator authentication.
+
+    :return: "1" success, "0" event participant registered, "4" wrong event details in JSON format.
+    """
     req_data = request.get_json()
     response = "Custom Response"
     date = req_data["date"]
@@ -218,6 +264,12 @@ def remove_event():
 
 @app.route('/get_report')
 def get_report():
+    """
+    Handles the request to remove an event.
+    It requires event name and operator authentication.
+
+    :return: List of participant and registered events in JSON format.
+    """
     response = "Custom Response"
 
     # list of tupple(event_id and name)

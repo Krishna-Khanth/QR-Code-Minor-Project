@@ -16,7 +16,14 @@ except:
 # get_report ()
 
 
-def login(uid, passw):
+def login(uid: str, passw: str) -> int:
+    """
+    Process the login data for database operation.
+
+    :param uid: User ID.
+    :param passw: Hash of password of user.
+    :return: "1"/"2" Password match, "0" Wrong password, "-1" User dose not exists.
+    """
     try:
         users = db.get_user()
     except:
@@ -37,14 +44,33 @@ def login(uid, passw):
     return -1
 
 
-def add_user(name, email_id, password, phone, perm):
+def add_user(name: str, email_id: str, password: str, phone: str, perm: int) -> int:
+    """
+    Request database to add new user data.
+
+    :param name: Name of user.
+    :param email_id: E-mail ID of user.
+    :param password: Hash of password of new user.
+    :param phone: Phone number of new user.
+    :param perm: Permission level provided to user.
+    :return: "1" if added, "0" Error (user already exists).
+    """
     success = db.add_user(name=name, email=email_id, phone=phone, passw=password, perm=perm)
     # "1" if added, "0" if exists
     return success
 
 
-def add_part(p_id, name, email, phone, events):
+def add_part(p_id: str, name: str, email: str, phone: str, events: str) -> int:
+    """
+    Process participant data to add into database.
 
+    :param p_id: Participant ID.
+    :param name: Participant name.
+    :param email: Participant E-mail ID.
+    :param phone: Participant phone number.
+    :param events: List of events in which participant needs to register.
+    :return: "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant.
+    """
     if name == "":
         print("mop existing user")
         resp = db.check_part(p_id)
@@ -63,7 +89,14 @@ def add_part(p_id, name, email, phone, events):
     return event_registry(p_id=p_id, events=events)
 
 
-def event_registry(p_id, events):
+def event_registry(p_id: str, events: str) -> int:
+    """
+    Process data to register participant in each event.
+
+    :param p_id: Participant ID.
+    :param events: List of events in which participant needs to register.
+    :return: "0" some error, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant.
+    """
     ex_event = []
     for i in events:
         # Registering participant in selected events
@@ -92,19 +125,39 @@ def event_registry(p_id, events):
     return 1
 
 
-def add_event(name, date, time):
+def add_event(name: str, date: str, time: str) -> int:
+    """
+    Request database to add new event.
+
+    :param name: Name of event.
+    :param date: Date of event.
+    :param time: Time of event.
+    :return: "1" success, "0" event name exists.
+    """
     resp = db.add_event(name=name, date=date, time=time)
     # "1" success, "0" event name exists
     return resp
 
 
-def get_events():
+def get_events() -> [str]:
+    """
+    Request database for list of events.
+
+    :return: List of events.
+    """
     events = db.get_events()
     # list of tupple(name)
     return events
 
 
-def mark_entry(p_id, event):
+def mark_entry(p_id: str, event: str) -> int:
+    """
+    Mark entry of a participant into to the event.
+
+    :param p_id: Participant ID.
+    :param event: Event name.
+    :return: "0" Not Registered, "1" Registered, "2" Entered.
+    """
     event_id = db.get_event_id(event)
     print("mop mark - ", event_id[0][0])
     resp = db.get_reg(p_id=p_id, event_id=event_id[0][0])
@@ -114,11 +167,24 @@ def mark_entry(p_id, event):
     return resp
 
 
-def remove_event(name, date, time):
+def remove_event(name: str, date: str, time: str) -> int:
+    """
+    Remove an event from database.
+
+    :param name: Name of event.
+    :param date: Date of event.
+    :param time: Time of event.
+    :return: "1" success, "0" event participant registered, "4" wrong event details.
+    """
     resp = db.remove_event(name=name, date=date, time=time)
     # "1" success, "0" event participant registered, "4" wrong event details
     return resp
 
 
-def get_report():
+def get_report() -> [[str]]:
+    """
+    Return the list of participant data and events they are registered in.
+
+    :return: List of participant data.
+    """
     return db.get_report()

@@ -4,6 +4,11 @@ import hashlib
 
 
 def db_init():
+    """
+    This function initializes the database and all the tables required in it.
+    First Administrator is automatically added.
+    Tables: User, Participant, Events, Registration.
+    """
     try:
         mydb = mysql.connector.connect(
             host="127.0.0.1",
@@ -128,6 +133,6 @@ def db_init():
     print(mycursor)
 
 
-if __name__ == "__main__":
-    db_init()
-    print("--------------------------------------------------")
+# if __name__ == "__main__":
+#     db_init()
+#     print("--------------------------------------------------")

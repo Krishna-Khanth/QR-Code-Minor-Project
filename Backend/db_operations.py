@@ -13,9 +13,15 @@ import mysql.connector
 # remove_event (name, date, time)
 # get_report ()
 # mark_entry (p_id, event_id)
+# check_part (p_id)
 
 
 def sql_connect():
+    """
+    Make a connection to the database.
+
+    :return: database name, Cursor object of database, connector of database.
+    """
     try:
         mydb = mysql.connector.connect(
             host="127.0.0.1",
@@ -33,7 +39,15 @@ def sql_connect():
     return db_name, mycursor, mydb
 
 
-def add_event(name, date, time):
+def add_event(name: str, date: str, time: str) -> int:
+    """
+    Command database to add an event.
+
+    :param name: Name of event.
+    :param date: Date of event.
+    :param time: Time of event.
+    :return: "1" success, "0" event name exists.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -51,7 +65,16 @@ def add_event(name, date, time):
         return 0
 
 
-def add_participant(p_id, name, email, phone):
+def add_participant(p_id: str, name: str, email: str, phone: str) -> int:
+    """
+    Command database to add a new participant.
+
+    :param p_id: Participant ID.
+    :param name: Participant name.
+    :param email: Participant E-mail ID.
+    :param phone: Participant phone number.
+    :return: "0" some error, "1" success.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -68,7 +91,17 @@ def add_participant(p_id, name, email, phone):
         return 0
 
 
-def add_user(name, email, phone, passw, perm):
+def add_user(name: str, email: str, phone: str, passw: str, perm: int) -> int:
+    """
+    Command database to add a new user.
+
+    :param name: Name of user.
+    :param email: E-mail ID of user.
+    :param passw: Hash of password of new user.
+    :param phone: Phone number of new user.
+    :param perm: Permission level provided to user.
+    :return: "1" if added, "0" Error (user already exists).
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
     phone = str(phone)
@@ -87,7 +120,14 @@ def add_user(name, email, phone, passw, perm):
         return 0
 
 
-def add_reg(p_id, event_id):
+def add_reg(p_id: str, event_id: str) -> int:
+    """
+    Command database to register a participant in an event.
+
+    :param p_id: Participant ID.
+    :param event_id: Event ID.
+    :return: "0" some error, "1" success.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -103,7 +143,13 @@ def add_reg(p_id, event_id):
         return 0
 
 
-def get_event_id(name):
+def get_event_id(name: str) -> int:
+    """
+    Retrieve event ID from database using the event name.
+
+    :param name: Event name.
+    :return: Event ID.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -114,7 +160,12 @@ def get_event_id(name):
     return myresult
 
 
-def get_events():
+def get_events() -> [str]:
+    """
+    Retrieve List of events from database.
+
+    :return: List of events.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -124,7 +175,12 @@ def get_events():
     return myresult
 
 
-def get_user():
+def get_user() -> [[str]]:
+    """
+    Retrieve e-mail id, password and permission level of user from database.
+
+    :return: List of e-mail id, password and permission level of all users.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -134,7 +190,14 @@ def get_user():
     return myresult
 
 
-def get_reg(p_id, event_id):
+def get_reg(p_id: str, event_id: str) -> int:
+    """
+    Retrieve entry detail of a participant in a particular event.
+
+    :param p_id: Participant ID.
+    :param event_id: Event ID.
+    :return: "1" Not Entered, "2" Entered, "0" Dose not exists.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
     event_id = str(event_id)
@@ -151,7 +214,12 @@ def get_reg(p_id, event_id):
         return 0
 
 
-def get_pid(phone):
+def get_pid(phone: str) -> str:
+    """
+    Retrieve participant id of a participant from phone number.
+    :param phone: Phone number of participant.
+    :return: Participant ID.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
     phone = str(phone)
@@ -162,7 +230,15 @@ def get_pid(phone):
     return myresult[0][0]
 
 
-def remove_event(name, date, time):
+def remove_event(name: str, date: str, time: str) -> int:
+    """
+    Command database to delete an event.
+
+    :param name: Name of event.
+    :param date: Date of event.
+    :param time: Time of event.
+    :return: "1" success, "0" event participant registered, "4" wrong event details.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -183,7 +259,12 @@ def remove_event(name, date, time):
         return 0
 
 
-def get_report():
+def get_report() -> [[str]]:
+    """
+    Retrieve participant details and events they registered in from database.
+
+    :return: List of participant details.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -194,7 +275,14 @@ def get_report():
     return myresult
 
 
-def mark_entry(p_id, event_id):
+def mark_entry(p_id: str, event_id: str) -> int:
+    """
+    Command database to mark a participant entry in a event.
+
+    :param p_id: Participant ID.
+    :param event_id: Event ID.
+    :return: "0" Not Registered, "1" Registered, "2" Entered.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
@@ -205,7 +293,13 @@ def mark_entry(p_id, event_id):
     print("entry row = ", mycursor.rowcount)
 
 
-def check_part(p_id):
+def check_part(p_id: str) -> int:
+    """
+    Retrieve all details of participant from database.
+
+    :param p_id: Participant ID.
+    :return: List of details of participant.
+    """
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 

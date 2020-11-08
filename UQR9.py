@@ -77,7 +77,7 @@ def scanner():
     time.sleep(2)
 
     # find content of QR
-    def decode(im):
+    def decode(im: object) -> object:
         """
         This function decodes image given by camera to isolate QR code present in it.
 
@@ -463,7 +463,7 @@ def QRP():
         wb.save(path)
 
     # code to add participant data to SQL
-    def QRdatamgSQL(content):
+    def QRdatamgSQL(content: str) -> int:
         """
         This function contacts the server to add participant data in the database.
 
@@ -1018,7 +1018,7 @@ def main_page():
     screen1.bind('<Return>', lambda event=None: btnn.invoke())
 
     # monitor app close
-    def on_closing(event):
+    def on_closing(event: object):
         """
         This function is used to monitor app close event,
         it binds the escape to it.
