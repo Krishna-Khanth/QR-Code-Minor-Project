@@ -8,6 +8,10 @@ import platform
 import pyqrcode
 import numpy as np
 import tkinter as tk
+try:
+    import frontend_api as fi
+except:
+    import App.frontend_api as fi
 import pyzbar.pyzbar as pyzbar
 from tkinter import *
 from tkinter import ttk
@@ -17,10 +21,6 @@ from openpyxl.styles import colors
 from openpyxl.styles.colors import *
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Color, PatternFill
-try:
-    import App.frontend_api as fi
-except:
-    import frontend_api as fi
 
 
 # check OS to set GUI size
@@ -39,8 +39,8 @@ def chkos():
         screen3geo = "360x125"
         screen4geo = "585x458"
         screen5geo = "690x470"
-        screen6geo = "390x190"
-        screen7geo = "300x230"
+        screen6geo = "420x190"
+        screen7geo = "300x250"
 
     elif oname == "Linux":
         screen1geo = "375x300"
@@ -49,8 +49,8 @@ def chkos():
         screen3geo = "320x125"
         screen4geo = "680x458"
         screen5geo = "770x460"
-        screen6geo = "455x190"
-        screen7geo = "360x250"
+        screen6geo = "495x190"
+        screen7geo = "360x270"
 
     else:
         screen1geo = "375x300"
@@ -131,16 +131,16 @@ def scanner():
             cv2.imshow('frame', frame)
             key = cv2.waitKey(1)
             # binding q key as shortcut to close camera
-            if key & 0xFF == ord('q'):
+            if key & 0xFF == ord('q') or key ==27:
                 cap.release()
                 cv2.destroyAllWindows()
                 break
             # binding s key as shortcut to save image in front of camera
             elif key & 0xFF == ord('s'):
-                if (bar != "") or (bar is not None):
+                if (bar != "") or (len(bar) != 0):
                     iname = "./scan/" + bar + ".png"
                 else:
-                    iname = "./scan/" + random.randint(1, 101) + ".png"
+                    iname = "./scan/" + str(random.randint(1, 101)) + ".png"
                 cv2.imwrite(iname, frame)
                 messagebox.showinfo("INFO", "QR Saved")
 
@@ -188,25 +188,29 @@ def QRScan():
         by matching it against data in the server.
         """
 
-        if (qrpid.get() != "") and (qreve.get() != ""):
-            uid = qrpid.get()[2:-1]
-            eve = qreve.get()
-            resp = fi.mark_entry(p_id=uid, event=eve)
-            if resp == 0:
-                messagebox.showerror("ALERT", "No participant registered with this QR ID in this event")
-            elif resp == 1:
-                messagebox.showinfo("Success", "Participant entry marked. \nEntry Granted")
+        try:
+            if (qrpid.get() != "") and (qreve.get() != ""):
+                uid = qrpid.get()[2:-1]
+                eve = qreve.get()
+                resp = fi.mark_entry(p_id=uid, event=eve)
+                if resp == 0:
+                    messagebox.showerror("ALERT", "No participant registered with this QR ID in this event")
+                elif resp == 1:
+                    messagebox.showinfo("Success", "Participant entry marked. \nEntry Granted")
+                else:
+                    messagebox.showerror("ALERT", "Participant already entered. \nEntry Denied")
+                screen7.focus_force()
+                qrpid.set("")
+            elif qrpid.get() != "":
+                messagebox.showerror("ALERT", "No Event selected")
+            elif qreve.get() != "":
+                messagebox.showerror("ALERT", "No QR ID found")
             else:
-                messagebox.showerror("ALERT", "Participant already entered. \nEntry Denied")
+                messagebox.showerror("ALERT", "Fields Incomplete")
+        except:
+            messagebox.showerror("ALERT", "Unable to connect to the server")
+        finally:
             screen7.focus_force()
-            qrpid.set("")
-        elif qrpid.get() != "":
-            messagebox.showerror("ALERT", "No Event selected")
-        elif qreve.get() != "":
-            messagebox.showerror("ALERT", "No QR ID found")
-        else:
-            messagebox.showerror("ALERT", "Fields Incomplete")
-        screen7.focus_force()
 
     # GUI of entry marker
     screen7 = Toplevel(screen4)
@@ -217,32 +221,40 @@ def QRScan():
     screen7.focus_force()
     icon = PhotoImage(file="./resc/qr-code-scan.png")
     screen7.iconphoto(False, icon)
-    evts = fi.get_events()
-    qrpid = StringVar()
-    qreve = StringVar()
-    label = Label(screen7, text="Participant Entry", bg=colr, font=("Times New Roman", 20, 'bold'))
-    label.configure(foreground="white", anchor="center")
-    label.grid(row=1, column=1, padx=20, pady=(20, 15), columnspan=3)
-    label = Label(screen7, width=15, text="Select Event : ", bg=colr)
-    label.configure(foreground="white")
-    label.grid(row=3, column=1, padx=5, pady=10)
-    screen7.entry1 = ttk.Combobox(screen7, width=17, textvariable=qreve, state="readonly")
-    screen7.entry1.grid(row=3, column=2, padx=5, pady=10, columnspan=1)
-    screen7.entry1['values'] = evts
-    screen7.entry1.current()
-    buton = Button(screen7, width=15, text="Scan", command=callscan)
-    buton.grid(row=5, column=1, padx=15, pady=(20, 10), columnspan=1)
-    # binding Ctrl + s key as shortcut to open scanner
-    screen7.bind("<Control-s>", lambda event=None: buton.invoke())
-    button = Button(screen7, width=15, text="Mark", command=marker)
-    button.grid(row=5, column=2, padx=15, pady=(20, 10), columnspan=1)
-    # binding Enter key as shortcut to mark the entry
-    screen7.bind('<Return>', lambda event=None: button.invoke())
-    label = Label(screen7, width=15, text="QR ID : ", bg=colr)
-    label.configure(foreground="white")
-    label.grid(row=4, column=1, padx=5, pady=10)
-    screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
-    screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
+    try:
+        evts = fi.get_events()
+        qrpid = StringVar()
+        qreve = StringVar()
+        label = Label(screen7, text="Participant Entry", bg=colr, font=("Times New Roman", 20, 'bold'))
+        label.configure(foreground="white", anchor="center")
+        label.grid(row=1, column=1, padx=20, pady=(20, 15), columnspan=3)
+        label = Label(screen7, width=15, text="Select Event : ", bg=colr)
+        label.configure(foreground="white")
+        label.grid(row=3, column=1, padx=5, pady=10)
+        screen7.entry1 = ttk.Combobox(screen7, width=17, textvariable=qreve, state="readonly")
+        screen7.entry1.grid(row=3, column=2, padx=5, pady=10, columnspan=1)
+        screen7.entry1['values'] = evts
+        screen7.entry1.current()
+        label = Label(screen7, width=15, text="QR ID : ", bg=colr)
+        label.configure(foreground="white")
+        label.grid(row=4, column=1, padx=5, pady=10)
+        screen7.entryname = Entry(screen7, width=20, textvariable=qrpid)
+        screen7.entryname.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
+        buton = Button(screen7, width=15, text="Scan (ctrl + s)", command=callscan)
+        buton.grid(row=5, column=1, padx=15, pady=(20, 0), columnspan=1)
+        # binding Ctrl + s key as shortcut to open scanner
+        screen7.bind("<Control-s>", lambda event=None: buton.invoke())
+        button = Button(screen7, width=15, text="Mark (↵)", command=marker)
+        button.grid(row=5, column=2, padx=15, pady=(20, 0), columnspan=1)
+        # binding Enter key as shortcut to mark the entry
+        screen7.bind('<Return>', lambda event=None: button.invoke())
+        label = Label(screen7, width=35, text="Press 'Esc' or 'q' to close camera \nPress 's' to save image.", bg=colr)
+        label.configure(foreground="#767777")
+        label.grid(row=6, column=1, padx=5, pady=10, columnspan=2)
+    except:
+        messagebox.showerror("ALERT", "Unable to connect to the server")
+    finally:
+        screen7.focus_force()
 
     # set focus to management window on closing
     screen4.focus_force()
@@ -274,81 +286,85 @@ def QRP():
         This function loads the GUI of participant registration window.
         """
 
-        global screen5
-        evts = fi.get_events()
         gcolor = "#161a2d"
+        global screen5
         screen5 = Toplevel(screen4)
         screen5.title("QR Generator")
         screen5.geometry(screen5geo)
         screen5.resizable(False, False)
         screen5.config(background=gcolor)
-        screen5.focus_force()
         icon = PhotoImage(file="./resc/laptop.png")
         screen5.iconphoto(False, icon)
-        label = Label(screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
-        label.configure(foreground="white", anchor="center")
-        label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)
-        label = Label(screen5, text="Enter all details or QR-ID of participant", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=1, column=1, padx=5, pady=10, columnspan=3)
-        label = Label(screen5, text="Enter Name : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=2, column=1, padx=5, pady=10)
-        screen5.entryname = Entry(screen5, width=30, textvariable=qrName)
-        screen5.entryname.grid(row=2, column=2, padx=5, pady=10, columnspan=2)
-        screen5.entryname.focus_set()
-        label = Label(screen5, text="Enter Phno : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=3, column=1, padx=5, pady=10)
-        screen5.entryphno = Entry(screen5, width=30, textvariable=qrphno)
-        screen5.entryphno.grid(row=3, column=2, padx=5, pady=10, columnspan=2)
-        label = Label(screen5, text="Enter Email : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=4, column=1, padx=5, pady=10)
-        screen5.entrymail = Entry(screen5, width=30, textvariable=qrmail)
-        screen5.entrymail.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
-        label = Label(screen5, text="QR ID : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=5, column=1, padx=5, pady=10)
-        screen5.entry = Entry(screen5, width=15, textvariable=qrID)
-        screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
-        sbtn = Button(screen5, width=8, text="Scanner", command=callscan)
-        sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
-        # binding Ctrl + s key as shortcut to open scanner
-        screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
-        ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
-        label = Label(screen5, text="1st Event Name : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=7, column=1, padx=5, pady=10)
-        label = Label(screen5, text="2nd Event Name : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=8, column=1, padx=5, pady=10)
-        screen5.entry1 = ttk.Combobox(screen5, width=27, textvariable=qrevent1, state="readonly")
-        screen5.entry1.grid(row=7, column=2, padx=5, pady=10, columnspan=2)
-        screen5.entry1['values'] = evts
-        screen5.entry1.current()
-        screen5.entry2 = ttk.Combobox(screen5, width=27, textvariable=qrevent2, state="readonly")
-        screen5.entry2.grid(row=8, column=2, padx=5, pady=10, columnspan=2)
-        screen5.entry2['values'] = evts
-        screen5.entry2.current()
-        label = Label(screen5, text="QR Code : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=9, column=1, padx=5, pady=10)
-        button = Button(screen5, width=10, text="Generate", command=QRCodeGenerate)
-        button.grid(row=9, column=2, padx=5, pady=10, columnspan=1)
-        # binding Enter key as shortcut to generate QR
-        screen5.bind('<Return>', lambda event=None: button.invoke())
-        buton = Button(screen5, width=10, text="Clear", command=QRClear)
-        buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)
-        # binding Ctrl + r key as shortcut to clear fields
-        screen5.bind("<Control-r>", lambda event=None: buton.invoke())
-        screen5.imageLabel = Label(screen5, background=gcolor)
-        screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10, 5), pady=10)
-        image = Image.open("./resc/wait.png")
-        image = image.resize((350, 350), Image.ANTIALIAS)
-        image = ImageTk.PhotoImage(image)
-        screen5.imageLabel.config(image=image)
-        screen5.imageLabel.photo = image
+        try:
+            evts = fi.get_events()
+            label = Label(screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
+            label.configure(foreground="white", anchor="center")
+            label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)
+            label = Label(screen5, text="Enter all details or QR-ID of participant", bg=gcolor)
+            label.configure(foreground="white")
+            label.grid(row=1, column=1, padx=5, pady=10, columnspan=3)
+            label = Label(screen5, text="Enter Name : ", bg=gcolor)
+            label.configure(foreground="white")
+            label.grid(row=2, column=1, padx=5, pady=10)
+            screen5.entryname = Entry(screen5, width=30, textvariable=qrName)
+            screen5.entryname.grid(row=2, column=2, padx=5, pady=10, columnspan=2)
+            screen5.entryname.focus_set()
+            label = Label(screen5, text="Enter Phno : ", bg=gcolor)
+            label.configure(foreground="white")
+            label.grid(row=3, column=1, padx=5, pady=10)
+            screen5.entryphno = Entry(screen5, width=30, textvariable=qrphno)
+            screen5.entryphno.grid(row=3, column=2, padx=5, pady=10, columnspan=2)
+            label = Label(screen5, text="Enter Email : ", bg=gcolor)
+            label.configure(foreground="white")
+            label.grid(row=4, column=1, padx=5, pady=10)
+            screen5.entrymail = Entry(screen5, width=30, textvariable=qrmail)
+            screen5.entrymail.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
+            label = Label(screen5, text="QR ID : ", bg=gcolor)
+            label.configure(foreground="white")
+            label.grid(row=5, column=1, padx=5, pady=10)
+            screen5.entry = Entry(screen5, width=15, textvariable=qrID)
+            screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
+            sbtn = Button(screen5, width=10, text="Scan (ctrl + s)", command=callscan)
+            sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
+            # binding Ctrl + s key as shortcut to open scanner
+            screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
+            ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
+            label = Label(screen5, text="1st Event Name : ", bg=gcolor)
+            label.configure(foreground="white")
+            label.grid(row=7, column=1, padx=5, pady=10)
+            label = Label(screen5, text="2nd Event Name : ", bg=gcolor)
+            label.configure(foreground="white")
+            label.grid(row=8, column=1, padx=5, pady=10)
+            screen5.entry1 = ttk.Combobox(screen5, width=27, textvariable=qrevent1, state="readonly")
+            screen5.entry1.grid(row=7, column=2, padx=5, pady=10, columnspan=2)
+            screen5.entry1['values'] = evts
+            screen5.entry1.current()
+            screen5.entry2 = ttk.Combobox(screen5, width=27, textvariable=qrevent2, state="readonly")
+            screen5.entry2.grid(row=8, column=2, padx=5, pady=10, columnspan=2)
+            screen5.entry2['values'] = evts
+            screen5.entry2.current()
+            label = Label(screen5, text="QR Code : ", bg=gcolor)
+            label.configure(foreground="white")
+            label.grid(row=9, column=1, padx=5, pady=10)
+            button = Button(screen5, width=10, text="Generate (↵)", command=QRCodeGenerate)
+            button.grid(row=9, column=2, padx=5, pady=10, columnspan=1)
+            # binding Enter key as shortcut to generate QR
+            screen5.bind('<Return>', lambda event=None: button.invoke())
+            buton = Button(screen5, width=10, text="Clear (ctrl + r)", command=QRClear)
+            buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)
+            # binding Ctrl + r key as shortcut to clear fields
+            screen5.bind("<Control-r>", lambda event=None: buton.invoke())
+            screen5.imageLabel = Label(screen5, background=gcolor)
+            screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10, 5), pady=10)
+            image = Image.open("./resc/wait.png")
+            image = image.resize((350, 350), Image.ANTIALIAS)
+            image = ImageTk.PhotoImage(image)
+            screen5.imageLabel.config(image=image)
+            screen5.imageLabel.photo = image
+        except:
+            messagebox.showerror("ALERT", "Unable to connect to the server")
+        finally:
+            screen5.focus_force()
 
     # reload wait image
     def ld():
@@ -403,7 +419,7 @@ def QRP():
                             messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
                         elif i == 4:
                             messagebox.showerror("ALERT", "Participant already registered in provided events. \nRegistration Aborted")
-                        else:
+                        elif i == 1:
                             qrGenerate = pyqrcode.create(content)
                             qrCodePath = './data/'
                             qrCodeName = qrCodePath + qrphno.get() + ".png"
@@ -429,7 +445,6 @@ def QRP():
                 screen5.entryphno.focus_set()
         elif (qrID.get() != '') and (qrevent1.get() != ''):
             autofil()
-            screen5.focus_force()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen5.focus_force()
@@ -444,17 +459,22 @@ def QRP():
         eve = [qrevent1.get(), qrevent2.get()]
         if qrevent2.get() == "":
             eve = [qrevent1.get()]
-        resp = fi.add_part(p_id=uid, name="", email_id="", phone="", events=eve)
-        if resp == 0:
-            messagebox.showerror("ALERT", "No Registration found on this QR ID \nRegistration Aborted")
-        elif resp == 2:
-            messagebox.showinfo("Pay Attention", "Participant already registered in event 1. \nRegistration for event 2 complete")
-        elif resp == 3:
-            messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
-        elif resp == 4:
-            messagebox.showerror("ALERT", "Participant already registered in provided events. \nRegistration Aborted")
-        else:
-            messagebox.showinfo("Success", "Registration Completed")
+        try:
+            resp = fi.add_part(p_id=uid, name="", email_id="", phone="", events=eve)
+            if resp == 0:
+                messagebox.showerror("ALERT", "No Registration found on this QR ID \nRegistration Aborted")
+            elif resp == 2:
+                messagebox.showinfo("Pay Attention", "Participant already registered in event 1. \nRegistration for event 2 complete")
+            elif resp == 3:
+                messagebox.showinfo("Pay Attention", "Participant already registered in event 2. \nRegistration for event 1 complete")
+            elif resp == 4:
+                messagebox.showerror("ALERT", "Participant already registered in provided events. \nRegistration Aborted")
+            else:
+                messagebox.showinfo("Success", "Registration Completed")
+        except:
+            messagebox.showerror("ALERT", "Unable to connect to the server")
+        finally:
+            screen5.focus_force()
 
     # code to add participant data to excel sheet
     def QRdatamgXL():
@@ -488,8 +508,13 @@ def QRP():
         eve = [qrevent1.get(), qrevent2.get()]
         if qrevent2.get() == "":
             eve = [qrevent1.get()]
-        resp = fi.add_part(p_id=content, name=qrName.get(), email_id=qrmail.get(), phone=qrphno.get(), events=eve)
-        return resp
+        try:
+            resp = fi.add_part(p_id=content, name=qrName.get(), email_id=qrmail.get(), phone=qrphno.get(), events=eve)
+            return resp
+        except:
+            messagebox.showerror("ALERT", "Unable to connect to the server")
+        finally:
+            screen5.focus_force()
 
     qrName = StringVar()
     qrphno = StringVar()
@@ -527,19 +552,23 @@ def eventmgm():
         """
 
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
-            resp = fi.add_event(name=evename.get(), date=evedate.get(), time=evetime.get())
-            if resp == 0:
-                messagebox.showerror("ALERT", "Another event entry with same name already exists")
-                adevent.focus_set()
-            elif resp == 2:
-                messagebox.showerror("ALERT", "Wrong date format: \n Correct format: YYYY-MM-DD")
-                adevedt.focus_set()
-            elif resp == 3:
-                messagebox.showerror("ALERT", "Wrong Time format: \n Correct format: HH:MM")
-                adeveti.focus_set()
-            else:
-                messagebox.showinfo("Success", "Event added successfully")
-            screen6.focus_force()
+            try:
+                resp = fi.add_event(name=evename.get(), date=evedate.get(), time=evetime.get())
+                if resp == 0:
+                    messagebox.showerror("ALERT", "Another event entry with same name already exists")
+                    adevent.focus_set()
+                elif resp == 2:
+                    messagebox.showerror("ALERT", "Wrong date format: \n Correct format: YYYY-MM-DD")
+                    adevedt.focus_set()
+                elif resp == 3:
+                    messagebox.showerror("ALERT", "Wrong Time format: \n Correct format: HH:MM")
+                    adeveti.focus_set()
+                else:
+                    messagebox.showinfo("Success", "Event added successfully")
+            except:
+                messagebox.showerror("ALERT", "Unable to connect to the server")
+            finally:
+                screen6.focus_force()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen6.focus_force()
@@ -553,21 +582,25 @@ def eventmgm():
         """
 
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
-            resp = fi.remove_event(name=evename.get(), date=evedate.get(), time=evetime.get())
-            if resp == 0:
-                messagebox.showerror("ALERT", "Someone is registered in this event")
-                adevent.focus_set()
-            elif resp == 1:
-                messagebox.showinfo("Success", "Event removed successfully")
-            elif resp == 2:
-                messagebox.showerror("ALERT", "Wrong date format: \nCorrect format: YYYY-MM-DD")
-                adevedt.focus_set()
-            elif resp == 3:
-                messagebox.showerror("ALERT", "Wrong Time format: \nCorrect format: HH:MM")
-                adeveti.focus_set()
-            elif resp == 4:
-                messagebox.showerror("ALERT", "Invalid event details")
-            screen6.focus_force()
+            try:
+                resp = fi.remove_event(name=evename.get(), date=evedate.get(), time=evetime.get())
+                if resp == 0:
+                    messagebox.showerror("ALERT", "Someone is registered in this event")
+                    adevent.focus_set()
+                elif resp == 1:
+                    messagebox.showinfo("Success", "Event removed successfully")
+                elif resp == 2:
+                    messagebox.showerror("ALERT", "Wrong date format: \nCorrect format: YYYY-MM-DD")
+                    adevedt.focus_set()
+                elif resp == 3:
+                    messagebox.showerror("ALERT", "Wrong Time format: \nCorrect format: HH:MM")
+                    adeveti.focus_set()
+                elif resp == 4:
+                    messagebox.showerror("ALERT", "Invalid event details")
+            except:
+                messagebox.showerror("ALERT", "Unable to connect to the server")
+            finally:
+                screen6.focus_force()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen6.focus_force()
@@ -603,11 +636,11 @@ def eventmgm():
     lbl.grid(row=3, column=1, padx=(40, 5), pady=5, columnspan=1)
     adeveti = Entry(screen6, width='17', textvariable=evetime)
     adeveti.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
-    bnt = Button(screen6, text="Clear", command=clrevent, width='13')
+    bnt = Button(screen6, text="Clear (ctrl + r)", command=clrevent, width=18)
     bnt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)
-    nbt = Button(screen6, text="Add Event", command=addevent, width='13')
+    nbt = Button(screen6, text="Add Event (ctrl + a)", command=addevent, width=18)
     nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)
-    tnb = Button(screen6, text="Remove Event", command=remevent, width='13')
+    tnb = Button(screen6, text="Remove Event (ctrl + d)", command=remevent, width=18)
     tnb.grid(row=3, column=3, padx=5, pady=5, columnspan=2)
     # binding Ctrl + a key as shortcut to add event
     screen6.bind("<Control-a>", lambda event=None: nbt.invoke())
@@ -635,43 +668,46 @@ def report_gen():
     participants & their attendance in various events.
     """
 
-    rep = fi.get_report()
-    # path to report excel file
-    p = "./data/report.xlsx"
     try:
-        wb = load_workbook(p)
-    except FileNotFoundError:
-        wb = Workbook(p)
-        wb.save(p)
-    try:
-        wb = load_workbook(p)
-        sheet = wb.active
-        sheet.delete_cols(1, 20)
-        sheet.delete_rows(1, 1000)
-        row = ("S.No.", "QR ID", "Name", "E-mail", "Phone no.")
-        sheet.append(row)
-        wb.save(p)
-        count = 1
-        for i in rep:
-            row = (count, i[0], i[1], i[2], i[3])
-            col = 6
-            e_count = 1
-            count += 1
-            sheet.append(row)
-            for x in i[4].split(","):
-                sheet.cell(row=1, column=col).value = "Event " + str(e_count)
-                sheet.cell(row=count, column=col).value = x[:-1]
-                sheet.cell(row=1, column=col + 1).value = "E-" + str(e_count) + " Entry"
-                sheet.cell(row=count, column=col + 1).value = x[-1].replace("1", "Not Entered").replace("2", "Entered")
-                col += 2
-                e_count += 1
+        rep = fi.get_report()
+        # path to report excel file
+        p = "./data/report.xlsx"
+        try:
+            wb = load_workbook(p)
+        except FileNotFoundError:
+            wb = Workbook(p)
             wb.save(p)
-        messagebox.showinfo("Success", "Report Generated successfully \nAt path = " + p)
-    except PermissionError:
-        messagebox.showerror("Alert", "File access denied. \nClose the excel sheet OR Run program as Administrator to fix this issue.")
-
-    # set focus to management window on closing
-    screen4.focus_force()
+        try:
+            wb = load_workbook(p)
+            sheet = wb.active
+            sheet.delete_cols(1, 20)
+            sheet.delete_rows(1, 1000)
+            row = ("S.No.", "QR ID", "Name", "E-mail", "Phone no.")
+            sheet.append(row)
+            wb.save(p)
+            count = 1
+            for i in rep:
+                row = (count, i[0], i[1], i[2], i[3])
+                col = 6
+                e_count = 1
+                count += 1
+                sheet.append(row)
+                for x in i[4].split(","):
+                    sheet.cell(row=1, column=col).value = "Event " + str(e_count)
+                    sheet.cell(row=count, column=col).value = x[:-1]
+                    sheet.cell(row=1, column=col + 1).value = "E-" + str(e_count) + " Entry"
+                    sheet.cell(row=count, column=col + 1).value = x[-1].replace("1", "Not Entered").replace("2", "Entered")
+                    col += 2
+                    e_count += 1
+                wb.save(p)
+            messagebox.showinfo("Success", "Report Generated successfully \nPath: " + p)
+        except PermissionError:
+            messagebox.showerror("Alert", "File access denied. \nClose the excel sheet OR Run program as Administrator to fix this issue.")
+    except:
+        messagebox.showerror("ALERT", "Unable to connect to the server")
+    finally:
+        # set focus to management window on closing
+        screen4.focus_force()
 
 
 # code to manage user tasks
@@ -696,13 +732,13 @@ def mgm_page():
     label.grid(row=1, column=1, padx=5, pady=(20, 30), columnspan=3)
     label = Label(screen4, text="Participant Registration", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=2, column=1, padx=(30, 40), pady=15, columnspan=1)
-    btn = Button(screen4, width=15, borderwidth=0, text="Registry", command=QRP)
+    btn = Button(screen4, width=15, borderwidth=0, text="Registry (ctrl + g)", command=QRP)
     btn.grid(row=3, column=1, padx=(30, 40), pady=10, columnspan=1)
     label = Label(screen4, text="Register participants in one or more \nevents & Generate QR code, \nunique for everyone", bg=colr, fg="white")
     label.grid(row=4, column=1, padx=(30, 40), pady=10, columnspan=1)
     label = Label(screen4, text="Participant Verification", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=2, column=3, padx=50, pady=15, columnspan=1)
-    bnt = Button(screen4, width=15, borderwidth=0, text="Entry", command=QRScan)
+    bnt = Button(screen4, width=15, borderwidth=0, text="Entry (ctrl + s)", command=QRScan)
     bnt.grid(row=3, column=3, padx=50, pady=10, columnspan=1)
     label = Label(screen4, text="Verify and mark participant's entry, \nusing the QR code provided, \nfor each event", bg=colr, fg="white")
     label.grid(row=4, column=3, padx=50, pady=10, columnspan=1)
@@ -710,13 +746,13 @@ def mgm_page():
     ttk.Separator(screen4, orient=HORIZONTAL).grid(column=2, row=2, rowspan=9, sticky='ns')
     label = Label(screen4, text="Event Management", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=6, column=1, padx=(30, 40), pady=15, columnspan=1)
-    tbn = Button(screen4, width=15, borderwidth=0, text="Manage", command=eventmgm)
+    tbn = Button(screen4, width=15, borderwidth=0, text="Manage (ctrl + e)", command=eventmgm)
     tbn.grid(row=7, column=1, padx=(30, 40), pady=10, columnspan=1)
     label = Label(screen4, text="Add and remove events to be organized, \nalong with their date and time", bg=colr, fg="white")
     label.grid(row=8, column=1, padx=(30, 40), pady=10, columnspan=1)
     label = Label(screen4, text="Report Generator", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=6, column=3, padx=50, pady=15, columnspan=1)
-    ttbn = Button(screen4, width=15, borderwidth=0, text="Report", command=report_gen)
+    ttbn = Button(screen4, width=15, borderwidth=0, text="Report (ctrl + r)", command=report_gen)
     ttbn.grid(row=7, column=3, padx=5, pady=10, columnspan=1)
     label = Label(screen4, text="Generate report for all events and \nparticipants along with their details", bg=colr, fg="white")
     label.grid(row=8, column=3, padx=50, pady=10, columnspan=1)
@@ -807,7 +843,7 @@ def main_page():
             label = Label(screen1_5, text="Registeration Success", width='30', bg="green", font=("Times New Roman", 20, 'bold'))
             label.configure(foreground="white")
             label.grid(pady=5, row=2, column=1, columnspan=1)
-            bttn = Button(screen1_5, text="OK", width="15", command=calllog)
+            bttn = Button(screen1_5, text="OK (↵)", width="15", command=calllog)
             bttn.grid(pady=5, row=3, column=1, columnspan=1)
             # binding Enter key as shortcut to proceed
             screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
@@ -828,12 +864,17 @@ def main_page():
                     if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
                         perm = perm_entry.get()
                         perm = 2 if perm == "Admin" else 1
-                        resp = fi.add_user(name=username.get(), email_id=emailid.get(), password=password.get(), phone=int(phno.get()), perm=perm)
-                        if resp == 0:
-                            messagebox.showerror("ALERT", "User email already exists")
+                        try:
+                            resp = fi.add_user(name=username.get(), email_id=emailid.get(), password=password.get(), phone=int(phno.get()), perm=perm)
+                            if resp == 0:
+                                messagebox.showerror("ALERT", "User email already exists")
+                                screen2.focus_force()
+                            else:
+                                register_user()
+                        except:
+                            messagebox.showerror("ALERT", "Unable to connect to the server")
+                        finally:
                             screen2.focus_force()
-                        else:
-                            register_user()
                     else:
                         messagebox.showerror("ALERT", "Password not Strong")
                         screen2.focus_force()
@@ -897,7 +938,7 @@ def main_page():
         perm_entry.grid(row=7, column=2, columnspan=1, pady=5)
         labl = Label(screen2, text="", bg=colr)
         labl.grid(row=8, column=1, columnspan=2)
-        regbtn = Button(screen2, text="Sumbit", width='18', command=valinp)
+        regbtn = Button(screen2, text="Sumbit (↵)", width='18', command=valinp)
         regbtn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)
         # binding Enter key as shortcut to proceed
         screen2.bind('<Return>', lambda event=None: regbtn.invoke())
@@ -923,9 +964,9 @@ def main_page():
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
         label.grid(row=1, column=1, pady=5, columnspan=1)
-        bttnn = Button(screen3, text="OK", width="15", command=clrlogin)
+        bttnn = Button(screen3, text="OK (↵)", width="15", command=clrlogin)
         bttnn.grid(row=2, column=1, pady=5, columnspan=1)
-        bttn = Button(screen3, text="Add Organizer", width="15", command=register)
+        bttn = Button(screen3, text="Add User (ctrl + a)", width="15", command=register)
         bttn.grid(row=3, column=1, pady=5, columnspan=1)
         # binding Enter key as shortcut to proceed
         screen3.bind('<Return>', lambda event=None: bttnn.invoke())
@@ -944,7 +985,7 @@ def main_page():
         label = Label(screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
         label.grid(row=2, column=1, pady=5)
-        bttn = Button(screen3, text="OK", width="10", command=clrlogin)
+        bttn = Button(screen3, text="OK (↵)", width="10", command=clrlogin)
         bttn.grid(row=3, column=1, pady=5)
         # binding Enter key as shortcut to proceed
         screen3.bind('<Return>', lambda event=None: bttn.invoke())
@@ -1051,7 +1092,7 @@ def main_page():
     password_entry1.grid(row=7, column=1, padx=5, pady=5, columnspan=1)
     label = Label(text="", bg=colr)
     label.grid(row=8, column=1)
-    btnn = Button(text="Login", width="18", command=chk_login_verify)
+    btnn = Button(text="Login (↵)", width="18", command=chk_login_verify)
     btnn.grid(row=9, column=1, padx=5, pady=5, columnspan=1)
     # binding Enter key as shortcut to login
     screen1.bind('<Return>', lambda event=None: btnn.invoke())
