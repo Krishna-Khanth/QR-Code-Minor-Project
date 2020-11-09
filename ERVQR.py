@@ -131,7 +131,7 @@ def scanner():
             cv2.imshow('frame', frame)
             key = cv2.waitKey(1)
             # binding q key as shortcut to close camera
-            if key & 0xFF == ord('q') or key ==27:
+            if key & 0xFF == ord('q') or key == 27:
                 cap.release()
                 cv2.destroyAllWindows()
                 break
@@ -490,6 +490,8 @@ def QRP():
         except FileNotFoundError:
             wb = Workbook(path)
             wb.save(path)
+        except PermissionError:
+            messagebox.showerror("Alert", "File access denied. \nClose the excel sheet to fix this issue.")
         wb = load_workbook(path)
         sheet = wb.active
         row = (qrName.get(), qrphno.get(), qrmail.get(), qrevent1.get(), qrevent2.get())
