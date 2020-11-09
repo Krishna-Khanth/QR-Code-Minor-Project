@@ -23,6 +23,12 @@ def sql_connect():
     :return: database name, Cursor object of database, connector of database.
     """
 
+    # mydb = mysql.connector.connect(
+    #     host="KKSJminorproject.mysql.pythonanywhere-services.com",
+    #     user="KKSJminorproject",
+    #     password="mpdbkksj"
+    # )
+
     try:
         mydb = mysql.connector.connect(
             host="127.0.0.1",
@@ -269,7 +275,7 @@ def get_report() -> [[str]]:
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
-    sql = "SELECT `minor_db`.`participants`.*, GROUP_CONCAT(`minor_db`.`events`.name, `minor_db`.`registration`.present) as \"events\" FROM ((`minor_db`.`participants` INNER JOIN `minor_db`.`registration` ON `minor_db`.`participants`.p_id = `minor_db`.`registration`.p_id) INNER JOIN `minor_db`.`events` ON `minor_db`.`events`.event_id = `minor_db`.`registration`.event_id) group by p_id;"
+    sql = "SELECT `" + db_name + "`.`participants`.*, GROUP_CONCAT(`" + db_name + "`.`events`.name, `" + db_name + "`.`registration`.present) as \"events\" FROM ((`" + db_name + "`.`participants` INNER JOIN `" + db_name + "`.`registration` ON `" + db_name + "`.`participants`.p_id = `" + db_name + "`.`registration`.p_id) INNER JOIN `" + db_name + "`.`events` ON `" + db_name + "`.`events`.event_id = `" + db_name + "`.`registration`.event_id) group by p_id;"
     mycursor.execute(sql)
     myresult = mycursor.fetchall()
     return myresult
@@ -286,7 +292,7 @@ def mark_entry(p_id: str, event_id: str):
     db_name, mycursor, mydb = sql_connect()
     mycursor.execute("USE " + db_name)
 
-    sql = "UPDATE `minor_db`.`registration` SET `present` = '2' WHERE p_id = %s AND event_id = %s"
+    sql = "UPDATE `" + db_name + "`.`registration` SET `present` = '2' WHERE p_id = %s AND event_id = %s"
     val = (p_id, event_id)
     mycursor.execute(sql, val)
     mydb.commit()
