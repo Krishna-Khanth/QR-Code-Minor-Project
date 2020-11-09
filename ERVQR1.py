@@ -137,10 +137,10 @@ def scanner():
                 break
             # binding s key as shortcut to save image in front of camera
             elif key & 0xFF == ord('s'):
-                if (bar != "") or (bar is not None):
+                if (bar != "") or (len(bar) != 0):
                     iname = "./scan/" + bar + ".png"
                 else:
-                    iname = "./scan/" + random.randint(1, 101) + ".png"
+                    iname = "./scan/" + str(random.randint(1, 101)) + ".png"
                 cv2.imwrite(iname, frame)
                 messagebox.showinfo("INFO", "QR Saved")
 
