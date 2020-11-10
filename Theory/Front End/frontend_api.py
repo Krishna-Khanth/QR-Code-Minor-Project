@@ -14,11 +14,11 @@ import hashlib
 # remove_event (name, date, time)
 # get_report ()
 
-url = "http://127.0.0.1:5000"
-# url = "https://KKSJminorproject.pythonanywhere.com"
+# url = "http://127.0.0.1:5000"
+url = "https://KKSJminorproject.pythonanywhere.com"
 user_id = ""
 upassw = ""
-time = 5
+timeout = 5
 
 
 def login(uid: str, password: str) -> int:
@@ -32,7 +32,7 @@ def login(uid: str, password: str) -> int:
 
     global upassw, user_id
     password = security(password)
-    r = requests.post(url + "/login", json={"id": uid, "password": password}, timeout=time)
+    r = requests.post(url + "/login", json={"id": uid, "password": password}, timeout=timeout)
     if r.json()["body"]["permission"] >= 1:
         upassw = password
         user_id = uid
@@ -52,7 +52,7 @@ def add_user(name: str, email_id: str, password: str, phone: str, perm: int) -> 
     """
 
     password = security(password)
-    r = requests.post(url + "/add_user", json={"name": name, "email_id": email_id, "password": password, "phone": phone, "permission": perm, "uid": user_id, "upassw": upassw}, timeout=time)
+    r = requests.post(url + "/add_user", json={"name": name, "email_id": email_id, "password": password, "phone": phone, "permission": perm, "uid": user_id, "upassw": upassw}, timeout=timeout)
     return r.json()["body"]["response"]
 
 
@@ -68,7 +68,7 @@ def add_part(p_id: str, name: str, email_id: str, phone: str, events: [str]) -> 
     :return: "0" some error OR no registration for this participant, "1" success, ("2"/"3"/"4") event (1/2/both) registered for this participant.
     """
 
-    r = requests.post(url + "/add_part", json={"p_id": p_id, "name": name, "email_id": email_id, "phone": phone, "events": events, "uid": user_id, "upassw": upassw}, timeout=time)
+    r = requests.post(url + "/add_part", json={"p_id": p_id, "name": name, "email_id": email_id, "phone": phone, "events": events, "uid": user_id, "upassw": upassw}, timeout=timeout)
     return r.json()["body"]["response"]
 
 
@@ -91,7 +91,7 @@ def add_event(name: str, date: str, time: str) -> int:
     except ValueError:
         return 3
     time = time + ":00"
-    r = requests.post(url + "/add_event", json={"name": name, "date": date, "time": time, "uid": user_id, "upassw": upassw}, timeout=time)
+    r = requests.post(url + "/add_event", json={"name": name, "date": date, "time": time, "uid": user_id, "upassw": upassw}, timeout=timeout)
     return r.json()["body"]["response"]
 
 
@@ -102,7 +102,7 @@ def get_events():
     :return: List of events.
     """
 
-    r = requests.get(url + "/get_events", timeout=time)
+    r = requests.get(url + "/get_events", timeout=timeout)
     return r.json()["body"]["response"]
 
 
@@ -115,7 +115,7 @@ def mark_entry(p_id, event):
     :return: "0" Not Registered, "1" Registered, "2" Already entered.
     """
 
-    r = requests.post(url + "/mark_entry", json={"p_id": p_id, "event": event, "uid": user_id, "upassw": upassw}, timeout=time)
+    r = requests.post(url + "/mark_entry", json={"p_id": p_id, "event": event, "uid": user_id, "upassw": upassw}, timeout=timeout)
     return r.json()["body"]["response"]
 
 
@@ -138,7 +138,7 @@ def remove_event(name, date, time):
     except ValueError:
         return 3
     time = time + ":00"
-    r = requests.post(url + "/remove_event", json={"name": name, "date": date, "time": time, "uid": user_id, "upassw": upassw}, timeout=time)
+    r = requests.post(url + "/remove_event", json={"name": name, "date": date, "time": time, "uid": user_id, "upassw": upassw}, timeout=timeout)
     return r.json()["body"]["response"]
 
 
@@ -149,7 +149,7 @@ def get_report():
     :return: List of tuple containing registry of each participant.
     """
 
-    r = requests.get(url + "/get_report", timeout=time)
+    r = requests.get(url + "/get_report", timeout=timeout)
     return r.json()["body"]["response"]
 
 
