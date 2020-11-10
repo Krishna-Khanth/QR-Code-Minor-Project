@@ -1211,7 +1211,5 @@ colr = "#1c44a5"
 # checking OS to set GUI geometry
 chkos()
 
-os.system("start cmd  /c python ..\\Backend\\backend_api.py")
-
 # start program by calling 1st module of login
 main_page()

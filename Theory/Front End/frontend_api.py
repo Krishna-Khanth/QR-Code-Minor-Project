@@ -14,8 +14,8 @@ import hashlib
 # remove_event (name, date, time)
 # get_report ()
 
-# url = "http://127.0.0.1:5000"
-url = "https://KKSJminorproject.pythonanywhere.com"
+url = "http://127.0.0.1:5000"
+# url = "https://KKSJminorproject.pythonanywhere.com"
 user_id = ""
 upassw = ""
 timeout = 5
