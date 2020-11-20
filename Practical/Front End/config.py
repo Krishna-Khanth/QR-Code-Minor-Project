@@ -13,3 +13,5 @@ screen4geo = 0
 screen5geo = 0
 screen6geo = 0
 screen7geo = 0
+
+perm_entry = "none"

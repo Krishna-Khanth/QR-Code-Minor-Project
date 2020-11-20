@@ -951,12 +951,12 @@ def main_page():
         and sends the validated data to the server.
         """
 
-        if (username.get() != "") and (emailid.get() != "") and (phno.get() != "") and (password.get() != "") and (perm_entry.get() != "Select"):
+        if (username.get() != "") and (emailid.get() != "") and (phno.get() != "") and (password.get() != "") and (config.perm_entry.get() != "Select"):
             if len(phno.get()) == 10:
                 rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
                 if re.search(rege, emailid.get()):
                     if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
-                        perm = perm_entry.get()
+                        perm = config.perm_entry.get()
                         perm = 2 if perm == "Admin" else 1
                         try:
                             resp = fi.add_user(name=username.get(), email_id=emailid.get(), password=password.get(), phone=int(phno.get()), perm=perm)
@@ -989,7 +989,6 @@ def main_page():
         """
 
         config.screen3.withdraw()
-        global perm_entry
         config.screen2 = Toplevel(config.screen1)
         config.screen2.title("Register")
         config.screen2.geometry(config.screen2geo)
@@ -1027,9 +1026,9 @@ def main_page():
         labl = Label(config.screen2, text="Permission : ", width='30', bg=colr)
         labl.configure(foreground="white")
         labl.grid(row=7, column=1, padx=5, pady=5, columnspan=1)
-        perm_entry = ttk.Combobox(config.screen2, textvariable=rights, width="17", values=["Select", "Admin", "User"], state="readonly")
-        perm_entry.current(0)
-        perm_entry.grid(row=7, column=2, columnspan=1, pady=5)
+        config.perm_entry = ttk.Combobox(config.screen2, textvariable=rights, width="17", values=["Select", "Admin", "User"], state="readonly")
+        config.perm_entry.current(0)
+        config.perm_entry.grid(row=7, column=2, columnspan=1, pady=5)
         labl = Label(config.screen2, text="", bg=colr)
         labl.grid(row=8, column=1, columnspan=2)
         regbtn = Button(config.screen2, text="Sumbit (↵)", width='18', command=valinp)
