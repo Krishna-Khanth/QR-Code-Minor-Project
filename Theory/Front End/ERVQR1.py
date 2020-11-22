@@ -18,10 +18,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from PIL import ImageTk, Image
-from openpyxl.styles import colors
-from openpyxl.styles.colors import *
 from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Font, Color, PatternFill
 
 
 # check OS to set GUI size
@@ -294,74 +291,6 @@ def QRP():
         config.screen5.config(background=gcolor)
         icon = PhotoImage(file="./resc/laptop.png")
         config.screen5.iconphoto(False, icon)
-        evts = fi.get_events()
-        label = Label(config.screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
-        label.configure(foreground="white", anchor="center")
-        label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)
-        label = Label(config.screen5, text="Enter all details or QR-ID of participant", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=1, column=1, padx=5, pady=10, columnspan=3)
-        label = Label(config.screen5, text="Enter Name : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=2, column=1, padx=5, pady=10)
-        config.screen5.entryname = Entry(config.screen5, width=30, textvariable=qrName)
-        config.screen5.entryname.grid(row=2, column=2, padx=5, pady=10, columnspan=2)
-        config.screen5.entryname.focus_set()
-        label = Label(config.screen5, text="Enter Phno : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=3, column=1, padx=5, pady=10)
-        config.screen5.entryphno = Entry(config.screen5, width=30, textvariable=qrphno)
-        config.screen5.entryphno.grid(row=3, column=2, padx=5, pady=10, columnspan=2)
-        label = Label(config.screen5, text="Enter Email : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=4, column=1, padx=5, pady=10)
-        config.screen5.entrymail = Entry(config.screen5, width=30, textvariable=qrmail)
-        config.screen5.entrymail.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
-        label = Label(config.screen5, text="QR ID : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=5, column=1, padx=5, pady=10)
-        config.screen5.entry = Entry(config.screen5, width=15, textvariable=qrID)
-        config.screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
-        sbtn = Button(config.screen5, width=10, text="Scan (ctrl + s)", command=callscan)
-        sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
-        # binding Ctrl + s key as shortcut to open scanner
-        config.screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
-        ttk.Separator(config.screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
-        label = Label(config.screen5, text="1st Event Name : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=7, column=1, padx=5, pady=10)
-        label = Label(config.screen5, text="2nd Event Name : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=8, column=1, padx=5, pady=10)
-        config.screen5.entry1 = ttk.Combobox(config.screen5, width=27, textvariable=qrevent1, state="readonly")
-        config.screen5.entry1.grid(row=7, column=2, padx=5, pady=10, columnspan=2)
-        config.screen5.entry1['values'] = evts
-        config.screen5.entry1.current()
-        config.screen5.entry2 = ttk.Combobox(config.screen5, width=27, textvariable=qrevent2, state="readonly")
-        config.screen5.entry2.grid(row=8, column=2, padx=5, pady=10, columnspan=2)
-        config.screen5.entry2['values'] = evts
-        config.screen5.entry2.current()
-        label = Label(config.screen5, text="QR Code : ", bg=gcolor)
-        label.configure(foreground="white")
-        label.grid(row=9, column=1, padx=5, pady=10)
-        button = Button(config.screen5, width=10, text="Generate (↵)", command=QRCodeGenerate)
-        button.grid(row=9, column=2, padx=5, pady=10, columnspan=1)
-        # binding Enter key as shortcut to generate QR
-        config.screen5.bind('<Return>', lambda event=None: button.invoke())
-        buton = Button(config.screen5, width=10, text="Clear (ctrl + r)", command=QRClear)
-        buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)
-        # binding Ctrl + r key as shortcut to clear fields
-        config.screen5.bind("<Control-r>", lambda event=None: buton.invoke())
-        config.screen5.imageLabel = Label(config.screen5, background=gcolor)
-        config.screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10, 5), pady=10)
-        image = Image.open("./resc/wait.png")
-        image = image.resize((350, 350), Image.ANTIALIAS)
-        image = ImageTk.PhotoImage(image)
-        config.screen5.imageLabel.config(image=image)
-        config.screen5.imageLabel.photo = image
-        config.screen5.focus_force()
-
-        """
         try:
             evts = fi.get_events()
             label = Label(config.screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
@@ -429,13 +358,11 @@ def QRP():
             config.screen5.imageLabel.config(image=image)
             config.screen5.imageLabel.photo = image
 
-        except Exception as e:
-            print ("err: ", e)
+        except:
             messagebox.showerror("ALERT", "Unable to connect to the server")
 
         finally:
             config.screen5.focus_force()
-        """
 
 
     # reload wait image
@@ -626,25 +553,6 @@ def eventmgm():
         """
 
         if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
-            resp = fi.add_event(name=evename.get(), date=evedate.get(), time=evetime.get())
-            if resp == 0:
-                messagebox.showerror("ALERT", "Another event entry with same name already exists")
-                adevent.focus_set()
-            elif resp == 2:
-                messagebox.showerror("ALERT", "Wrong date format: \n Correct format: YYYY-MM-DD")
-                adevedt.focus_set()
-            elif resp == 3:
-                messagebox.showerror("ALERT", "Wrong Time format: \n Correct format: HH:MM")
-                adeveti.focus_set()
-            else:
-                messagebox.showinfo("Success", "Event added successfully")
-            screen6.focus_force()
-        else:
-            messagebox.showerror("ALERT", "Fields Incomplete")
-            screen6.focus_force()
-
-        """
-        if (evename.get() != "") and (evedate.get() != "") and (evetime.get() != ""):
             try:
                 resp = fi.add_event(name=evename.get(), date=evedate.get(), time=evetime.get())
                 if resp == 0:
@@ -665,7 +573,6 @@ def eventmgm():
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
             screen6.focus_force()
-        """
 
     # remove events from database
     def remevent():
@@ -1204,13 +1111,15 @@ def main_page():
     config.screen1.mainloop()
 
 
-# setting a main color theme
-colr = "#1c44a5"
+# securing code from import exploits
+if __name__ == "__main__":
+    # setting a main color theme
+    colr = "#1c44a5"
 
-# checking OS to set GUI geometry
-chkos()
+    # checking OS to set GUI geometry
+    chkos()
 
-os.system("start cmd  /c python ..\\Backend\\backend_api.py")
+    os.system("start cmd  /c python ..\\Backend\\backend_api.py")
 
-# start program by calling 1st module of login
-main_page()
+    # start program by calling 1st module of login
+    main_page()
