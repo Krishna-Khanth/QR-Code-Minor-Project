@@ -3,6 +3,7 @@ import os
 import re
 import cv2
 import time
+import config
 import random
 import platform
 import pyqrcode
@@ -15,12 +16,10 @@ except:
 import pyzbar.pyzbar as pyzbar
 from tkinter import *
 from tkinter import ttk
+from tkcalendar import *
 from tkinter import messagebox
 from PIL import ImageTk, Image
-from openpyxl.styles import colors
-from openpyxl.styles.colors import *
 from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Font, Color, PatternFill
 
 
 # check OS to set GUI size
@@ -31,36 +30,35 @@ def chkos():
     """
 
     oname = platform.system()
-    global screen1geo, screen1_5geo, screen2geo, screen3geo, screen4geo, screen5geo, screen6geo, screen7geo
     if oname == "Windows":
-        screen1geo = "430x300"
-        screen1_5geo = "490x145"
-        screen2geo = "500x310"
-        screen3geo = "360x125"
-        screen4geo = "585x458"
-        screen5geo = "690x470"
-        screen6geo = "420x190"
-        screen7geo = "300x250"
+        config.screen1geo = "430x300"
+        config.screen1_5geo = "490x145"
+        config.screen2geo = "500x310"
+        config.screen3geo = "360x125"
+        config.screen4geo = "585x458"
+        config.screen5geo = "690x470"
+        config.screen6geo = "420x190"
+        config.screen7geo = "300x250"
 
     elif oname == "Linux":
-        screen1geo = "375x300"
-        screen1_5geo = "390x145"
-        screen2geo = "520x310"
-        screen3geo = "320x125"
-        screen4geo = "680x458"
-        screen5geo = "770x460"
-        screen6geo = "495x190"
-        screen7geo = "360x270"
+        config.screen1geo = "375x300"
+        config.screen1_5geo = "390x145"
+        config.screen2geo = "520x310"
+        config.screen3geo = "320x125"
+        config.screen4geo = "680x458"
+        config.screen5geo = "770x460"
+        config.screen6geo = "495x190"
+        config.screen7geo = "360x270"
 
     else:
-        screen1geo = "375x300"
-        screen1_5geo = "390x145"
-        screen2geo = "520x310"
-        screen3geo = "320x125"
-        screen4geo = "250x258"
-        screen5geo = "760x460"
-        screen6geo = "455x190"
-        screen7geo = "300x300"
+        config.screen1geo = "375x300"
+        config.screen1_5geo = "390x145"
+        config.screen2geo = "520x310"
+        config.screen3geo = "320x125"
+        config.screen4geo = "250x258"
+        config.screen5geo = "760x460"
+        config.screen6geo = "455x190"
+        config.screen7geo = "300x300"
 
 
 # code for QR scanner
@@ -213,9 +211,9 @@ def QRScan():
             screen7.focus_force()
 
     # GUI of entry marker
-    screen7 = Toplevel(screen4)
+    screen7 = Toplevel(config.screen4)
     screen7.title("Event Entry Management")
-    screen7.geometry(screen7geo)
+    screen7.geometry(config.screen7geo)
     screen7.resizable(False, False)
     screen7.config(background=colr)
     screen7.focus_force()
@@ -257,7 +255,7 @@ def QRScan():
         screen7.focus_force()
 
     # set focus to management window on closing
-    screen4.focus_force()
+    config.screen4.focus_force()
 
 
 # code to register & generate QR for participant
@@ -275,10 +273,10 @@ def QRP():
 
         resp = scanner()
         if resp == 0:
-            screen5.focus_force()
+            config.screen5.focus_force()
         else:
             qrID.set(resp)
-            screen5.focus_force()
+            config.screen5.focus_force()
 
     # code for GUI of QR generator
     def QRGen():
@@ -287,84 +285,86 @@ def QRP():
         """
 
         gcolor = "#161a2d"
-        global screen5
-        screen5 = Toplevel(screen4)
-        screen5.title("QR Generator")
-        screen5.geometry(screen5geo)
-        screen5.resizable(False, False)
-        screen5.config(background=gcolor)
+        config.screen5 = Toplevel(config.screen4)
+        config.screen5.title("QR Generator")
+        config.screen5.geometry(config.screen5geo)
+        config.screen5.resizable(False, False)
+        config.screen5.config(background=gcolor)
         icon = PhotoImage(file="./resc/laptop.png")
-        screen5.iconphoto(False, icon)
+        config.screen5.iconphoto(False, icon)
         try:
             evts = fi.get_events()
-            label = Label(screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
+            label = Label(config.screen5, text="Event Registration", bg=gcolor, font=("Times New Roman", 20, 'bold'))
             label.configure(foreground="white", anchor="center")
             label.grid(row=0, column=2, padx=5, pady=5, columnspan=4)
-            label = Label(screen5, text="Enter all details or QR-ID of participant", bg=gcolor)
+            label = Label(config.screen5, text="Enter all details or QR-ID of participant", bg=gcolor)
             label.configure(foreground="white")
             label.grid(row=1, column=1, padx=5, pady=10, columnspan=3)
-            label = Label(screen5, text="Enter Name : ", bg=gcolor)
+            label = Label(config.screen5, text="Enter Name : ", bg=gcolor)
             label.configure(foreground="white")
             label.grid(row=2, column=1, padx=5, pady=10)
-            screen5.entryname = Entry(screen5, width=30, textvariable=qrName)
-            screen5.entryname.grid(row=2, column=2, padx=5, pady=10, columnspan=2)
-            screen5.entryname.focus_set()
-            label = Label(screen5, text="Enter Phno : ", bg=gcolor)
+            config.screen5.entryname = Entry(config.screen5, width=30, textvariable=qrName)
+            config.screen5.entryname.grid(row=2, column=2, padx=5, pady=10, columnspan=2)
+            config.screen5.entryname.focus_set()
+            label = Label(config.screen5, text="Enter Phno : ", bg=gcolor)
             label.configure(foreground="white")
             label.grid(row=3, column=1, padx=5, pady=10)
-            screen5.entryphno = Entry(screen5, width=30, textvariable=qrphno)
-            screen5.entryphno.grid(row=3, column=2, padx=5, pady=10, columnspan=2)
-            label = Label(screen5, text="Enter Email : ", bg=gcolor)
+            config.screen5.entryphno = Entry(config.screen5, width=30, textvariable=qrphno)
+            config.screen5.entryphno.grid(row=3, column=2, padx=5, pady=10, columnspan=2)
+            label = Label(config.screen5, text="Enter Email : ", bg=gcolor)
             label.configure(foreground="white")
             label.grid(row=4, column=1, padx=5, pady=10)
-            screen5.entrymail = Entry(screen5, width=30, textvariable=qrmail)
-            screen5.entrymail.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
-            label = Label(screen5, text="QR ID : ", bg=gcolor)
+            config.screen5.entrymail = Entry(config.screen5, width=30, textvariable=qrmail)
+            config.screen5.entrymail.grid(row=4, column=2, padx=5, pady=10, columnspan=2)
+            label = Label(config.screen5, text="QR ID : ", bg=gcolor)
             label.configure(foreground="white")
             label.grid(row=5, column=1, padx=5, pady=10)
-            screen5.entry = Entry(screen5, width=15, textvariable=qrID)
-            screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
-            sbtn = Button(screen5, width=10, text="Scan (ctrl + s)", command=callscan)
+            config.screen5.entry = Entry(config.screen5, width=15, textvariable=qrID)
+            config.screen5.entry.grid(row=5, column=2, padx=10, pady=10, columnspan=1, sticky='w')
+            sbtn = Button(config.screen5, width=10, text="Scan (ctrl + s)", command=callscan)
             sbtn.grid(row=5, column=3, padx=5, pady=10, sticky='e')
             # binding Ctrl + s key as shortcut to open scanner
-            screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
-            ttk.Separator(screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
-            label = Label(screen5, text="1st Event Name : ", bg=gcolor)
+            config.screen5.bind("<Control-s>", lambda event=None: sbtn.invoke())
+            ttk.Separator(config.screen5, orient=HORIZONTAL).grid(column=1, row=6, columnspan=3, sticky='ew')
+            label = Label(config.screen5, text="1st Event Name : ", bg=gcolor)
             label.configure(foreground="white")
             label.grid(row=7, column=1, padx=5, pady=10)
-            label = Label(screen5, text="2nd Event Name : ", bg=gcolor)
+            label = Label(config.screen5, text="2nd Event Name : ", bg=gcolor)
             label.configure(foreground="white")
             label.grid(row=8, column=1, padx=5, pady=10)
-            screen5.entry1 = ttk.Combobox(screen5, width=27, textvariable=qrevent1, state="readonly")
-            screen5.entry1.grid(row=7, column=2, padx=5, pady=10, columnspan=2)
-            screen5.entry1['values'] = evts
-            screen5.entry1.current()
-            screen5.entry2 = ttk.Combobox(screen5, width=27, textvariable=qrevent2, state="readonly")
-            screen5.entry2.grid(row=8, column=2, padx=5, pady=10, columnspan=2)
-            screen5.entry2['values'] = evts
-            screen5.entry2.current()
-            label = Label(screen5, text="QR Code : ", bg=gcolor)
+            config.screen5.entry1 = ttk.Combobox(config.screen5, width=27, textvariable=qrevent1, state="readonly")
+            config.screen5.entry1.grid(row=7, column=2, padx=5, pady=10, columnspan=2)
+            config.screen5.entry1['values'] = evts
+            config.screen5.entry1.current()
+            config.screen5.entry2 = ttk.Combobox(config.screen5, width=27, textvariable=qrevent2, state="readonly")
+            config.screen5.entry2.grid(row=8, column=2, padx=5, pady=10, columnspan=2)
+            config.screen5.entry2['values'] = evts
+            config.screen5.entry2.current()
+            label = Label(config.screen5, text="QR Code : ", bg=gcolor)
             label.configure(foreground="white")
             label.grid(row=9, column=1, padx=5, pady=10)
-            button = Button(screen5, width=10, text="Generate (↵)", command=QRCodeGenerate)
+            button = Button(config.screen5, width=10, text="Generate (↵)", command=QRCodeGenerate)
             button.grid(row=9, column=2, padx=5, pady=10, columnspan=1)
             # binding Enter key as shortcut to generate QR
-            screen5.bind('<Return>', lambda event=None: button.invoke())
-            buton = Button(screen5, width=10, text="Clear (ctrl + r)", command=QRClear)
+            config.screen5.bind('<Return>', lambda event=None: button.invoke())
+            buton = Button(config.screen5, width=10, text="Clear (ctrl + r)", command=QRClear)
             buton.grid(row=9, column=3, padx=5, pady=10, columnspan=1)
             # binding Ctrl + r key as shortcut to clear fields
-            screen5.bind("<Control-r>", lambda event=None: buton.invoke())
-            screen5.imageLabel = Label(screen5, background=gcolor)
-            screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10, 5), pady=10)
+            config.screen5.bind("<Control-r>", lambda event=None: buton.invoke())
+            config.screen5.imageLabel = Label(config.screen5, background=gcolor)
+            config.screen5.imageLabel.grid(row=2, column=4, rowspan=9, columnspan=3, padx=(10, 5), pady=10)
             image = Image.open("./resc/wait.png")
             image = image.resize((350, 350), Image.ANTIALIAS)
             image = ImageTk.PhotoImage(image)
-            screen5.imageLabel.config(image=image)
-            screen5.imageLabel.photo = image
+            config.screen5.imageLabel.config(image=image)
+            config.screen5.imageLabel.photo = image
+
         except:
             messagebox.showerror("ALERT", "Unable to connect to the server")
+
         finally:
-            screen5.focus_force()
+            config.screen5.focus_force()
+
 
     # reload wait image
     def ld():
@@ -375,8 +375,8 @@ def QRP():
         image = Image.open("./resc/wait.png")
         image = image.resize((350, 350), Image.ANTIALIAS)
         image = ImageTk.PhotoImage(image)
-        screen5.imageLabel.config(image=image)
-        screen5.imageLabel.photo = image
+        config.screen5.imageLabel.config(image=image)
+        config.screen5.imageLabel.photo = image
 
     # code for clearing values of GUI fields
     def QRClear():
@@ -384,7 +384,7 @@ def QRP():
         This function clears the fields in participant registration window.
         """
 
-        screen5.entryname.focus_set()
+        config.screen5.entryname.focus_set()
         qrName.set("")
         qrphno.set("")
         qrmail.set("")
@@ -394,9 +394,9 @@ def QRP():
         image = Image.open("./resc/done.png")
         image = image.resize((350, 350), Image.ANTIALIAS)
         image = ImageTk.PhotoImage(image)
-        screen5.imageLabel.config(image=image)
-        screen5.imageLabel.photo = image
-        screen5.after(500, ld)
+        config.screen5.imageLabel.config(image=image)
+        config.screen5.imageLabel.photo = image
+        config.screen5.after(500, ld)
 
     # code to generate QR with participant data
     def QRCodeGenerate():
@@ -427,27 +427,27 @@ def QRP():
                             image = Image.open(qrCodeName)
                             image = image.resize((350, 350), Image.ANTIALIAS)
                             image = ImageTk.PhotoImage(image)
-                            screen5.imageLabel.config(image=image)
-                            screen5.imageLabel.photo = image
+                            config.screen5.imageLabel.config(image=image)
+                            config.screen5.imageLabel.photo = image
                             QRdatamgXL()
-                        screen5.focus_force()
+                        config.screen5.focus_force()
                     else:
                         messagebox.showerror("ALERT", "Invalid Email ID")
-                        screen5.focus_force()
-                        screen5.entrymail.focus_set()
+                        config.screen5.focus_force()
+                        config.screen5.entrymail.focus_set()
                 except:
                     messagebox.showerror("ALERT", "Error in Generating QR or Phone NaN")
-                    screen5.focus_force()
-                    screen5.entryphno.focus_set()
+                    config.screen5.focus_force()
+                    config.screen5.entryphno.focus_set()
             else:
                 messagebox.showerror("ALERT", "Invalid Phone Number")
-                screen5.focus_force()
-                screen5.entryphno.focus_set()
+                config.screen5.focus_force()
+                config.screen5.entryphno.focus_set()
         elif (qrID.get() != '') and (qrevent1.get() != ''):
             autofil()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
-            screen5.focus_force()
+            config.screen5.focus_force()
 
     # code for autofill
     def autofil():
@@ -474,7 +474,7 @@ def QRP():
         except:
             messagebox.showerror("ALERT", "Unable to connect to the server")
         finally:
-            screen5.focus_force()
+            config.screen5.focus_force()
 
     # code to add participant data to excel sheet
     def QRdatamgXL():
@@ -516,7 +516,7 @@ def QRP():
         except:
             messagebox.showerror("ALERT", "Unable to connect to the server")
         finally:
-            screen5.focus_force()
+            config.screen5.focus_force()
 
     qrName = StringVar()
     qrphno = StringVar()
@@ -546,6 +546,28 @@ def eventmgm():
         evedate.set("")
         evetime.set("")
 
+    # clear placeholder of date field
+    def clrdt(event: object):
+        """
+        This function is used to monitor widget selection to
+        clear the placeholder value.
+
+        :param event: checks mouse interrupt.
+        """
+
+        evedate.set("")
+
+    # clear placeholder of time field
+    def clrti(event: object):
+        """
+        This function is used to monitor widget selection to
+        clear the placeholder value.
+
+        :param event: checks mouse interrupt.
+        """
+
+        evetime.set("")
+
     # add events to database
     def addevent():
         """
@@ -560,10 +582,10 @@ def eventmgm():
                     messagebox.showerror("ALERT", "Another event entry with same name already exists")
                     adevent.focus_set()
                 elif resp == 2:
-                    messagebox.showerror("ALERT", "Wrong date format: \n Correct format: YYYY-MM-DD")
+                    messagebox.showerror("ALERT", "Wrong date format: \nCorrect format: YYYY-MM-DD")
                     adevedt.focus_set()
                 elif resp == 3:
-                    messagebox.showerror("ALERT", "Wrong Time format: \n Correct format: HH:MM")
+                    messagebox.showerror("ALERT", "Wrong Time format: \nCorrect format: HH:MM")
                     adeveti.focus_set()
                 else:
                     messagebox.showinfo("Success", "Event added successfully")
@@ -608,9 +630,9 @@ def eventmgm():
             screen6.focus_force()
 
     # GUI code for event manager
-    screen6 = Toplevel(screen4)
+    screen6 = Toplevel(config.screen4)
     screen6.title("Event Manager")
-    screen6.geometry(screen6geo)
+    screen6.geometry(config.screen6geo)
     screen6.resizable(False, False)
     screen6.config(background="green")
     icon = PhotoImage(file="./resc/team-management.png")
@@ -627,16 +649,19 @@ def eventmgm():
     lbl.grid(row=1, column=1, padx=(40, 5), pady=5, columnspan=1)
     adevent = Entry(screen6, width='17', textvariable=evename)
     adevent.grid(row=1, column=2, padx=5, pady=5, columnspan=1)
-    adevent.focus_set()
     lbl = Label(screen6, text="Event Date", bg="green")
     lbl.configure(foreground="white")
     lbl.grid(row=2, column=1, padx=(40, 5), pady=5, columnspan=1)
     adevedt = Entry(screen6, width='17', textvariable=evedate)
+    adevedt.insert(0, 'YYYY-MM-DD')
+    adevedt.bind("<FocusIn>", clrdt)
     adevedt.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
     lbl = Label(screen6, text="Event Time", bg="green")
     lbl.configure(foreground="white")
     lbl.grid(row=3, column=1, padx=(40, 5), pady=5, columnspan=1)
     adeveti = Entry(screen6, width='17', textvariable=evetime)
+    adeveti.insert(0, 'HH:MM')
+    adeveti.bind("<FocusIn>", clrti)
     adeveti.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
     bnt = Button(screen6, text="Clear (ctrl + r)", command=clrevent, width=18)
     bnt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)
@@ -644,6 +669,7 @@ def eventmgm():
     nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)
     tnb = Button(screen6, text="Remove Event (ctrl + d)", command=remevent, width=18)
     tnb.grid(row=3, column=3, padx=5, pady=5, columnspan=2)
+    adevent.focus_set()
     # binding Ctrl + a key as shortcut to add event
     screen6.bind("<Control-a>", lambda event=None: nbt.invoke())
     # binding Ctrl + d key as shortcut to remove event
@@ -658,7 +684,7 @@ def eventmgm():
         reopens tasks window.
         """
 
-        screen4.deiconify()
+        config.screen4.deiconify()
         screen6.destroy()
     screen6.protocol("WM_DELETE_WINDOW", on_closing)
 
@@ -709,7 +735,7 @@ def report_gen():
         messagebox.showerror("ALERT", "Unable to connect to the server")
     finally:
         # set focus to management window on closing
-        screen4.focus_force()
+        config.screen4.focus_force()
 
 
 # code to manage user tasks
@@ -720,52 +746,52 @@ def mgm_page():
     """
 
     # GUI for organizer management
-    screen3.withdraw()
-    global screen4
-    screen4 = Toplevel(screen3)
-    screen4.title("Select")
-    screen4.geometry(screen4geo)
-    screen4.resizable(False, False)
-    screen4.config(background=colr)
+    config.screen3.withdraw()
+    config.screen4 = config.screen4
+    config.screen4 = Toplevel(config.screen3)
+    config.screen4.title("Select")
+    config.screen4.geometry(config.screen4geo)
+    config.screen4.resizable(False, False)
+    config.screen4.config(background=colr)
     icon = PhotoImage(file="./resc/process.png")
-    screen4.iconphoto(False, icon)
-    screen4.focus_force()
-    label = Label(screen4, text="Event Registration & Verification Using QR", bg=colr, fg="white", font=("Times New Roman", 20, 'bold'))
+    config.screen4.iconphoto(False, icon)
+    config.screen4.focus_force()
+    label = Label(config.screen4, text="Event Registration & Verification Using QR", bg=colr, fg="white", font=("Times New Roman", 20, 'bold'))
     label.grid(row=1, column=1, padx=5, pady=(20, 30), columnspan=3)
-    label = Label(screen4, text="Participant Registration", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
+    label = Label(config.screen4, text="Participant Registration", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=2, column=1, padx=(30, 40), pady=15, columnspan=1)
-    btn = Button(screen4, width=15, borderwidth=0, text="Registry (ctrl + g)", command=QRP)
+    btn = Button(config.screen4, width=15, borderwidth=0, text="Registry (ctrl + g)", command=QRP)
     btn.grid(row=3, column=1, padx=(30, 40), pady=10, columnspan=1)
-    label = Label(screen4, text="Register participants in one or more \nevents & Generate QR code, \nunique for everyone", bg=colr, fg="white")
+    label = Label(config.screen4, text="Register participants in one or more \nevents & Generate QR code, \nunique for everyone", bg=colr, fg="white")
     label.grid(row=4, column=1, padx=(30, 40), pady=10, columnspan=1)
-    label = Label(screen4, text="Participant Verification", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
+    label = Label(config.screen4, text="Participant Verification", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=2, column=3, padx=50, pady=15, columnspan=1)
-    bnt = Button(screen4, width=15, borderwidth=0, text="Entry (ctrl + s)", command=QRScan)
+    bnt = Button(config.screen4, width=15, borderwidth=0, text="Entry (ctrl + s)", command=QRScan)
     bnt.grid(row=3, column=3, padx=50, pady=10, columnspan=1)
-    label = Label(screen4, text="Verify and mark participant's entry, \nusing the QR code provided, \nfor each event", bg=colr, fg="white")
+    label = Label(config.screen4, text="Verify and mark participant's entry, \nusing the QR code provided, \nfor each event", bg=colr, fg="white")
     label.grid(row=4, column=3, padx=50, pady=10, columnspan=1)
-    ttk.Separator(screen4, orient=HORIZONTAL).grid(column=1, row=5, columnspan=3, sticky='ew')
-    ttk.Separator(screen4, orient=HORIZONTAL).grid(column=2, row=2, rowspan=9, sticky='ns')
-    label = Label(screen4, text="Event Management", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
+    ttk.Separator(config.screen4, orient=HORIZONTAL).grid(column=1, row=5, columnspan=3, sticky='ew')
+    ttk.Separator(config.screen4, orient=HORIZONTAL).grid(column=2, row=2, rowspan=9, sticky='ns')
+    label = Label(config.screen4, text="Event Management", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=6, column=1, padx=(30, 40), pady=15, columnspan=1)
-    tbn = Button(screen4, width=15, borderwidth=0, text="Manage (ctrl + e)", command=eventmgm)
+    tbn = Button(config.screen4, width=15, borderwidth=0, text="Manage (ctrl + e)", command=eventmgm)
     tbn.grid(row=7, column=1, padx=(30, 40), pady=10, columnspan=1)
-    label = Label(screen4, text="Add and remove events to be organized, \nalong with their date and time", bg=colr, fg="white")
+    label = Label(config.screen4, text="Add and remove events to be organized, \nalong with their date and time", bg=colr, fg="white")
     label.grid(row=8, column=1, padx=(30, 40), pady=10, columnspan=1)
-    label = Label(screen4, text="Report Generator", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
+    label = Label(config.screen4, text="Report Generator", bg=colr, fg="white", font=("Times New Roman", 12, 'bold'))
     label.grid(row=6, column=3, padx=50, pady=15, columnspan=1)
-    ttbn = Button(screen4, width=15, borderwidth=0, text="Report (ctrl + r)", command=report_gen)
+    ttbn = Button(config.screen4, width=15, borderwidth=0, text="Report (ctrl + r)", command=report_gen)
     ttbn.grid(row=7, column=3, padx=5, pady=10, columnspan=1)
-    label = Label(screen4, text="Generate report for all events and \nparticipants along with their details", bg=colr, fg="white")
+    label = Label(config.screen4, text="Generate report for all events and \nparticipants along with their details", bg=colr, fg="white")
     label.grid(row=8, column=3, padx=50, pady=10, columnspan=1)
     # binding Ctrl + g key as shortcut to open participant adding window
-    screen4.bind("<Control-g>", lambda event=None: btn.invoke())
+    config.screen4.bind("<Control-g>", lambda event=None: btn.invoke())
     # binding Ctrl + s key as shortcut to open participant entry window
-    screen4.bind("<Control-s>", lambda event=None: bnt.invoke())
+    config.screen4.bind("<Control-s>", lambda event=None: bnt.invoke())
     # binding Ctrl + e key as shortcut to open event management window
-    screen4.bind("<Control-e>", lambda event=None: tbn.invoke())
+    config.screen4.bind("<Control-e>", lambda event=None: tbn.invoke())
     # binding Ctrl + r key as shortcut to generate report
-    screen4.bind("<Control-r>", lambda event=None: ttbn.invoke())
+    config.screen4.bind("<Control-r>", lambda event=None: ttbn.invoke())
 
     # code to monitor main tasks window / app close event
     def on_closing():
@@ -774,8 +800,8 @@ def mgm_page():
         it also terminates the entire app.
         """
 
-        screen1.destroy()
-    screen4.protocol("WM_DELETE_WINDOW", on_closing)
+        config.screen1.destroy()
+    config.screen4.protocol("WM_DELETE_WINDOW", on_closing)
 
 
 # GUI & code for login & signup
@@ -807,9 +833,9 @@ def main_page():
             This function monitors the Registration window close event.
             """
 
-            screen2.destroy()
-            screen1.deiconify()
-        screen2.protocol("WM_DELETE_WINDOW", on_closing)
+            config.screen2.destroy()
+            config.screen1.deiconify()
+        config.screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
         # GUI for user add success
         def disab():
@@ -817,12 +843,12 @@ def main_page():
             This function sets the GUI of user registration success window.
             """
 
-            screen1_5 = Toplevel(screen1)
-            screen1_5.title("Success")
-            screen1_5.geometry(screen1_5geo)
-            screen1_5.resizable(False, False)
-            screen1_5.config(background="green")
-            screen1_5.focus_force()
+            config.screen1_5 = Toplevel(config.screen1)
+            config.screen1_5.title("Success")
+            config.screen1_5.geometry(config.screen1_5geo)
+            config.screen1_5.resizable(False, False)
+            config.screen1_5.config(background="green")
+            config.screen1_5.focus_force()
 
             # code to call login success screen
             def calllog():
@@ -835,20 +861,20 @@ def main_page():
                 emailid.set("")
                 phno.set("")
                 password.set("")
-                screen3.deiconify()
-                screen1_5.destroy()
-                screen2.destroy()
+                config.screen3.deiconify()
+                config.screen1_5.destroy()
+                config.screen2.destroy()
                 adminlogin()
 
-            label = Label(screen1_5, text="", bg="green")
+            label = Label(config.screen1_5, text="", bg="green")
             label.grid(row=1, column=1)
-            label = Label(screen1_5, text="Registeration Success", width='30', bg="green", font=("Times New Roman", 20, 'bold'))
+            label = Label(config.screen1_5, text="Registeration Success", width='30', bg="green", font=("Times New Roman", 20, 'bold'))
             label.configure(foreground="white")
             label.grid(pady=5, row=2, column=1, columnspan=1)
-            bttn = Button(screen1_5, text="OK (↵)", width="15", command=calllog)
+            bttn = Button(config.screen1_5, text="OK (↵)", width="15", command=calllog)
             bttn.grid(pady=5, row=3, column=1, columnspan=1)
             # binding Enter key as shortcut to proceed
-            screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
+            config.screen1_5.bind('<Return>', lambda event=None: bttn.invoke())
 
         disab()
 
@@ -859,36 +885,36 @@ def main_page():
         and sends the validated data to the server.
         """
 
-        if (username.get() != "") and (emailid.get() != "") and (phno.get() != "") and (password.get() != "") and (perm_entry.get() != "Select"):
+        if (username.get() != "") and (emailid.get() != "") and (phno.get() != "") and (password.get() != "") and (config.perm_entry.get() != "Select"):
             if len(phno.get()) == 10:
                 rege = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
                 if re.search(rege, emailid.get()):
                     if re.fullmatch(r'[A-Za-z0-9@#$%^&+=]{8,}', password.get()):
-                        perm = perm_entry.get()
+                        perm = config.perm_entry.get()
                         perm = 2 if perm == "Admin" else 1
                         try:
                             resp = fi.add_user(name=username.get(), email_id=emailid.get(), password=password.get(), phone=int(phno.get()), perm=perm)
                             if resp == 0:
                                 messagebox.showerror("ALERT", "User email already exists")
-                                screen2.focus_force()
+                                config.screen2.focus_force()
                             else:
                                 register_user()
                         except:
                             messagebox.showerror("ALERT", "Unable to connect to the server")
                         finally:
-                            screen2.focus_force()
+                            config.screen2.focus_force()
                     else:
                         messagebox.showerror("ALERT", "Password not Strong")
-                        screen2.focus_force()
+                        config.screen2.focus_force()
                 else:
                     messagebox.showerror("ALERT", "Invalid Email")
-                    screen2.focus_force()
+                    config.screen2.focus_force()
             else:
                 messagebox.showerror("ALERT", "Invalid Phone Number")
-                screen2.focus_force()
+                config.screen2.focus_force()
         else:
             messagebox.showerror("ALERT", "Fields Incomplete")
-            screen2.focus_force()
+            config.screen2.focus_force()
 
     # GUI code for adding user
     def register():
@@ -896,54 +922,53 @@ def main_page():
         This function sets the GUI of user registration window.
         """
 
-        screen3.withdraw()
-        global screen2, perm_entry
-        screen2 = Toplevel(screen1)
-        screen2.title("Register")
-        screen2.geometry(screen2geo)
-        screen2.resizable(False, False)
-        screen2.config(background=colr)
+        config.screen3.withdraw()
+        config.screen2 = Toplevel(config.screen1)
+        config.screen2.title("Register")
+        config.screen2.geometry(config.screen2geo)
+        config.screen2.resizable(False, False)
+        config.screen2.config(background=colr)
         icon = PhotoImage(file="./resc/add.png")
-        screen2.iconphoto(False, icon)
-        screen2.focus_force()
-        labl = Label(screen2, text="Please enter user information", width="30", bg=colr)
+        config.screen2.iconphoto(False, icon)
+        config.screen2.focus_force()
+        labl = Label(config.screen2, text="Please enter user information", width="30", bg=colr)
         labl.configure(foreground="white", font=("Times New Roman", 20, 'bold'))
         labl.grid(row=1, column=1, padx=5, pady=5, columnspan=2)
-        labl = Label(screen2, text="User Name", width='30', bg=colr)
+        labl = Label(config.screen2, text="User Name", width='30', bg=colr)
         labl.configure(foreground="white")
         labl.grid(row=2, column=1, padx=5, pady=5, columnspan=1)
-        username_entry = Entry(screen2, textvariable=username)
+        username_entry = Entry(config.screen2, textvariable=username)
         username_entry.grid(row=3, column=1, padx=5, pady=5, columnspan=1)
         username_entry.focus_set()
-        labl = Label(screen2, text="Email ID", width='30', bg=colr)
+        labl = Label(config.screen2, text="Email ID", width='30', bg=colr)
         labl.configure(foreground="white")
         labl.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
-        emailid_entry = Entry(screen2, textvariable=emailid)
+        emailid_entry = Entry(config.screen2, textvariable=emailid)
         emailid_entry.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
-        labl = Label(screen2, text="Phone Number", width='30', bg=colr)
+        labl = Label(config.screen2, text="Phone Number", width='30', bg=colr)
         labl.configure(foreground="white")
         labl.grid(row=4, column=1, padx=5, pady=5, columnspan=1)
-        phno_entry = Entry(screen2, textvariable=phno)
+        phno_entry = Entry(config.screen2, textvariable=phno)
         phno_entry.grid(row=5, column=1, padx=5, pady=5, columnspan=1)
-        labl = Label(screen2, text="Password", width='30', bg=colr)
+        labl = Label(config.screen2, text="Password", width='30', bg=colr)
         labl.configure(foreground="white")
         labl.grid(row=4, column=2, padx=5, pady=5, columnspan=1)
-        password_entry = Entry(screen2, show="*", textvariable=password)
+        password_entry = Entry(config.screen2, show="*", textvariable=password)
         password_entry.grid(row=5, column=2, padx=5, pady=5, columnspan=1)
-        labl = Label(screen2, text="", width="30", bg=colr)
+        labl = Label(config.screen2, text="", width="30", bg=colr)
         labl.grid(row=6, column=1, padx=5, pady=5, columnspan=2)
-        labl = Label(screen2, text="Permission : ", width='30', bg=colr)
+        labl = Label(config.screen2, text="Permission : ", width='30', bg=colr)
         labl.configure(foreground="white")
         labl.grid(row=7, column=1, padx=5, pady=5, columnspan=1)
-        perm_entry = ttk.Combobox(screen2, textvariable=rights, width="17", values=["Select", "Admin", "User"], state="readonly")
-        perm_entry.current(0)
-        perm_entry.grid(row=7, column=2, columnspan=1, pady=5)
-        labl = Label(screen2, text="", bg=colr)
+        config.perm_entry = ttk.Combobox(config.screen2, textvariable=rights, width="17", values=["Select", "Admin", "User"], state="readonly")
+        config.perm_entry.current(0)
+        config.perm_entry.grid(row=7, column=2, columnspan=1, pady=5)
+        labl = Label(config.screen2, text="", bg=colr)
         labl.grid(row=8, column=1, columnspan=2)
-        regbtn = Button(screen2, text="Sumbit (↵)", width='18', command=valinp)
+        regbtn = Button(config.screen2, text="Sumbit (↵)", width='18', command=valinp)
         regbtn.grid(row=9, column=1, padx=5, pady=5, columnspan=2)
         # binding Enter key as shortcut to proceed
-        screen2.bind('<Return>', lambda event=None: regbtn.invoke())
+        config.screen2.bind('<Return>', lambda event=None: regbtn.invoke())
 
         # code to monitor screen2 close event
         def on_closing():
@@ -952,9 +977,9 @@ def main_page():
             it reopens the admin login success window.
             """
 
-            screen3.deiconify()
-            screen2.destroy()
-        screen2.protocol("WM_DELETE_WINDOW", on_closing)
+            config.screen3.deiconify()
+            config.screen2.destroy()
+        config.screen2.protocol("WM_DELETE_WINDOW", on_closing)
 
     # GUI if user is admin
     def adminlogin():
@@ -962,18 +987,18 @@ def main_page():
         This functions sets the GUI if user is an admin.
         """
 
-        screen3.geometry(screen3geo)
-        label = Label(screen3, text="Login Success", width='30', bg="green")
+        config.screen3.geometry(config.screen3geo)
+        label = Label(config.screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
         label.grid(row=1, column=1, pady=5, columnspan=1)
-        bttnn = Button(screen3, text="OK (↵)", width="15", command=clrlogin)
+        bttnn = Button(config.screen3, text="OK (↵)", width="15", command=clrlogin)
         bttnn.grid(row=2, column=1, pady=5, columnspan=1)
-        bttn = Button(screen3, text="Add User (ctrl + a)", width="15", command=register)
+        bttn = Button(config.screen3, text="Add User (ctrl + a)", width="15", command=register)
         bttn.grid(row=3, column=1, pady=5, columnspan=1)
         # binding Enter key as shortcut to proceed
-        screen3.bind('<Return>', lambda event=None: bttnn.invoke())
+        config.screen3.bind('<Return>', lambda event=None: bttnn.invoke())
         # binding Ctrl + a key as shortcut to access user adding screen
-        screen3.bind("<Control-a>", lambda event=None: bttn.invoke())
+        config.screen3.bind("<Control-a>", lambda event=None: bttn.invoke())
 
     # GUI if user is user
     def userlogin():
@@ -981,16 +1006,16 @@ def main_page():
         This function sets the GUI if the user is an organizer.
         """
 
-        screen3.geometry(screen3geo)
-        label = Label(screen3, text="", bg="green")
+        config.screen3.geometry(config.screen3geo)
+        label = Label(config.screen3, text="", bg="green")
         label.grid(row=1, column=1, pady=5)
-        label = Label(screen3, text="Login Success", width='30', bg="green")
+        label = Label(config.screen3, text="Login Success", width='30', bg="green")
         label.configure(foreground="white", font=("Times New Roman", 16, 'bold'))
         label.grid(row=2, column=1, pady=5)
-        bttn = Button(screen3, text="OK (↵)", width="10", command=clrlogin)
+        bttn = Button(config.screen3, text="OK (↵)", width="10", command=clrlogin)
         bttn.grid(row=3, column=1, pady=5)
         # binding Enter key as shortcut to proceed
-        screen3.bind('<Return>', lambda event=None: bttn.invoke())
+        config.screen3.bind('<Return>', lambda event=None: bttn.invoke())
 
     # code for GUI & user details verification
     def login_verify():
@@ -999,16 +1024,15 @@ def main_page():
         it sends the login credentials to be verified & authenticated to the server.
         """
 
-        screen1.withdraw()
-        global screen3
-        screen3 = Toplevel(screen1)
-        screen3.title("Info")
-        screen3.geometry(screen3geo)
-        screen3.resizable(False, False)
-        screen3.config(background="green")
-        screen3.focus_force()
+        config.screen1.withdraw()
+        config.screen3 = Toplevel(config.screen1)
+        config.screen3.title("Info")
+        config.screen3.geometry(config.screen3geo)
+        config.screen3.resizable(False, False)
+        config.screen3.config(background="green")
+        config.screen3.focus_force()
         icon = PhotoImage(file="./resc/check.png")
-        screen3.iconphoto(False, icon)
+        config.screen3.iconphoto(False, icon)
 
         # code to monitor screen3 close event
         def on_closing():
@@ -1019,9 +1043,9 @@ def main_page():
             """
 
             clrlogin()
-            screen1.deiconify()
-            screen3.destroy()
-        screen3.protocol("WM_DELETE_WINDOW", on_closing)
+            config.screen1.deiconify()
+            config.screen3.destroy()
+        config.screen3.protocol("WM_DELETE_WINDOW", on_closing)
 
         try:
             resp = fi.login(uid=username_verify.get(), password=password_verify.get())
@@ -1061,14 +1085,14 @@ def main_page():
             username_entry1.focus_set()
 
     # code for login GUI
-    global screen1
-    screen1 = Tk()
-    screen1.title("Login")
-    screen1.geometry(screen1geo)
-    screen1.config(background=colr)
-    screen1.resizable(False, False)
+
+    config.screen1 = Tk()
+    config.screen1.title("Login")
+    config.screen1.geometry(config.screen1geo)
+    config.screen1.config(background=colr)
+    config.screen1.resizable(False, False)
     icon = PhotoImage(file="./resc/login.png")
-    screen1.iconphoto(False, icon)
+    config.screen1.iconphoto(False, icon)
     username = StringVar()
     password = StringVar()
     emailid = StringVar()
@@ -1097,7 +1121,7 @@ def main_page():
     btnn = Button(text="Login (↵)", width="18", command=chk_login_verify)
     btnn.grid(row=9, column=1, padx=5, pady=5, columnspan=1)
     # binding Enter key as shortcut to login
-    screen1.bind('<Return>', lambda event=None: btnn.invoke())
+    config.screen1.bind('<Return>', lambda event=None: btnn.invoke())
 
     # monitor app close
     def on_closing(event: object):
@@ -1110,17 +1134,19 @@ def main_page():
 
         sys.exit()
     # binding Escape key as shortcut to close app
-    screen1.bind('<Escape>', on_closing)
-    screen1.mainloop()
+    config.screen1.bind('<Escape>', on_closing)
+    config.screen1.mainloop()
 
 
-# setting a main color theme
-colr = "#1c44a5"
+# securing code from import exploits
+if __name__ == "__main__":
+    # setting a main color theme
+    colr = "#1c44a5"
 
-# checking OS to set GUI geometry
-chkos()
+    # checking OS to set GUI geometry
+    chkos()
 
-os.system("start cmd  /c python ..\\Backend\\backend_api.py")
+    os.system("start cmd  /c python ..\\Backend\\backend_api.py")
 
-# start program by calling 1st module of login
-main_page()
+    # start program by calling 1st module of login
+    main_page()
