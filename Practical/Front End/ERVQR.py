@@ -544,6 +544,28 @@ def eventmgm():
         evedate.set("")
         evetime.set("")
 
+    # clear placeholder of date field
+    def clrdt(event: object):
+        """
+        This function is used to monitor widget selection to
+        clear the placeholder value.
+
+        :param event: checks mouse interrupt.
+        """
+
+        evedate.set("")
+
+    # clear placeholder of time field
+    def clrti(event: object):
+        """
+        This function is used to monitor widget selection to
+        clear the placeholder value.
+
+        :param event: checks mouse interrupt.
+        """
+
+        evetime.set("")
+
     # add events to database
     def addevent():
         """
@@ -625,16 +647,19 @@ def eventmgm():
     lbl.grid(row=1, column=1, padx=(40, 5), pady=5, columnspan=1)
     adevent = Entry(screen6, width='17', textvariable=evename)
     adevent.grid(row=1, column=2, padx=5, pady=5, columnspan=1)
-    adevent.focus_set()
     lbl = Label(screen6, text="Event Date", bg="green")
     lbl.configure(foreground="white")
     lbl.grid(row=2, column=1, padx=(40, 5), pady=5, columnspan=1)
     adevedt = Entry(screen6, width='17', textvariable=evedate)
+    adevedt.insert(0, 'YYYY-MM-DD')
+    adevedt.bind("<FocusIn>", clrdt)
     adevedt.grid(row=2, column=2, padx=5, pady=5, columnspan=1)
     lbl = Label(screen6, text="Event Time", bg="green")
     lbl.configure(foreground="white")
     lbl.grid(row=3, column=1, padx=(40, 5), pady=5, columnspan=1)
     adeveti = Entry(screen6, width='17', textvariable=evetime)
+    adeveti.insert(0, 'HH:MM')
+    adeveti.bind("<FocusIn>", clrti)
     adeveti.grid(row=3, column=2, padx=5, pady=5, columnspan=1)
     bnt = Button(screen6, text="Clear (ctrl + r)", command=clrevent, width=18)
     bnt.grid(row=1, column=3, padx=5, pady=5, columnspan=2)
@@ -642,6 +667,7 @@ def eventmgm():
     nbt.grid(row=2, column=3, padx=5, pady=5, columnspan=2)
     tnb = Button(screen6, text="Remove Event (ctrl + d)", command=remevent, width=18)
     tnb.grid(row=3, column=3, padx=5, pady=5, columnspan=2)
+    adevent.focus_set()
     # binding Ctrl + a key as shortcut to add event
     screen6.bind("<Control-a>", lambda event=None: nbt.invoke())
     # binding Ctrl + d key as shortcut to remove event

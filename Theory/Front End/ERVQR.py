@@ -16,7 +16,6 @@ except:
 import pyzbar.pyzbar as pyzbar
 from tkinter import *
 from tkinter import ttk
-from tkcalendar import *
 from tkinter import messagebox
 from PIL import ImageTk, Image
 from openpyxl import Workbook, load_workbook
@@ -364,7 +363,6 @@ def QRP():
 
         finally:
             config.screen5.focus_force()
-
 
     # reload wait image
     def ld():
@@ -1085,7 +1083,6 @@ def main_page():
             username_entry1.focus_set()
 
     # code for login GUI
-
     config.screen1 = Tk()
     config.screen1.title("Login")
     config.screen1.geometry(config.screen1geo)
