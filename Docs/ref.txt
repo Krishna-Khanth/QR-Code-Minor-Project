@@ -12,3 +12,15 @@ http://effbot.org/pyfaq/how-do-i-share-global-variables-across-modules.htm
 
 https://effbot.org/zone/tkinter-window-destroy.htm
 
+more:
+
+https://www.tutorialspoint.com/python/python_gui_programming.htm
+
+https://www.javatpoint.com/mysql-tutorial
+
+https://docs.opencv.org/master/d9/df8/tutorial_root.html
+
+https://www.geeksforgeeks.org/python-opencv-cv2-puttext-method/
+
+https://stackoverflow.com/questions/17598475/resizing-window-doesnt-resize-contents-in-tkinter
+
