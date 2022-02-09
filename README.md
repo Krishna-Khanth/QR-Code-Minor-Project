@@ -6,3 +6,6 @@ Theory>Front End>ERVQR.py
 
 To run application from server:
 Practical>Front End>ERVQR.py
+
+Login Credentials:
+Docs>creds.txt
