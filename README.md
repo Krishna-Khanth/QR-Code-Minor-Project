@@ -2,7 +2,7 @@
 Event registration &amp; verification using QR-Code
 
 To run application in local machine:
-Theory>Front End>EVQR.py
+Theory>Front End>ERVQR.py
 
 To run application from server:
-Practical>Front End>EVQR.py
+Practical>Front End>ERVQR.py
