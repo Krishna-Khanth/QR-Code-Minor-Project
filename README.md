@@ -5,8 +5,8 @@ Login Credentials:
 Docs>creds.txt
 
 Install dependecies:
-Docs>req.txt
-pip install -r req.txt
+requirments.txt
+pip install -r requirments.txt
 
 To run application in local machine:
 Theory>Front End>ERVQR.py
