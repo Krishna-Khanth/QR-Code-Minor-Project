@@ -9,10 +9,7 @@ import platform
 import pyqrcode
 import numpy as np
 import tkinter as tk
-try:
-    import frontend_api as fi
-except:
-    import App.frontend_api as fi
+import frontend_api as fi
 import pyzbar.pyzbar as pyzbar
 from tkinter import *
 from tkinter import ttk
